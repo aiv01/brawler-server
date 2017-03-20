@@ -7,6 +7,10 @@ Sprint 1 - March 20 - April 3
 * Makefile for mono
 * JOIN, LEAVE, KICK, UPDATE
 
+20170320 Absolute position and rotation at specific rate
+20170320 Action replication from authority client to all clients
+
+
 (sprint meeting)
 
 
