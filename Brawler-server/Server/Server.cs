@@ -74,11 +74,12 @@ namespace BrawlerServer.Server
 
         public void RemoveClient(Client client)
         {
-            clients.Remove(client.EndPoint);
+            RemoveClient(client.EndPoint);
         }
 
         public void RemoveClient(IPEndPoint endPoint)
         {
+            var removedClient = clients[endPoint];
             clients.Remove(endPoint);
         }
 

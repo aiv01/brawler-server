@@ -1,11 +1,7 @@
 ﻿all: build restart
 
 build:
-	mcs Program.cs
+	mcs Brawler-server/Program.cs
 
 restart:
-	touch Brawler-server.ini
-
-tests:
-	mcs Brawler-server-tests/
-	nunit 
+	touch Brawler-server/Brawler-server.ini
