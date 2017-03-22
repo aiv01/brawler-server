@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Brawler-server": {
+      "commandName": "Project",
+      "commandLineArgs": "127.0.0.1 20234"
+    }
+  }
+}
