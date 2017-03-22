@@ -9,8 +9,8 @@ namespace BrawlerServer.Utilities
     public static class Utilities
     {
         // handlers per command (the array index is the command)
-        private static readonly Type[] Handlers = {
-            typeof(JoinHandler)
+        private static readonly Dictionary<int, Type> Handlers = new Dictionary<int, Type> {
+            { 0, typeof(JoinHandler) }
         };
 
         public static ICommandHandler GetHandler(Packet packet)

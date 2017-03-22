@@ -32,6 +32,7 @@ namespace BrawlerServer.Server
         private void ParseHeader()
         {
             var index = 0;
+            // todo: memorystream + binarywriter
             Id = BitConverter.ToInt32(Data, index); index += sizeof(int);
             Time = BitConverter.ToSingle(Data, index); index += sizeof(float);
 

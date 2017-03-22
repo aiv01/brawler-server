@@ -5,3 +5,7 @@ build:
 
 restart:
 	touch Brawler-server.ini
+
+tests:
+	mcs Brawler-server-tests/
+	nunit 
