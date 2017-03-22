@@ -15,6 +15,7 @@ namespace BrawlerServer
             var bindEp = new IPEndPoint(IPAddress.Parse(args[0]), Convert.ToInt32(args[1]));
 
             var server = new Server.Server(bindEp);
+            server.Bind();
             server.MainLoop();
         }
     }

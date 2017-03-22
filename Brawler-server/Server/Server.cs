@@ -11,6 +11,7 @@ namespace BrawlerServer.Server
     {
         private readonly IPEndPoint bindEp;
         private readonly Socket socket;
+        private readonly List<Packet> packetsToSend;
         private readonly byte[] buffer;
         private readonly int packetsPerLoop;
 
@@ -22,15 +23,20 @@ namespace BrawlerServer.Server
 
         public Server(IPEndPoint bindEp, int bufferSize = 1024, int packetsPerLoop = 256)
         {
+            packetsToSend = new List<Packet>();
             clients = new Dictionary<IPEndPoint, Client>();
 
             this.packetsPerLoop = packetsPerLoop;
             this.bindEp = bindEp;
 
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            socket.Bind(bindEp);
-
             buffer = new byte[bufferSize];
+
+            socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        }
+
+        public void Bind()
+        {
+            socket.Bind(bindEp);
         }
 
         public void MainLoop(float loopTime = 1f / 10)
@@ -44,6 +50,7 @@ namespace BrawlerServer.Server
             {
                 Time = watch.ElapsedMilliseconds;
 
+                // first receive packets
                 var packetIndex = 0;
                 while (packetIndex < packetsPerLoop && socket.Available > 0)
                 {
@@ -51,6 +58,7 @@ namespace BrawlerServer.Server
                     try
                     {
                         var packet = new Packet(this, size, buffer, (IPEndPoint)remoteEp);
+                        packet.ParseHeaderFromData();
                     }
                     catch (Exception e)
                     {
@@ -60,10 +68,34 @@ namespace BrawlerServer.Server
 
                     packetIndex++;
                 }
+                // then send packets (do we need to send only a fixed number?)
+                foreach (var packet in packetsToSend)
+                {
+                    if (packet.Broadcast)
+                    {
+                        foreach (var pair in clients)
+                        {
+                            if (!pair.Key.Equals(packet.RemoteEp))
+                            {
+                                socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, pair.Key);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, packet.RemoteEp);
+                    }
+                }
+                packetsToSend.Clear();
 
                 DeltaTime = watch.ElapsedMilliseconds - Time;
                 Thread.Sleep(Math.Max((int)(msLoopTime - DeltaTime), 0));
             }
+        }
+
+        public void SendPacket(Packet packet)
+        {
+            packetsToSend.Add(packet);
         }
 
         #region ClientsManagement

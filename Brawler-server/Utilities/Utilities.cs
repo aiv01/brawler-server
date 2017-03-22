@@ -23,10 +23,14 @@ namespace BrawlerServer.Utilities
             return (b & (1 << pos)) != 0;
         }
 
+        public static byte SetBitOnByte(byte b, int pos, bool value)
+        {
+            return value ? (byte) (b | (1 << pos)) : (byte) (b & ~(1 << pos));
+        }
+
         public static dynamic ParsePacketJson(Packet packet, Type type)
         {
-            var jsonData = Encoding.UTF8.GetString(packet.Data, packet.PayloadIndex,
-                packet.Data.Length - packet.PayloadIndex);
+            var jsonData = packet.Reader.ReadString();
             return JsonConvert.DeserializeObject(jsonData, type);
         }
     }

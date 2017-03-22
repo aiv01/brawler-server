@@ -12,6 +12,7 @@ namespace BrawlerServer.Server
     {
         public Packet Packet { get; private set; }
         public JoinHandlerJson JsonData { get; private set; }
+        public Client Client { get; private set; }
 
         public void Init(Packet packet)
         {
@@ -25,8 +26,8 @@ namespace BrawlerServer.Server
                 throw new Exception(string.Format("Client with remoteEp '{0}' tried to join but has already joined.", packet.RemoteEp));
             }
             // create client and add it to the server's clients
-            var client = new Client(packet.RemoteEp, JsonData.Name);
-            packet.Server.AddClient(client);
+            Client = new Client(packet.RemoteEp, JsonData.Name);
+            packet.Server.AddClient(Client);
         }
     }
 }

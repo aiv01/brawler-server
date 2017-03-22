@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Brawler-server", "Brawler-server.csproj", "{4E6DBA24-9EDA-4153-8666-C98B2390CF71}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Brawler-server-tests", "..\Brawler-server-tests\Brawler-server-tests.csproj", "{F3DE60C7-F330-41B0-BE64-D6FF9D2D7E66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Brawler-server-tests", "..\Brawler-server-tests\Brawler-server-tests.csproj", "{158E29F4-E9F5-4DBD-8936-33066082E7EA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Brawler-server", "Brawler-server.csproj", "{63ABA119-E607-441D-B9DA-492949171A74}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4E6DBA24-9EDA-4153-8666-C98B2390CF71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4E6DBA24-9EDA-4153-8666-C98B2390CF71}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4E6DBA24-9EDA-4153-8666-C98B2390CF71}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4E6DBA24-9EDA-4153-8666-C98B2390CF71}.Release|Any CPU.Build.0 = Release|Any CPU
-		{158E29F4-E9F5-4DBD-8936-33066082E7EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{158E29F4-E9F5-4DBD-8936-33066082E7EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{158E29F4-E9F5-4DBD-8936-33066082E7EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{158E29F4-E9F5-4DBD-8936-33066082E7EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3DE60C7-F330-41B0-BE64-D6FF9D2D7E66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3DE60C7-F330-41B0-BE64-D6FF9D2D7E66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3DE60C7-F330-41B0-BE64-D6FF9D2D7E66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3DE60C7-F330-41B0-BE64-D6FF9D2D7E66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63ABA119-E607-441D-B9DA-492949171A74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63ABA119-E607-441D-B9DA-492949171A74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63ABA119-E607-441D-B9DA-492949171A74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63ABA119-E607-441D-B9DA-492949171A74}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
