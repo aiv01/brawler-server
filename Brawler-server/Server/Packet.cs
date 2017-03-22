@@ -7,8 +7,8 @@ namespace BrawlerServer.Server
     {
         public Server Server { get; set; }
 
-        public byte[] Data { get; }
-        public IPEndPoint RemoteEp { get; }
+        public byte[] Data { get; private set; }
+        public IPEndPoint RemoteEp { get; private set; }
         // header
         public int Id { get; private set; }
         public float Time { get; private set; }
