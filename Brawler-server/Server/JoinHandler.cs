@@ -26,6 +26,7 @@ namespace BrawlerServer.Server
             }
             // create client and add it to the server's clients
             var client = new Client(packet.RemoteEp, JsonData.Name);
+            Console.WriteLine("Client with remoteEp '{0}' joined the server", packet.RemoteEp);
             packet.Server.AddClient(client);
         }
     }
