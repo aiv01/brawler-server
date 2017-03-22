@@ -2,6 +2,14 @@
 
 ## Header
 4 byte: id
+
 4 byte: timestamp
+
 1 byte: (primo bit: tipo di pacchetto "0 è binario", "1 è json", secondo bit se reliable o no): se json ignora il resto del byte, altrimenti AND con 0x7f (00-) e converti a intero
+
 resto : PAYLOAD
+
+## Host info
+Hostname: unbit0016.uwsgi.it
+
+Port: 20234
