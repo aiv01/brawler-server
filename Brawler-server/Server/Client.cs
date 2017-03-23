@@ -15,5 +15,10 @@ namespace BrawlerServer.Server
             EndPoint = endPoint;
             Name = name;
         }
+
+        public override string ToString()
+        {
+            return $"client:[name:'{Name}', endPoint:'{EndPoint}']";
+        }
     }
 }

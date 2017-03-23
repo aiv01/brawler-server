@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using BrawlerServer.Utilities;
 
 namespace BrawlerServer.Server
 {
@@ -63,6 +64,7 @@ namespace BrawlerServer.Server
                 while (packetIndex < packetsPerLoop && socket.Available > 0)
                 {
                     var size = socket.ReceiveFrom(recvBuffer, ref remoteEp);
+                    Logs.Log($"[{Time}] Received message from '{remoteEp}', size: '{size}'.");
                     try
                     {
                         var packet = new Packet(this, size, recvBuffer, (IPEndPoint)remoteEp, recvStream, recvReader, recvWriter);
@@ -70,7 +72,7 @@ namespace BrawlerServer.Server
                     }
                     catch (Exception e)
                     {
-                        Debug.WriteLine("Error while parsing packet from '{0}', with size of '{1}':\n{2}", remoteEp, size, e);
+                        Logs.LogError($"Error while parsing packet from '{remoteEp}', with size of '{size}':\n{e}");
                         continue;
                     }
 
@@ -110,6 +112,7 @@ namespace BrawlerServer.Server
         public void AddClient(Client client)
         {
             clients[client.EndPoint] = client;
+            Logs.Log($"[{Time}] Added new Client: '{client}'.");
         }
 
         public void RemoveClient(Client client)
@@ -121,6 +124,7 @@ namespace BrawlerServer.Server
         {
             var removedClient = clients[endPoint];
             clients.Remove(endPoint);
+            Logs.Log($"[{Time}] Removed Client: '{removedClient}'.");
         }
 
         public bool HasClient(IPEndPoint endPoint)

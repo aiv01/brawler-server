@@ -1,5 +1,6 @@
 ﻿
 using System;
+using BrawlerServer.Utilities;
 
 namespace BrawlerServer.Server
 {
@@ -23,8 +24,9 @@ namespace BrawlerServer.Server
             // first check if user is already in joined users
             if (packet.Server.HasClient(packet.RemoteEp))
             {
-                throw new Exception(string.Format("Client with remoteEp '{0}' tried to join but has already joined.", packet.RemoteEp));
+                throw new Exception($"Client with remoteEp '{packet.RemoteEp}' tried to join but has already joined.");
             }
+            Logs.Log($"[{packet.Server.Time}] Received join message from '{packet.RemoteEp}'.");
             // create client and add it to the server's clients
             Client = new Client(packet.RemoteEp, JsonData.Name);
             packet.Server.AddClient(Client);
