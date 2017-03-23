@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -12,7 +13,11 @@ namespace BrawlerServer.Server
         private readonly IPEndPoint bindEp;
         private readonly Socket socket;
         private readonly List<Packet> packetsToSend;
-        private readonly byte[] buffer;
+        private readonly byte[] recvBuffer;
+        private readonly MemoryStream recvStream;
+        private readonly BinaryReader recvReader;
+        private readonly BinaryWriter recvWriter;
+
         private readonly int packetsPerLoop;
 
         private readonly Dictionary<IPEndPoint, Client> clients;
@@ -29,7 +34,10 @@ namespace BrawlerServer.Server
             this.packetsPerLoop = packetsPerLoop;
             this.bindEp = bindEp;
 
-            buffer = new byte[bufferSize];
+            recvBuffer = new byte[bufferSize];
+            recvStream = new MemoryStream(recvBuffer);
+            recvReader = new BinaryReader(recvStream);
+            recvWriter = new BinaryWriter(recvStream);
 
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         }
@@ -54,10 +62,10 @@ namespace BrawlerServer.Server
                 var packetIndex = 0;
                 while (packetIndex < packetsPerLoop && socket.Available > 0)
                 {
-                    var size = socket.ReceiveFrom(buffer, ref remoteEp);
+                    var size = socket.ReceiveFrom(recvBuffer, ref remoteEp);
                     try
                     {
-                        var packet = new Packet(this, size, buffer, (IPEndPoint)remoteEp);
+                        var packet = new Packet(this, size, recvBuffer, (IPEndPoint)remoteEp, recvStream, recvReader, recvWriter);
                         packet.ParseHeaderFromData();
                     }
                     catch (Exception e)
