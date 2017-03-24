@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Threading;
 using BrawlerServer.Utilities;
 
@@ -11,7 +12,12 @@ namespace BrawlerServer.Server
 {
     public class Server
     {
-        private readonly IPEndPoint bindEp;
+        public delegate void ServerTickHandler(Server server);
+        public delegate void ServerPacketReceiveHandler(Server server, Packet packet);
+        public event ServerTickHandler ServerTick;
+        public event ServerPacketReceiveHandler ServerPacketReceive;
+
+        public readonly IPEndPoint BindEp;
         private readonly Socket socket;
         private readonly List<Packet> packetsToSend;
         private readonly byte[] recvBuffer;
@@ -23,6 +29,7 @@ namespace BrawlerServer.Server
 
         private readonly Dictionary<IPEndPoint, Client> clients;
 
+        public bool IsRunning { get; set; }
         public float Time { get; private set; }
         // does NOT count looptime
         public float DeltaTime { get; private set; }
@@ -33,7 +40,7 @@ namespace BrawlerServer.Server
             clients = new Dictionary<IPEndPoint, Client>();
 
             this.packetsPerLoop = packetsPerLoop;
-            this.bindEp = bindEp;
+            this.BindEp = bindEp;
 
             recvBuffer = new byte[bufferSize];
             recvStream = new MemoryStream(recvBuffer);
@@ -45,17 +52,22 @@ namespace BrawlerServer.Server
 
         public void Bind()
         {
-            socket.Bind(bindEp);
+            if (!socket.IsBound)
+            {
+                socket.Bind(BindEp);
+            }
         }
 
         public void MainLoop(float loopTime = 1f / 10)
         {
+            IsRunning = true;
+
             var msLoopTime = (int)(loopTime * 1000f);
 
             EndPoint remoteEp = new IPEndPoint(0, 0);
 
             var watch = Stopwatch.StartNew();
-            while (true)
+            while (IsRunning)
             {
                 Time = watch.ElapsedMilliseconds;
 
@@ -65,15 +77,21 @@ namespace BrawlerServer.Server
                 {
                     var size = socket.ReceiveFrom(recvBuffer, ref remoteEp);
                     Logs.Log($"[{Time}] Received message from '{remoteEp}', size: '{size}'.");
+                    Packet packet = null;
                     try
                     {
-                        var packet = new Packet(this, size, recvBuffer, (IPEndPoint)remoteEp, recvStream, recvReader, recvWriter);
+                        packet = new Packet(this, size, recvBuffer, (IPEndPoint) remoteEp, recvStream, recvReader,
+                            recvWriter);
                         packet.ParseHeaderFromData();
                     }
                     catch (Exception e)
                     {
                         Logs.LogError($"Error while parsing packet from '{remoteEp}', with size of '{size}':\n{e}");
                         continue;
+                    }
+                    finally
+                    {
+                        ServerPacketReceive?.Invoke(this, packet);
                     }
 
                     packetIndex++;
@@ -98,11 +116,13 @@ namespace BrawlerServer.Server
                 }
                 packetsToSend.Clear();
 
+                ServerTick?.Invoke(this);
+
                 DeltaTime = watch.ElapsedMilliseconds - Time;
                 Thread.Sleep(Math.Max((int)(msLoopTime - DeltaTime), 0));
             }
         }
-
+        
         public void SendPacket(Packet packet)
         {
             packetsToSend.Add(packet);
