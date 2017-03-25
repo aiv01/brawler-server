@@ -8,21 +8,12 @@ using Newtonsoft.Json;
 using NUnit;
 using NUnit.Framework;
 
-namespace BrawlerServer.Tests
+namespace BrawlerServer.Server.Tests
 {
     [TestFixture]
     public class JoinHandlerTests
     {
-        [Test]
-        public void TestJoinPacket()
-        {
-            var ep = new IPEndPoint(0, 0);
-            var server = new Server.Server(ep);
-
-            CreateAndTestJoinPacket(server);
-        }
-
-        Packet CreateAndTestJoinPacket(Server.Server server)
+        Packet CreateAndTestJoinPacket(Server server)
         {
             var joinData = new byte[1024];
 
@@ -56,12 +47,12 @@ namespace BrawlerServer.Tests
             return packet;
         }
 
-        void TestJoinPacketBySocketSendPacket(Server.Server server)
+        void TestJoinPacketBySocketSendPacket(Server server)
         {
             server.ServerTick -= TestJoinPacketBySocketSendPacket;
 
             var packet = CreateAndTestJoinPacket(server);
-            var client = ((JoinHandler) packet.PacketHandler).Client;
+            var client = ((JoinHandler)packet.PacketHandler).Client;
 
             server.RemoveClient(client);
             Assert.That(server.HasClient(client), Is.EqualTo(false));
@@ -90,11 +81,21 @@ namespace BrawlerServer.Tests
             server.SendPacket(packet);
         }
 
+
         [Test]
-        public void TestJoinPacketBySocket()
+        public void JoinPacketTest()
+        {
+            var ep = new IPEndPoint(0, 0);
+            var server = new Server(ep);
+
+            CreateAndTestJoinPacket(server);
+        }
+
+        [Test]
+        public void JoinPacketBySocketTest()
         {
             var ep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 20237);
-            var server = new Server.Server(ep);
+            var server = new Server(ep);
             server.ServerTick += TestJoinPacketBySocketSendPacket;
             server.Bind();
             server.MainLoop();

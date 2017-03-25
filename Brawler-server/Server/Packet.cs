@@ -73,7 +73,7 @@ namespace BrawlerServer.Server
             PayloadOffset = (int) Stream.Position;
         }
 
-        public void ParseHeaderFromData()
+        public void ParseHeaderFromData(bool initHandler = true)
         {
             Stream.Seek(0, SeekOrigin.Begin);
 
@@ -87,12 +87,17 @@ namespace BrawlerServer.Server
             // remove first two bits
             Command = Reader.ReadByte();
             if (IsReliable)
+            {
                 Command = Utilities.Utilities.SetBitOnByte(Command, 7, false);
+            }
             // rest is payload
             PayloadOffset = (int) Stream.Position;
 
             PacketHandler = Utilities.Utilities.GetHandler(this);
-            PacketHandler.Init(this);
+            if (initHandler)
+            {
+                PacketHandler.Init(this);
+            }
         }
     }
 }
