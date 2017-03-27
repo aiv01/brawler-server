@@ -30,6 +30,7 @@ namespace BrawlerServer.Server
             // create client and add it to the server's clients
             Client = new Client(packet.RemoteEp, JsonData.Name);
             packet.Server.AddClient(Client);
+            Logs.Log($"[{packet.Server.Time}] Player with remoteEp '{packet.RemoteEp}' (a.k.a. {JsonData.Name}) joined the server");
         }
     }
 }
