@@ -9,9 +9,6 @@
 
 resto : PAYLOAD
 
-## JOIN
-Payload: Json deserialized from class JoinHandlerJson: https://github.com/aiv01/brawler-server/blob/master/Brawler-server/Server/JoinHandler.cs
-
 ## Host info
 Hostname: unbit0016.uwsgi.it (server's local 10.0.0.238)
 
