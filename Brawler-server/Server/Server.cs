@@ -147,6 +147,11 @@ namespace BrawlerServer.Server
             Logs.Log($"[{Time}] Removed Client: '{removedClient}'.");
         }
 
+        public Client GetClientFromEndPoint(IPEndPoint endPoint)
+        {
+            return clients[endPoint];
+        }
+
         public bool HasClient(IPEndPoint endPoint)
         {
             return clients.ContainsKey(endPoint);

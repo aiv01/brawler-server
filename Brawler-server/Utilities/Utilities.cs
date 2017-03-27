@@ -10,7 +10,10 @@ namespace BrawlerServer.Utilities
     {
         // handlers per command (the array index is the command)
         private static readonly Dictionary<int, Type> Handlers = new Dictionary<int, Type> {
-            { 0, typeof(JoinHandler) }
+            { 0, typeof(JoinHandler) },
+            //{ 1, typeof(KickHandler) },
+            { 2, typeof(LeaveHandler) },
+
         };
 
         public static ICommandHandler GetHandler(Packet packet)

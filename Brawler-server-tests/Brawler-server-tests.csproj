@@ -54,6 +54,7 @@
     <Compile Include="Server\ClientTests.cs" />
     <Compile Include="Server\JoinHandlerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Server\LeaveHandlerTest.cs" />
     <Compile Include="Server\PacketTests.cs" />
     <Compile Include="Utilities\UtilitiesTests.cs" />
   </ItemGroup>
