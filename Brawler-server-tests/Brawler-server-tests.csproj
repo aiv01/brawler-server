@@ -51,8 +51,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommandHandlerTests.cs" />
+    <Compile Include="Server\ClientTests.cs" />
+    <Compile Include="Server\JoinHandlerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Server\PacketTests.cs" />
+    <Compile Include="Utilities\UtilitiesTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

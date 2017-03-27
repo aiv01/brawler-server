@@ -1,22 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Threading;
+using BrawlerServer.Utilities;
 
 namespace BrawlerServer.Server
 {
     public class Server
     {
-        private readonly IPEndPoint bindEp;
+        public delegate void ServerTickHandler(Server server);
+        public delegate void ServerPacketReceiveHandler(Server server, Packet packet);
+        public event ServerTickHandler ServerTick;
+        public event ServerPacketReceiveHandler ServerPacketReceive;
+
+        public readonly IPEndPoint BindEp;
         private readonly Socket socket;
         private readonly List<Packet> packetsToSend;
-        private readonly byte[] buffer;
+        private readonly byte[] recvBuffer;
+        private readonly MemoryStream recvStream;
+        private readonly BinaryReader recvReader;
+        private readonly BinaryWriter recvWriter;
+
         private readonly int packetsPerLoop;
 
         private readonly Dictionary<IPEndPoint, Client> clients;
 
+        public bool IsRunning { get; set; }
         public float Time { get; private set; }
         // does NOT count looptime
         public float DeltaTime { get; private set; }
@@ -27,26 +40,34 @@ namespace BrawlerServer.Server
             clients = new Dictionary<IPEndPoint, Client>();
 
             this.packetsPerLoop = packetsPerLoop;
-            this.bindEp = bindEp;
+            this.BindEp = bindEp;
 
-            buffer = new byte[bufferSize];
+            recvBuffer = new byte[bufferSize];
+            recvStream = new MemoryStream(recvBuffer);
+            recvReader = new BinaryReader(recvStream);
+            recvWriter = new BinaryWriter(recvStream);
 
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         }
 
         public void Bind()
         {
-            socket.Bind(bindEp);
+            if (!socket.IsBound)
+            {
+                socket.Bind(BindEp);
+            }
         }
 
         public void MainLoop(float loopTime = 1f / 10)
         {
+            IsRunning = true;
+
             var msLoopTime = (int)(loopTime * 1000f);
 
             EndPoint remoteEp = new IPEndPoint(0, 0);
 
             var watch = Stopwatch.StartNew();
-            while (true)
+            while (IsRunning)
             {
                 Time = watch.ElapsedMilliseconds;
 
@@ -54,16 +75,23 @@ namespace BrawlerServer.Server
                 var packetIndex = 0;
                 while (packetIndex < packetsPerLoop && socket.Available > 0)
                 {
-                    var size = socket.ReceiveFrom(buffer, ref remoteEp);
+                    var size = socket.ReceiveFrom(recvBuffer, ref remoteEp);
+                    Logs.Log($"[{Time}] Received message from '{remoteEp}', size: '{size}'.");
+                    Packet packet = null;
                     try
                     {
-                        var packet = new Packet(this, size, buffer, (IPEndPoint)remoteEp);
+                        packet = new Packet(this, size, recvBuffer, (IPEndPoint) remoteEp, recvStream, recvReader,
+                            recvWriter);
                         packet.ParseHeaderFromData();
                     }
                     catch (Exception e)
                     {
-                        Debug.WriteLine("Error while parsing packet from '{0}', with size of '{1}':\n{2}", remoteEp, size, e);
+                        Logs.LogError($"Error while parsing packet from '{remoteEp}', with size of '{size}':\n{e}");
                         continue;
+                    }
+                    finally
+                    {
+                        ServerPacketReceive?.Invoke(this, packet);
                     }
 
                     packetIndex++;
@@ -88,11 +116,13 @@ namespace BrawlerServer.Server
                 }
                 packetsToSend.Clear();
 
+                ServerTick?.Invoke(this);
+
                 DeltaTime = watch.ElapsedMilliseconds - Time;
                 Thread.Sleep(Math.Max((int)(msLoopTime - DeltaTime), 0));
             }
         }
-
+        
         public void SendPacket(Packet packet)
         {
             packetsToSend.Add(packet);
@@ -102,6 +132,7 @@ namespace BrawlerServer.Server
         public void AddClient(Client client)
         {
             clients[client.EndPoint] = client;
+            Logs.Log($"[{Time}] Added new Client: '{client}'.");
         }
 
         public void RemoveClient(Client client)
@@ -113,6 +144,7 @@ namespace BrawlerServer.Server
         {
             var removedClient = clients[endPoint];
             clients.Remove(endPoint);
+            Logs.Log($"[{Time}] Removed Client: '{removedClient}'.");
         }
 
         public bool HasClient(IPEndPoint endPoint)
