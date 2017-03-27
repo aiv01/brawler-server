@@ -11,8 +11,7 @@ using NUnit.Framework;
 namespace BrawlerServer.Server.Tests
 {
     [TestFixture]
-    public class 
-        Tests
+    public class JoinHandlerTests
     {
         Packet CreateAndTestJoinPacket(Server server)
         {
