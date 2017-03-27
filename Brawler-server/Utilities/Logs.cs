@@ -39,13 +39,13 @@ namespace BrawlerServer.Utilities
 
         public static void LogWarning(string message)
         {
-            if (Level >= DebugLevel.WarningsOnly) return;
+            if (Level < DebugLevel.WarningsOnly) return;
             Listener.Write(message, "warning");
         }
 
         public static void LogError(string message)
         {
-            if (Level >= DebugLevel.ErrorsOnly) return;
+            if (Level < DebugLevel.ErrorsOnly) return;
             Listener.Write(message, "error");
         }
     }
