@@ -13,6 +13,7 @@ namespace BrawlerServer.Utilities
             { 0, typeof(JoinHandler) },
             //{ 1, typeof(KickHandler) },
             { 2, typeof(LeaveHandler) },
+            { 3, typeof(UpdateHandler) },
 
         };
 
@@ -28,7 +29,7 @@ namespace BrawlerServer.Utilities
 
         public static byte SetBitOnByte(byte b, int pos, bool value)
         {
-            return value ? (byte) (b | (1 << pos)) : (byte) (b & ~(1 << pos));
+            return value ? (byte)(b | (1 << pos)) : (byte)(b & ~(1 << pos));
         }
 
         public static dynamic ParsePacketJson(Packet packet, Type type)
@@ -36,5 +37,21 @@ namespace BrawlerServer.Utilities
             var jsonData = packet.Reader.ReadString();
             return JsonConvert.DeserializeObject(jsonData, type);
         }
+
+        public static string ComposePacketJson(object jsonObject)
+        {
+            return JsonConvert.SerializeObject(jsonObject);
+        }
+
+        public static dynamic GetCommandFromId(sbyte id)
+        {
+            return Handlers[id];
+        }
+
+        //TODO
+        //public static dynamic GetIdFromCommand(Type type)
+        //{
+        //    return Handlers[type];
+        //}
     }
 }
