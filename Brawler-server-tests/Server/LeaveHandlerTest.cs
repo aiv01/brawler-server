@@ -59,8 +59,7 @@ namespace BrawlerServer.Server.Tests
 
             var packet = CreateAndTestLeavePacket(server);
             var client = ((LeaveHandler)packet.PacketHandler).Client;
-
-            //server.RemoveClient(client);
+            
             Assert.That(server.HasClient(client), Is.EqualTo(false));
 
             server.ServerPacketReceive += (s, p) =>
@@ -104,6 +103,7 @@ namespace BrawlerServer.Server.Tests
             server.ServerTick += TestLeavePacketBySocketSendPacket;
             server.Bind();
             server.MainLoop();
+           
         }
     }
 }
