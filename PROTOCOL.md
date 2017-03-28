@@ -15,7 +15,7 @@ Payload: Json deserialized from class JoinHandlerJson: https://github.com/aiv01/
 ## LEAVE (command 2)
 Payload: Json deserialized from class LeaveHandlerJson: https://github.com/aiv01/brawler-server/blob/master/Brawler-server/Server/LeaveHandler.cs
 
-## Update (command 2)
+## Update (command 3)
 Payload: Json deserialized from class UpdateHandlerJson: https://github.com/aiv01/brawler-server/blob/master/Brawler-server/Server/UpdateHandler.cs
 
 
