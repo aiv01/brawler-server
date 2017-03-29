@@ -2,9 +2,9 @@
 
 tests: build-tests run-tests
 
-dotnet="~/.dotnet/dotnet"
+dotnet=${HOME}/.dotnet/dotnet
 export FrameworkPathOverride=/usr/lib/mono/4.5/
-nunit-console="mono ~/.nuget/packages/nunit.consolerunner/3.6.1/tools/nunit3-console.exe"
+nunit-console=mono ${HOME}/.nuget/packages/nunit.consolerunner/3.6.1/tools/nunit3-console.exe
 
 build:
 	cd Brawler-server/ && $(dotnet) build
