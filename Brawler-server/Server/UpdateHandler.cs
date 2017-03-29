@@ -5,41 +5,43 @@ using System.Text;
 
 namespace BrawlerServer.Server
 {
-    public class UpdateHandlerJson
-    {
-        public string Name;
-        public float X;
-        public float Y;
-        public float Z;
-        public float Rx;
-        public float Ry;
-        public float Rz;
-    }
-
     public class UpdateHandler : ICommandHandler
     {
         public Packet Packet { get; private set; }
-        public UpdateHandlerJson JsonData { get; private set; }
         public Client Client { get; private set; }
+        public float X { get; private set; }
+        public float Y { get; private set; }
+        public float Z { get; private set; }
+        public float Rx { get; private set; }
+        public float Ry { get; private set; }
+        public float Rz { get; private set; }
+        public float Rw { get; private set; }
 
         public void Init(Packet packet)
         {
             Packet = packet;
 
-            JsonData = Utilities.Utilities.ParsePacketJson(Packet, typeof(UpdateHandlerJson));
-            
             Logs.Log($"[{packet.Server.Time}] Received update packet from '{packet.RemoteEp}'.");
 
-            Logs.Log($"[{packet.Server.Time}] Player ({JsonData.Name}) with remoteEp '{packet.RemoteEp}' updated his pos to x:{JsonData.X}, y:{JsonData.Y}, z:{JsonData.Z}, rX:{JsonData.Rx}, rY:{JsonData.Ry}, rZ:{JsonData.Rz}");
+            packet.Stream.Seek(packet.PayloadOffset, System.IO.SeekOrigin.Begin);
+            X = packet.Reader.ReadSingle();
+            Y = packet.Reader.ReadSingle();
+            Z = packet.Reader.ReadSingle();
+            Rx = packet.Reader.ReadSingle();
+            Ry = packet.Reader.ReadSingle();
+            Rz = packet.Reader.ReadSingle();
+            Rw = packet.Reader.ReadSingle();
 
-            byte[] JsonToSend = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(JsonData));
-            Packet PacketToSend = new Packet(Packet.Server, 1024, JsonToSend, packet.RemoteEp);
-
+            Packet PacketToSend = new Packet(Packet.Server, 1024, packet.Data, packet.RemoteEp);
             PacketToSend.Broadcast = true;
-            PacketToSend.AddHeaderToData(Packet.Id + 1, true, 3);
-            packet.Writer.Write(JsonToSend);
-            packet.PacketSize = (int)packet.Stream.Position;
-
+            PacketToSend.AddHeaderToData(packet.Id + 1 /*To redefine*/, false, 3);
+            PacketToSend.Writer.Write(X);
+            PacketToSend.Writer.Write(Y);
+            PacketToSend.Writer.Write(Z);
+            PacketToSend.Writer.Write(Rx);
+            PacketToSend.Writer.Write(Ry);
+            PacketToSend.Writer.Write(Rz);
+            PacketToSend.Writer.Write(Rw);
             Packet.Server.SendPacket(PacketToSend);
         }
     }

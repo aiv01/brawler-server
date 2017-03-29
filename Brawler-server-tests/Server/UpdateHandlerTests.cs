@@ -17,16 +17,19 @@ namespace BrawlerServer.Server.Tests
         {
             var UpdateData = new byte[1024];
 
-            var jsonDataObject = new UpdateHandlerJson { Name = "TEST" , X = 102.5f, Y = 0f, Z = 25.25f, Rx = 0f, Ry = 177.7f, Rz = 0f };
-            var jsonData = JsonConvert.SerializeObject(jsonDataObject);
-
             var packet = new Packet(server, 1024, UpdateData, server.BindEp);
-            packet.AddHeaderToData(17, true, 3);
-            packet.Writer.Write(jsonData);
+            packet.AddHeaderToData(17, false, 3);
+            packet.Writer.Write(102.5f);
+            packet.Writer.Write(0f);
+            packet.Writer.Write(25.25f);
+            packet.Writer.Write(654f);
+            packet.Writer.Write(177.7f);
+            packet.Writer.Write(321f);
+            packet.Writer.Write(6f);
             packet.PacketSize = (int)packet.Stream.Position;
 
             Assert.That(packet.Id, Is.EqualTo(17));
-            Assert.That(packet.IsReliable, Is.EqualTo(true));
+            Assert.That(packet.IsReliable, Is.EqualTo(false));
             Assert.That(packet.Command, Is.EqualTo(3));
             Assert.That(packet.RemoteEp, Is.EqualTo(server.BindEp));
             var payloadOffset = packet.PayloadOffset;
@@ -34,7 +37,7 @@ namespace BrawlerServer.Server.Tests
             packet.ParseHeaderFromData();
 
             Assert.That(packet.Id, Is.EqualTo(17));
-            Assert.That(packet.IsReliable, Is.EqualTo(true));
+            Assert.That(packet.IsReliable, Is.EqualTo(false));
             Assert.That(packet.Command, Is.EqualTo(3));
             Assert.That(packet.RemoteEp, Is.EqualTo(server.BindEp));
             Assert.That(packet.PayloadOffset, Is.EqualTo(payloadOffset));
@@ -42,12 +45,13 @@ namespace BrawlerServer.Server.Tests
             var packetHandler = packet.PacketHandler as UpdateHandler;
 
             Assert.That(packetHandler, Is.Not.EqualTo(null));
-            Assert.That(packetHandler.JsonData.X, Is.EqualTo(102.5f));
-            Assert.That(packetHandler.JsonData.Y, Is.EqualTo(0f));
-            Assert.That(packetHandler.JsonData.Z, Is.EqualTo(25.25f));
-            Assert.That(packetHandler.JsonData.Rx, Is.EqualTo(0f));
-            Assert.That(packetHandler.JsonData.Ry, Is.EqualTo(177.7f));
-            Assert.That(packetHandler.JsonData.Rz, Is.EqualTo(0f));
+            Assert.That(packetHandler.X, Is.EqualTo(102.5f));
+            Assert.That(packetHandler.Y, Is.EqualTo(0f));
+            Assert.That(packetHandler.Z, Is.EqualTo(25.25f));
+            Assert.That(packetHandler.Rx, Is.EqualTo(654f));
+            Assert.That(packetHandler.Ry, Is.EqualTo(177.7f));
+            Assert.That(packetHandler.Rz, Is.EqualTo(321f));
+            Assert.That(packetHandler.Rw, Is.EqualTo(6f));
 
             return packet;
         }
@@ -65,8 +69,8 @@ namespace BrawlerServer.Server.Tests
 
                 Assert.That(p, Is.Not.EqualTo(null));
 
-                Assert.That(p.Id, Is.EqualTo(17));
-                Assert.That(p.IsReliable, Is.EqualTo(true));
+                Assert.That(p.Id, Is.EqualTo(18));
+                Assert.That(p.IsReliable, Is.EqualTo(false));
                 Assert.That(p.Command, Is.EqualTo(3));
                 Assert.That(p.RemoteEp, Is.EqualTo(server.BindEp));
                 Assert.That(p.PayloadOffset, Is.EqualTo(packet.PayloadOffset));
@@ -76,13 +80,14 @@ namespace BrawlerServer.Server.Tests
 
                 Assert.That(packetHandler, Is.Not.EqualTo(null));
                 Assert.That(Equals(packetHandler.Client, client), Is.EqualTo(true));
-
-                Assert.That(packetHandler.JsonData.X, Is.EqualTo(102.5f));
-                Assert.That(packetHandler.JsonData.Y, Is.EqualTo(0f));
-                Assert.That(packetHandler.JsonData.Z, Is.EqualTo(25.25f));
-                Assert.That(packetHandler.JsonData.Rx, Is.EqualTo(0f));
-                Assert.That(packetHandler.JsonData.Ry, Is.EqualTo(177.7f));
-                Assert.That(packetHandler.JsonData.Rz, Is.EqualTo(0f));
+                
+                Assert.That(packetHandler.X, Is.EqualTo(102.5f));
+                Assert.That(packetHandler.Y, Is.EqualTo(0f));
+                Assert.That(packetHandler.Z, Is.EqualTo(25.25f));
+                Assert.That(packetHandler.Rx, Is.EqualTo(654f));
+                Assert.That(packetHandler.Ry, Is.EqualTo(177.7f));
+                Assert.That(packetHandler.Rz, Is.EqualTo(321f));
+                Assert.That(packetHandler.Rw, Is.EqualTo(6f));
             };
 
             server.SendPacket(packet);
@@ -101,7 +106,7 @@ namespace BrawlerServer.Server.Tests
         [Test]
         public void UpdatePacketBySocketTest()
         {
-            var ep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 20237);
+            var ep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1003);
             var server = new Server(ep);
             server.ServerTick += TestUpdatePacketBySocketSendPacket;
             server.Bind();
