@@ -94,7 +94,7 @@ namespace BrawlerServer.Server.Tests
         [Test]
         public void JoinPacketBySocketTest()
         {
-            var ep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 20237);
+            var ep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 0);
             var server = new Server(ep);
             server.ServerTick += TestJoinPacketBySocketSendPacket;
             server.Bind();
