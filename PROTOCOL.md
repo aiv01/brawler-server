@@ -11,17 +11,19 @@
 	Most Significant Bit: 1 if reliable, otherwise 0; 
 	Other 7 bits: command
 
-#Payload
-## JOIN (command 0)
-Json Payload: Json deserialized from class JoinHandlerJson: https://github.com/aiv01/brawler-server/blob/master/Brawler-server/Server/JoinHandler.cs
+##Payload
+### JOIN (command 0)
+Json Payload: 
+	Json deserialized from class JoinHandlerJson: https://github.com/aiv01/brawler-server/blob/master/Brawler-server/Server/JoinHandler.cs
 
-## KICK (command 1)
+### KICK (command 1)
 Not yet implemented
 
-## LEAVE (command 2)
-Json Payload: Json deserialized from class LeaveHandlerJson: https://github.com/aiv01/brawler-server/blob/master/Brawler-server/Server/LeaveHandler.cs
+### LEAVE (command 2)
+Json Payload: 
+	Json deserialized from class LeaveHandlerJson: https://github.com/aiv01/brawler-server/blob/master/Brawler-server/Server/LeaveHandler.cs
 
-## UPDATE (command 3)
+### UPDATE (command 3)
 Binary Payload: 
 	X (float): X position of the player;
 	Y (float): Y position of the player;

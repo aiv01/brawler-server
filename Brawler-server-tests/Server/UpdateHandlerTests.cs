@@ -106,7 +106,7 @@ namespace BrawlerServer.Server.Tests
         [Test]
         public void UpdatePacketBySocketTest()
         {
-            var ep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1003);
+            var ep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 0);
             var server = new Server(ep);
             server.ServerTick += TestUpdatePacketBySocketSendPacket;
             server.Bind();
