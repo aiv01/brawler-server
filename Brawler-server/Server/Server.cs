@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 using System.Threading;
 using BrawlerServer.Utilities;
 
@@ -17,7 +16,7 @@ namespace BrawlerServer.Server
         public event ServerTickHandler ServerTick;
         public event ServerPacketReceiveHandler ServerPacketReceive;
 
-        public readonly IPEndPoint BindEp;
+        public IPEndPoint BindEp { get; private set; }
         private readonly Socket socket;
         private readonly List<Packet> packetsToSend;
         private readonly byte[] recvBuffer;
@@ -55,6 +54,7 @@ namespace BrawlerServer.Server
             if (!socket.IsBound)
             {
                 socket.Bind(BindEp);
+                BindEp = (IPEndPoint) socket.LocalEndPoint;
             }
         }
 
@@ -121,6 +121,7 @@ namespace BrawlerServer.Server
                 DeltaTime = watch.ElapsedMilliseconds - Time;
                 Thread.Sleep(Math.Max((int)(msLoopTime - DeltaTime), 0));
             }
+            socket.Close();
         }
         
         public void SendPacket(Packet packet)
