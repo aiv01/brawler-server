@@ -121,6 +121,7 @@ namespace BrawlerServer.Server
                 DeltaTime = watch.ElapsedMilliseconds - Time;
                 Thread.Sleep(Math.Max((int)(msLoopTime - DeltaTime), 0));
             }
+            socket.Close();
         }
         
         public void SendPacket(Packet packet)
