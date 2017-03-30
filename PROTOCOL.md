@@ -39,8 +39,7 @@ Binary Payload:
 * Rx (float): X component of the quaternion rotation;  
 * Ry (float): Y component of the quaternion rotation;  
 * Rz (float): Z component of the quaternion rotation;  
-* Rw (float): W component of the quaternion rotation;  
-* Id (uint): Client Unique Identifier;  
+* Rw (float): W component of the quaternion rotation;   
 
 ### CLIENT MOVED (command 5) Server-Client
 Binary Payload:  
@@ -51,6 +50,7 @@ Binary Payload:
 * Ry (float): Y component of the quaternion rotation;  
 * Rz (float): Z component of the quaternion rotation;  
 * Rw (float): W component of the quaternion rotation;  
+* Id (uint): Client Unique Identifier; 
 
 ## Host info
 Hostname: unbit0016.uwsgi.it (server's local 10.0.0.238)
