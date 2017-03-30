@@ -6,8 +6,21 @@ using Newtonsoft.Json;
 
 namespace BrawlerServer.Utilities
 {
+    public enum Commands : byte
+    {
+        JOIN,
+        CLIENT_JOINED,
+        LEAVE,
+        CLIENT_LEFT,
+        UPDATE,
+        CLIENT_MOVED
+    }
+
     public static class Utilities
     {
+        private static int PacketId = 0;
+        private static uint ClientId = 0;
+
         // handlers per command (the array index is the command)
         private static readonly Dictionary<int, Type> Handlers = new Dictionary<int, Type> {
             { 0, typeof(JoinHandler) },
@@ -53,5 +66,15 @@ namespace BrawlerServer.Utilities
         //{
         //    return Handlers[type];
         //}
+
+        public static int GetPacketId()
+        {
+            return PacketId++;
+        }
+
+        public static uint GetClientId()
+        {
+            return ClientId++;
+        }
     }
 }
