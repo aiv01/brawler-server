@@ -8,7 +8,7 @@ Sprint 1 - March 20 - April 3
 * JOIN, LEAVE, KICK, UPDATE
 
 - [x] 20170320 Absolute position and rotation at specific rate
-- [] 20170320 Action replication from authority client to all clients
+- [ ] 20170320 Action replication from authority client to all clients
 
 
 (sprint meeting)
