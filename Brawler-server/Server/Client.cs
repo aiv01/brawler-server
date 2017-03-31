@@ -9,6 +9,7 @@ namespace BrawlerServer.Server
     {
         public IPEndPoint EndPoint { get; private set; }
         public string Name { get; private set; }
+        public uint Id { get; private set; }
 
         public Client(IPEndPoint endPoint, string name)
         {

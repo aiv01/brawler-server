@@ -16,10 +16,16 @@ namespace BrawlerServer.Server
         public float Ry { get; private set; }
         public float Rz { get; private set; }
         public float Rw { get; private set; }
+        public float Id { get; private set; }
 
         public void Init(Packet packet)
         {
             Packet = packet;
+
+            if (!packet.Server.HasClient(packet.RemoteEp))
+            {
+                throw new Exception($"Client with remoteEp '{packet.RemoteEp}' sent an update but has never joined.");
+            }
 
             Logs.Log($"[{packet.Server.Time}] Received update packet from '{packet.RemoteEp}'.");
 
@@ -31,10 +37,11 @@ namespace BrawlerServer.Server
             Ry = packet.Reader.ReadSingle();
             Rz = packet.Reader.ReadSingle();
             Rw = packet.Reader.ReadSingle();
+            Id = packet.Server.GetClientFromEndPoint(packet.RemoteEp).Id;
 
             Packet PacketToSend = new Packet(Packet.Server, 1024, packet.Data, packet.RemoteEp);
             PacketToSend.Broadcast = true;
-            PacketToSend.AddHeaderToData(packet.Id + 1 /*To redefine*/, false, 3);
+            PacketToSend.AddHeaderToData(Utilities.Utilities.GetPacketId(), false, (byte)Commands.CLIENT_MOVED);
             PacketToSend.Writer.Write(X);
             PacketToSend.Writer.Write(Y);
             PacketToSend.Writer.Write(Z);
@@ -42,6 +49,7 @@ namespace BrawlerServer.Server
             PacketToSend.Writer.Write(Ry);
             PacketToSend.Writer.Write(Rz);
             PacketToSend.Writer.Write(Rw);
+            PacketToSend.Writer.Write(Id);
             Packet.Server.SendPacket(PacketToSend);
         }
     }

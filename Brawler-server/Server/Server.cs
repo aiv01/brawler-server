@@ -6,9 +6,22 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using BrawlerServer.Utilities;
+using Newtonsoft.Json;
 
 namespace BrawlerServer.Server
 {
+    public class ClientJoinJson
+    {
+        public string Name;
+        public uint Id;
+    }
+
+    public class ClientLeftJson
+    {
+        public uint Id;
+        public string Reason;
+    }
+
     public class Server
     {
         public delegate void ServerTickHandler(Server server);
@@ -132,20 +145,45 @@ namespace BrawlerServer.Server
         #region ClientsManagement
         public void AddClient(Client client)
         {
+            ClientJoinJson jsonDataObject = new ClientJoinJson { Name = client.Name, Id = Utilities.Utilities.GetClientId() };
+            string jsonData = JsonConvert.SerializeObject(jsonDataObject);
+
             clients[client.EndPoint] = client;
             Logs.Log($"[{Time}] Added new Client: '{client}'.");
+
+            byte[] data = new byte[1024];
+
+            Packet packetClientAdded = new Packet(this, data.Length, data, null);
+            packetClientAdded.AddHeaderToData(Utilities.Utilities.GetPacketId(), true, (byte)Commands.CLIENT_JOINED);
+            packetClientAdded.Broadcast = true;
+            packetClientAdded.Writer.Write(jsonData);
+
+            this.SendPacket(packetClientAdded);
         }
 
-        public void RemoveClient(Client client)
+        public void RemoveClient(Client client, string Reason = "Unkown")
         {
-            RemoveClient(client.EndPoint);
+            RemoveClient(client.EndPoint, Reason);
         }
 
-        public void RemoveClient(IPEndPoint endPoint)
+        public void RemoveClient(IPEndPoint endPoint, string Reason)
         {
             var removedClient = clients[endPoint];
+
+            ClientLeftJson jsonDataObject = new ClientLeftJson { Reason = Reason, Id = removedClient.Id };
+            string jsonData = JsonConvert.SerializeObject(jsonDataObject);
+
             clients.Remove(endPoint);
             Logs.Log($"[{Time}] Removed Client: '{removedClient}'.");
+
+            byte[] data = new byte[1024];
+
+            Packet packetRemoveClient = new Packet(this, data.Length, data, null);
+            packetRemoveClient.AddHeaderToData(Utilities.Utilities.GetPacketId(), true, (byte)Commands.CLIENT_LEFT);
+            packetRemoveClient.Broadcast = true;
+            packetRemoveClient.Writer.Write(jsonData);
+
+            this.SendPacket(packetRemoveClient);
         }
 
         public Client GetClientFromEndPoint(IPEndPoint endPoint)
