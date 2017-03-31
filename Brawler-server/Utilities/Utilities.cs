@@ -8,17 +8,17 @@ namespace BrawlerServer.Utilities
 {
     public enum Commands : byte
     {
-        JOIN,
-        CLIENT_JOINED,
-        LEAVE,
-        CLIENT_LEFT,
-        UPDATE,
-        CLIENT_MOVED
+        Join,
+        ClientJoined,
+        Leave,
+        ClientLeft,
+        Update,
+        ClientMoved
     }
 
     public static class Utilities
     {
-        private static int PacketId = 0;
+        private static uint PacketId = 0;
         private static uint ClientId = 0;
 
         // handlers per command (the array index is the command)
@@ -67,7 +67,7 @@ namespace BrawlerServer.Utilities
         //    return Handlers[type];
         //}
 
-        public static int GetPacketId()
+        public static uint GetPacketId()
         {
             return PacketId++;
         }

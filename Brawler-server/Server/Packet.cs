@@ -15,7 +15,7 @@ namespace BrawlerServer.Server
         public IPEndPoint RemoteEp { get; private set; }
         public bool Broadcast { get; set; }
         // header
-        public int Id { get; private set; }
+        public uint Id { get; private set; }
         public float Time { get; private set; }
         public bool IsReliable { get; private set; }
         public byte Command { get; private set; }
@@ -50,7 +50,12 @@ namespace BrawlerServer.Server
             RemoteEp = remoteEp;
         }
 
-        public void AddHeaderToData(int id, bool reliable, byte command)
+        public void AddHeaderToData(bool reliable, byte command)
+        {
+            AddHeaderToData(Utilities.Utilities.GetPacketId(), reliable, command);
+        }
+
+        public void AddHeaderToData(uint id, bool reliable, byte command)
         {
             if (command > 127)
             {
@@ -77,7 +82,7 @@ namespace BrawlerServer.Server
         {
             Stream.Seek(0, SeekOrigin.Begin);
 
-            Id = Reader.ReadInt32();
+            Id = Reader.ReadUInt32();
             Time = Reader.ReadSingle();
 
             // if 6th bit is set then this is a reliable packet, else it's not

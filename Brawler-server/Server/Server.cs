@@ -12,8 +12,8 @@ namespace BrawlerServer.Server
 {
     public class ClientJoinJson
     {
-        public string Name;
         public uint Id;
+        public string Name;
     }
 
     public class ClientLeftJson
@@ -154,7 +154,7 @@ namespace BrawlerServer.Server
             byte[] data = new byte[1024];
 
             Packet packetClientAdded = new Packet(this, data.Length, data, null);
-            packetClientAdded.AddHeaderToData(Utilities.Utilities.GetPacketId(), true, (byte)Commands.CLIENT_JOINED);
+            packetClientAdded.AddHeaderToData(true, (byte)Commands.ClientJoined);
             packetClientAdded.Broadcast = true;
             packetClientAdded.Writer.Write(jsonData);
 
@@ -179,7 +179,7 @@ namespace BrawlerServer.Server
             byte[] data = new byte[1024];
 
             Packet packetRemoveClient = new Packet(this, data.Length, data, null);
-            packetRemoveClient.AddHeaderToData(Utilities.Utilities.GetPacketId(), true, (byte)Commands.CLIENT_LEFT);
+            packetRemoveClient.AddHeaderToData(true, (byte)Commands.ClientLeft);
             packetRemoveClient.Broadcast = true;
             packetRemoveClient.Writer.Write(jsonData);
 
@@ -198,7 +198,7 @@ namespace BrawlerServer.Server
 
         public bool HasClient(Client client)
         {
-            return clients.ContainsValue(client);
+            return HasClient(client.EndPoint);
         }
         #endregion
     }

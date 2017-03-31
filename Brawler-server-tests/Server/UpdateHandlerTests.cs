@@ -15,10 +15,13 @@ namespace BrawlerServer.Server.Tests
     {
         Packet CreateAndTestUpdatePacket(Server server)
         {
+            server.AddClient(new Client(server.BindEp, "name"));
+
             var UpdateData = new byte[1024];
 
+            var packetId = Utilities.Utilities.GetPacketId();
             var packet = new Packet(server, 1024, UpdateData, server.BindEp);
-            packet.AddHeaderToData(17, false, 3);
+            packet.AddHeaderToData(packetId, false, 3);
             packet.Writer.Write(102.5f);
             packet.Writer.Write(0f);
             packet.Writer.Write(25.25f);
@@ -28,7 +31,7 @@ namespace BrawlerServer.Server.Tests
             packet.Writer.Write(6f);
             packet.PacketSize = (int)packet.Stream.Position;
 
-            Assert.That(packet.Id, Is.EqualTo(17));
+            Assert.That(packet.Id, Is.EqualTo(packetId));
             Assert.That(packet.IsReliable, Is.EqualTo(false));
             Assert.That(packet.Command, Is.EqualTo(3));
             Assert.That(packet.RemoteEp, Is.EqualTo(server.BindEp));
@@ -36,7 +39,7 @@ namespace BrawlerServer.Server.Tests
 
             packet.ParseHeaderFromData();
 
-            Assert.That(packet.Id, Is.EqualTo(17));
+            Assert.That(packet.Id, Is.EqualTo(packetId));
             Assert.That(packet.IsReliable, Is.EqualTo(false));
             Assert.That(packet.Command, Is.EqualTo(3));
             Assert.That(packet.RemoteEp, Is.EqualTo(server.BindEp));
@@ -69,7 +72,7 @@ namespace BrawlerServer.Server.Tests
 
                 Assert.That(p, Is.Not.EqualTo(null));
 
-                Assert.That(p.Id, Is.EqualTo(18));
+                Assert.That(p.Id, Is.GreaterThan(packet.Id));
                 Assert.That(p.IsReliable, Is.EqualTo(false));
                 Assert.That(p.Command, Is.EqualTo(3));
                 Assert.That(p.RemoteEp, Is.EqualTo(server.BindEp));
@@ -79,7 +82,7 @@ namespace BrawlerServer.Server.Tests
                 client = ((UpdateHandler)packet.PacketHandler).Client;
 
                 Assert.That(packetHandler, Is.Not.EqualTo(null));
-                Assert.That(Equals(packetHandler.Client, client), Is.EqualTo(true));
+                Assert.That(s.HasClient(client), Is.EqualTo(true));
                 
                 Assert.That(packetHandler.X, Is.EqualTo(102.5f));
                 Assert.That(packetHandler.Y, Is.EqualTo(0f));

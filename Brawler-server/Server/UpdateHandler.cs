@@ -26,6 +26,7 @@ namespace BrawlerServer.Server
             {
                 throw new Exception($"Client with remoteEp '{packet.RemoteEp}' sent an update but has never joined.");
             }
+            Client = packet.Server.GetClientFromEndPoint(packet.RemoteEp);
 
             Logs.Log($"[{packet.Server.Time}] Received update packet from '{packet.RemoteEp}'.");
 
@@ -39,18 +40,18 @@ namespace BrawlerServer.Server
             Rw = packet.Reader.ReadSingle();
             Id = packet.Server.GetClientFromEndPoint(packet.RemoteEp).Id;
 
-            Packet PacketToSend = new Packet(Packet.Server, 1024, packet.Data, packet.RemoteEp);
-            PacketToSend.Broadcast = true;
-            PacketToSend.AddHeaderToData(Utilities.Utilities.GetPacketId(), false, (byte)Commands.CLIENT_MOVED);
-            PacketToSend.Writer.Write(X);
-            PacketToSend.Writer.Write(Y);
-            PacketToSend.Writer.Write(Z);
-            PacketToSend.Writer.Write(Rx);
-            PacketToSend.Writer.Write(Ry);
-            PacketToSend.Writer.Write(Rz);
-            PacketToSend.Writer.Write(Rw);
-            PacketToSend.Writer.Write(Id);
-            Packet.Server.SendPacket(PacketToSend);
+            Packet packetToSend = new Packet(Packet.Server, 1024, packet.Data, packet.RemoteEp);
+            packetToSend.Broadcast = true;
+            packetToSend.AddHeaderToData(false, (byte)Commands.ClientMoved);
+            packetToSend.Writer.Write(X);
+            packetToSend.Writer.Write(Y);
+            packetToSend.Writer.Write(Z);
+            packetToSend.Writer.Write(Rx);
+            packetToSend.Writer.Write(Ry);
+            packetToSend.Writer.Write(Rz);
+            packetToSend.Writer.Write(Rw);
+            packetToSend.Writer.Write(Id);
+            Packet.Server.SendPacket(packetToSend);
         }
     }
 }

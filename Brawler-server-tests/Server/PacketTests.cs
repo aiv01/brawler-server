@@ -20,7 +20,7 @@ namespace BrawlerServer.Server.Tests
 
             var server = new Server(new IPEndPoint(0, 0));
 
-            var id = 0;
+            uint id = 0;
             var reliable = true;
             byte command = 124;
             var packet = new Packet(server, 1024, data, server.BindEp);
@@ -39,7 +39,7 @@ namespace BrawlerServer.Server.Tests
 
             var server = new Server(new IPEndPoint(0, 0));
 
-            var id = int.MaxValue;
+            uint id = uint.MaxValue;
             var reliable = false;
             byte command = 0;
             var packet = new Packet(server, 1024, data, server.BindEp);

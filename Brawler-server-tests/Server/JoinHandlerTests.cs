@@ -73,8 +73,6 @@ namespace BrawlerServer.Server.Tests
                 client = ((JoinHandler)packet.PacketHandler).Client;
 
                 Assert.That(packetHandler, Is.Not.EqualTo(null));
-                Assert.That(Equals(packetHandler.Client, client), Is.EqualTo(true));
-
                 Assert.That(s.HasClient(client), Is.EqualTo(true));
             };
 

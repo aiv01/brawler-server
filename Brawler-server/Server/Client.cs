@@ -11,11 +11,15 @@ namespace BrawlerServer.Server
         public string Name { get; private set; }
         public uint Id { get; private set; }
 
-        public Client(IPEndPoint endPoint, string name)
+        public Client(uint id, IPEndPoint endPoint, string name)
         {
+            Id = id;
             EndPoint = endPoint;
             Name = name;
         }
+
+        public Client(IPEndPoint endPoint, string name) : this(Utilities.Utilities.GetClientId(), endPoint, name)
+        { }
 
         public override string ToString()
         {
@@ -24,7 +28,7 @@ namespace BrawlerServer.Server
 
         protected bool Equals(Client other)
         {
-            return Equals(EndPoint, other.EndPoint) && string.Equals(Name, other.Name);
+            return Equals(EndPoint, other.EndPoint) && string.Equals(Name, other.Name) && Equals(Id, other.Id);
         }
 
         public override bool Equals(object obj)
@@ -37,7 +41,9 @@ namespace BrawlerServer.Server
         {
             unchecked
             {
-                return ((EndPoint != null ? EndPoint.GetHashCode() : 0) * 397) ^ (Name != null ? Name.GetHashCode() : 0);
+                return ((EndPoint != null ? EndPoint.GetHashCode() : 0) * 397) ^ 
+                    (Id.GetHashCode() * 397) ^ 
+                    (Name != null ? Name.GetHashCode() : 0);
             }
         }
     }
