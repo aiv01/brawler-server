@@ -6,7 +6,6 @@ namespace BrawlerServer.Server
 {
     public class JoinHandlerJson
     {
-        public string Name;
     }
 
     public class JoinHandler : ICommandHandler
@@ -28,9 +27,9 @@ namespace BrawlerServer.Server
             }
             Logs.Log($"[{packet.Server.Time}] Received join message from '{packet.RemoteEp}'.");
             // create client and add it to the server's clients
-            Client = new Client(packet.RemoteEp, JsonData.Name);
+            Client = new Client(packet.RemoteEp);
             packet.Server.AddClient(Client);
-            Logs.Log($"[{packet.Server.Time}] Player with remoteEp '{packet.RemoteEp}' (a.k.a. {JsonData.Name}) joined the server");
+            Logs.Log($"[{packet.Server.Time}] Player with remoteEp '{packet.RemoteEp}' joined the server");
         }
     }
 }

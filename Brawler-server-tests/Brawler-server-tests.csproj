@@ -61,7 +61,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\LeaveHandlerTest.cs" />
     <Compile Include="Server\PacketTests.cs" />
-    <Compile Include="Server\UpdateHandlerTests.cs" />
+    <Compile Include="Server\MovedHandlerTests.cs" />
     <Compile Include="Utilities\UtilitiesTests.cs" />
   </ItemGroup>
   <ItemGroup>

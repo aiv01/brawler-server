@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Net;
+using BrawlerServer.Utilities;
 
 namespace BrawlerServer.Server
 {
@@ -18,7 +19,7 @@ namespace BrawlerServer.Server
         public uint Id { get; private set; }
         public float Time { get; private set; }
         public bool IsReliable { get; private set; }
-        public byte Command { get; private set; }
+        public Commands Command { get; private set; }
         public int PayloadOffset { get; private set; }
         public ICommandHandler PacketHandler { get; private set; }
         public int PacketSize { get; set; }
@@ -50,28 +51,23 @@ namespace BrawlerServer.Server
             RemoteEp = remoteEp;
         }
 
-        public void AddHeaderToData(bool reliable, byte command)
+        public void AddHeaderToData(bool reliable, Commands command)
         {
             AddHeaderToData(Utilities.Utilities.GetPacketId(), reliable, command);
         }
 
-        public void AddHeaderToData(uint id, bool reliable, byte command)
+        public void AddHeaderToData(uint id, bool reliable, Commands command)
         {
-            if (command > 127)
-            {
-                throw new Exception("Command can NOT be higher than 127.");
-            }
-
             Stream.Seek(0, SeekOrigin.Begin);
 
             Id = id;
             IsReliable = reliable;
-            Command = command;
+            Command = (Commands) command;
             Time = Server.Time / 1000f;
 
             Writer.Write(id);
             Writer.Write(Time);
-            byte infoByte = command;
+            byte infoByte = (byte) command;
             infoByte = Utilities.Utilities.SetBitOnByte(infoByte, 7, reliable);
             Writer.Write(infoByte);
 
@@ -90,16 +86,16 @@ namespace BrawlerServer.Server
             Stream.Seek(-1, SeekOrigin.Current);
 
             // remove first two bits
-            Command = Reader.ReadByte();
+            Command = (Commands) Reader.ReadByte();
             if (IsReliable)
             {
-                Command = Utilities.Utilities.SetBitOnByte(Command, 7, false);
+                Command = (Commands) Utilities.Utilities.SetBitOnByte((byte) Command, 7, false);
             }
             // rest is payload
             PayloadOffset = (int) Stream.Position;
 
             PacketHandler = Utilities.Utilities.GetHandler(this);
-            if (initHandler)
+            if (initHandler && PacketHandler != null)
             {
                 PacketHandler.Init(this);
             }

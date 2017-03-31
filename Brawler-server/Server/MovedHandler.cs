@@ -5,7 +5,7 @@ using System.Text;
 
 namespace BrawlerServer.Server
 {
-    public class UpdateHandler : ICommandHandler
+    public class MovedHandler : ICommandHandler
     {
         public Packet Packet { get; private set; }
         public Client Client { get; private set; }
@@ -42,7 +42,7 @@ namespace BrawlerServer.Server
 
             Packet packetToSend = new Packet(Packet.Server, 1024, packet.Data, packet.RemoteEp);
             packetToSend.Broadcast = true;
-            packetToSend.AddHeaderToData(false, (byte)Commands.ClientMoved);
+            packetToSend.AddHeaderToData(false, Commands.ClientMoved);
             packetToSend.Writer.Write(X);
             packetToSend.Writer.Write(Y);
             packetToSend.Writer.Write(Z);

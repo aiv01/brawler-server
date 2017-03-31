@@ -8,12 +8,14 @@ namespace BrawlerServer.Utilities
 {
     public enum Commands : byte
     {
-        Join,
-        ClientJoined,
-        Leave,
-        ClientLeft,
-        Update,
-        ClientMoved
+        // client -> server
+        Join = 0,
+        Leave = 2,
+        Move = 4,
+        // server -> client
+        ClientJoined = 1,
+        ClientLeft = 3,
+        ClientMoved = 5
     }
 
     public static class Utilities
@@ -22,17 +24,23 @@ namespace BrawlerServer.Utilities
         private static uint ClientId = 0;
 
         // handlers per command (the array index is the command)
-        private static readonly Dictionary<int, Type> Handlers = new Dictionary<int, Type> {
-            { 0, typeof(JoinHandler) },
+        private static readonly Dictionary<Commands, Type> Handlers = new Dictionary<Commands, Type> {
+            { Commands.Join, typeof(JoinHandler) },
             //{ 1, typeof(KickHandler) },
-            { 2, typeof(LeaveHandler) },
-            { 3, typeof(UpdateHandler) },
+            { Commands.Leave, typeof(LeaveHandler) },
+            { Commands.Move, typeof(MovedHandler) },
 
         };
 
         public static ICommandHandler GetHandler(Packet packet)
         {
-            return (ICommandHandler)Activator.CreateInstance(Handlers[packet.Command]);
+            ICommandHandler result = null;
+            Type commandHandlerType;
+            if (Handlers.TryGetValue(packet.Command, out commandHandlerType))
+            {
+                result = (ICommandHandler) Activator.CreateInstance(commandHandlerType);
+            }
+            return result;
         }
 
         public static bool IsBitSet(byte b, int pos)
@@ -55,17 +63,6 @@ namespace BrawlerServer.Utilities
         {
             return JsonConvert.SerializeObject(jsonObject);
         }
-
-        public static dynamic GetCommandFromId(sbyte id)
-        {
-            return Handlers[id];
-        }
-
-        //TODO
-        //public static dynamic GetIdFromCommand(Type type)
-        //{
-        //    return Handlers[type];
-        //}
 
         public static uint GetPacketId()
         {

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using BrawlerServer.Utilities;
 
 namespace BrawlerServer.Server.Tests
 {
@@ -22,7 +23,7 @@ namespace BrawlerServer.Server.Tests
 
             uint id = 0;
             var reliable = true;
-            byte command = 124;
+            var command = Commands.Join;
             var packet = new Packet(server, 1024, data, server.BindEp);
             packet.AddHeaderToData(id, reliable, command);
 
@@ -41,7 +42,7 @@ namespace BrawlerServer.Server.Tests
 
             uint id = uint.MaxValue;
             var reliable = false;
-            byte command = 0;
+            var command = Commands.Join;
             var packet = new Packet(server, 1024, data, server.BindEp);
             packet.AddHeaderToData(id, reliable, command);
 

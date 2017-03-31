@@ -15,10 +15,10 @@ namespace BrawlerServer.Server.Tests
         [Test]
         public void ClientEqualityTest()
         {
-            var client = new Client(0, new IPEndPoint(0, 0), "name");
-            var otherClient = new Client(0, new IPEndPoint(0, 1), "name");
-            var otherClient2 = new Client(0, new IPEndPoint(0, 0), "nop");
-            var equalClient = new Client(0, new IPEndPoint(0, 0), "name");
+            var client = new Client(0, new IPEndPoint(0, 0));
+            var otherClient = new Client(0, new IPEndPoint(0, 1));
+            var otherClient2 = new Client(1, new IPEndPoint(0, 0));
+            var equalClient = new Client(0, new IPEndPoint(0, 0));
 
             Assert.That(client, Is.EqualTo(client));
             Assert.That(client, Is.EqualTo(equalClient));

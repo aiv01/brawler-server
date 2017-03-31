@@ -59,7 +59,7 @@ namespace BrawlerServer.Server
             recvReader = new BinaryReader(recvStream);
             recvWriter = new BinaryWriter(recvStream);
 
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp) {Blocking = false};
         }
 
         public void Bind()
@@ -154,7 +154,7 @@ namespace BrawlerServer.Server
             byte[] data = new byte[1024];
 
             Packet packetClientAdded = new Packet(this, data.Length, data, null);
-            packetClientAdded.AddHeaderToData(true, (byte)Commands.ClientJoined);
+            packetClientAdded.AddHeaderToData(true, Commands.ClientJoined);
             packetClientAdded.Broadcast = true;
             packetClientAdded.Writer.Write(jsonData);
 
@@ -179,7 +179,7 @@ namespace BrawlerServer.Server
             byte[] data = new byte[1024];
 
             Packet packetRemoveClient = new Packet(this, data.Length, data, null);
-            packetRemoveClient.AddHeaderToData(true, (byte)Commands.ClientLeft);
+            packetRemoveClient.AddHeaderToData(true, Commands.ClientLeft);
             packetRemoveClient.Broadcast = true;
             packetRemoveClient.Writer.Write(jsonData);
 

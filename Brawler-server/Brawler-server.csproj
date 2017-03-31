@@ -60,7 +60,7 @@
     <Compile Include="Server\Client.cs" />
     <Compile Include="Server\ICommandHandler.cs" />
     <Compile Include="Server\JoinHandler.cs" />
-    <Compile Include="Server\UpdateHandler.cs" />
+    <Compile Include="Server\MovedHandler.cs" />
     <Compile Include="Server\LeaveHandler.cs" />
     <Compile Include="Server\Packet.cs" />
     <Compile Include="Server\Server.cs" />

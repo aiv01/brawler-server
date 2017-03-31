@@ -11,14 +11,13 @@ namespace BrawlerServer.Server
         public string Name { get; private set; }
         public uint Id { get; private set; }
 
-        public Client(uint id, IPEndPoint endPoint, string name)
+        public Client(uint id, IPEndPoint endPoint)
         {
             Id = id;
             EndPoint = endPoint;
-            Name = name;
         }
 
-        public Client(IPEndPoint endPoint, string name) : this(Utilities.Utilities.GetClientId(), endPoint, name)
+        public Client(IPEndPoint endPoint) : this(Utilities.Utilities.GetClientId(), endPoint)
         { }
 
         public override string ToString()

@@ -6,7 +6,6 @@ namespace BrawlerServer.Server
 {
     public class LeaveHandlerJson
     {
-        public string Name;
     }
 
     public class LeaveHandler : ICommandHandler
@@ -30,7 +29,7 @@ namespace BrawlerServer.Server
             // create client and add it to the server's clients
             Client = packet.Server.GetClientFromEndPoint(packet.RemoteEp);
             packet.Server.RemoveClient(packet.RemoteEp, "left the game");
-            Logs.Log($"[{packet.Server.Time}] Player with remoteEp '{packet.RemoteEp}' (a.k.a. {JsonData.Name}) left the server");
+            Logs.Log($"[{packet.Server.Time}] Player with remoteEp '{packet.RemoteEp}' left the server");
         }
     }
 }

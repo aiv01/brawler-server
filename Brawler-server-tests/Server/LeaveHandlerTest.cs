@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using BrawlerServer.Server;
+using BrawlerServer.Utilities;
 using Newtonsoft.Json;
 using NUnit;
 using NUnit.Framework;
@@ -17,7 +18,7 @@ namespace BrawlerServer.Server.Tests
         {
             var LeaveData = new byte[1024];
 
-            var jsonDataObject = new LeaveHandlerJson { Name = "TEST" };
+            var jsonDataObject = new LeaveHandlerJson();
             var jsonData = JsonConvert.SerializeObject(jsonDataObject);
 
             var packet = new Packet(server, 1024, LeaveData, server.BindEp);
@@ -27,13 +28,13 @@ namespace BrawlerServer.Server.Tests
             packet.ParseHeaderFromData();
 
             packet = new Packet(server, 1024, LeaveData, server.BindEp);
-            packet.AddHeaderToData(17, true, 2);
+            packet.AddHeaderToData(17, true, Commands.Leave);
             packet.Writer.Write(jsonData);
             packet.PacketSize = (int)packet.Stream.Position;
 
             Assert.That(packet.Id, Is.EqualTo(17));
             Assert.That(packet.IsReliable, Is.EqualTo(true));
-            Assert.That(packet.Command, Is.EqualTo(2));
+            Assert.That(packet.Command, Is.EqualTo(Commands.Leave));
             Assert.That(packet.RemoteEp, Is.EqualTo(server.BindEp));
             var payloadOffset = packet.PayloadOffset;
 
@@ -41,7 +42,7 @@ namespace BrawlerServer.Server.Tests
 
             Assert.That(packet.Id, Is.EqualTo(17));
             Assert.That(packet.IsReliable, Is.EqualTo(true));
-            Assert.That(packet.Command, Is.EqualTo(2));
+            Assert.That(packet.Command, Is.EqualTo(Commands.Leave));
             Assert.That(packet.RemoteEp, Is.EqualTo(server.BindEp));
             Assert.That(packet.PayloadOffset, Is.EqualTo(payloadOffset));
 
@@ -70,7 +71,7 @@ namespace BrawlerServer.Server.Tests
 
                 Assert.That(p.Id, Is.EqualTo(17));
                 Assert.That(p.IsReliable, Is.EqualTo(true));
-                Assert.That(p.Command, Is.EqualTo(2));
+                Assert.That(p.Command, Is.EqualTo(Commands.Leave));
                 Assert.That(p.RemoteEp, Is.EqualTo(server.BindEp));
                 Assert.That(p.PayloadOffset, Is.EqualTo(packet.PayloadOffset));
 
