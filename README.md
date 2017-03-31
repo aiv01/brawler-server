@@ -4,8 +4,8 @@ Server Side Of the Second Year Project 2016/2017 (2A)
 Sprint 1 - March 20 - April 3
 -
 
-- [ ] Makefile for mono
-- [ ] JOIN, LEAVE, KICK, UPDATE
+- [x] Makefile for mono
+- [x] JOIN, LEAVE, KICK, UPDATE
 - [x] 20170320 Absolute position and rotation at specific rate
 - [x] 20170320 Action replication from authority client to all clients
 
