@@ -8,7 +8,7 @@ Sprint 1 - March 20 - April 3
 * JOIN, LEAVE, KICK, UPDATE
 
 - [x] 20170320 Absolute position and rotation at specific rate
-- [ ] 20170320 Action replication from authority client to all clients
+- [x] 20170320 Action replication from authority client to all clients
 
 
 (sprint meeting)
@@ -17,12 +17,12 @@ Sprint 1 - March 20 - April 3
 Sprint 2 - April 3 - April 19
 -
 
-* Non-blocking http/https communication with the services server
-* add the AUTH command (reliable), it contains the token, check ip address and token on the services
-* the services server confirms the authorization givin the nickname/battlename to the server
-* allow JOIN by checking the stored endpoint
-* ignore unauth packets
-* ensure non blocking sockets
+- [] Non-blocking http/https communication with the services server
+- [] add the AUTH command (reliable), it contains the token, check ip address and token on the services
+- [] the services server confirms the authorization givin the nickname/battlename to the server
+- [] allow JOIN by checking the stored endpoint
+- [] ignore unauth packets
+- [] ensure non blocking sockets
 
 (sprint meeting)
 
