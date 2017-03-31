@@ -23,6 +23,7 @@ namespace BrawlerServer.Server.Tests
             var packetId = Utilities.Utilities.GetPacketId();
             var packet = new Packet(server, 1024, UpdateData, server.BindEp);
             packet.AddHeaderToData(packetId, false, Commands.Move);
+            packet.Writer.Write((byte) 128);
             packet.Writer.Write(102.5f);
             packet.Writer.Write(0f);
             packet.Writer.Write(25.25f);
@@ -50,6 +51,7 @@ namespace BrawlerServer.Server.Tests
 
             Assert.That(packetHandler, Is.Not.EqualTo(null));
 
+            Assert.That(packetHandler.MoveType, Is.EqualTo((byte)128));
             Assert.That(packetHandler.X, Is.EqualTo(102.5f));
             Assert.That(packetHandler.Y, Is.EqualTo(0f));
             Assert.That(packetHandler.Z, Is.EqualTo(25.25f));
@@ -88,6 +90,7 @@ namespace BrawlerServer.Server.Tests
                     Assert.That(s.HasClient(client), Is.EqualTo(true));
 
                     p.Stream.Seek(p.PayloadOffset, SeekOrigin.Begin);
+                    Assert.That(p.Reader.ReadByte(), Is.EqualTo((byte)128));
                     Assert.That(p.Reader.ReadSingle(), Is.EqualTo(102.5f));
                     Assert.That(p.Reader.ReadSingle(), Is.EqualTo(0f));
                     Assert.That(p.Reader.ReadSingle(), Is.EqualTo(25.25f));

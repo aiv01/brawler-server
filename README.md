@@ -17,6 +17,13 @@ Sprint 1 - March 20 - April 3
 Sprint 2 - April 3 - April 19
 -
 
+* Non-blocking http/https communication with the services server
+* add the AUTH command (reliable), it contains the token, check ip address and token on the services
+* the services server confirms the authorization givin the nickname/battlename to the server
+* allow JOIN by checking the stored endpoint
+* ignore unauth packets
+* ensure non blocking sockets
+
 (sprint meeting)
 
 Sprint 3 - April 19 - May 3
