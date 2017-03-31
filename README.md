@@ -17,6 +17,11 @@ Sprint 1 - March 20 - April 3
 Sprint 2 - April 3 - April 19
 -
 
+* Non-blocking http/https communication with the services server
+* allow JOIN by checking endpoint and token with the services server
+* ignore unauth packets
+* ensure non blocking sockets
+
 (sprint meeting)
 
 Sprint 3 - April 19 - May 3
