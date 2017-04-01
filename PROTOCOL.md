@@ -8,7 +8,7 @@
 * Time elapsed from the start of the server (in seconds)
 
 1 byte: Packet Infos  
-* Most Significant Bit: 1 if reliable, otherwise 0; 
+* Most Significant Bit: 1 if reliable, otherwise 0;
 * Other 7 bits: command
 
 ## Payload
@@ -33,23 +33,25 @@ Json Payload:
 
 ### MOVE (command 4) Client > Server
 Binary Payload:  
-* X (float): X position of the player;  
-* Y (float): Y position of the player;  
-* Z (float): Z position of the player;  
-* Rx (float): X component of the quaternion rotation;  
-* Ry (float): Y component of the quaternion rotation;  
-* Rz (float): Z component of the quaternion rotation;  
-* Rw (float): W component of the quaternion rotation;   
+* MoveType (byte): Movement type of the player (like camera lock)
+* X (float): X position of the player;
+* Y (float): Y position of the player;
+* Z (float): Z position of the player;
+* Rx (float): X component of the quaternion rotation;
+* Ry (float): Y component of the quaternion rotation;
+* Rz (float): Z component of the quaternion rotation;
+* Rw (float): W component of the quaternion rotation;
 
 ### CLIENT MOVED (command 5) Server > Client
 Binary Payload:  
-* X (float): X position of the player;  
-* Y (float): Y position of the player;  
-* Z (float): Z position of the player;  
-* Rx (float): X component of the quaternion rotation;  
-* Ry (float): Y component of the quaternion rotation;  
-* Rz (float): Z component of the quaternion rotation;  
-* Rw (float): W component of the quaternion rotation;  
+* MoveType (byte): Movement type of the player (like camera lock)
+* X (float): X position of the player;
+* Y (float): Y position of the player;
+* Z (float): Z position of the player;
+* Rx (float): X component of the quaternion rotation;
+* Ry (float): Y component of the quaternion rotation;
+* Rz (float): Z component of the quaternion rotation;
+* Rw (float): W component of the quaternion rotation;
 * Id (uint): Client Unique Identifier;
 
 ### AUTH (command 125) Client > Server
