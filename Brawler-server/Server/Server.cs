@@ -39,6 +39,10 @@ namespace BrawlerServer.Server
 
         private readonly int packetsPerLoop;
 
+        private List<Packet> ReliablePackets;
+        private float AckResponseTime;
+        private float tAckResponseTime;
+
         private readonly Dictionary<IPEndPoint, Client> clients;
 
         public bool IsRunning { get; set; }
@@ -60,6 +64,10 @@ namespace BrawlerServer.Server
             recvWriter = new BinaryWriter(recvStream);
 
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp) {Blocking = false};
+
+            this.ReliablePackets = new List<Packet>();
+            this.AckResponseTime = 5f;
+            this.tAckResponseTime = 0f;
         }
 
         public void Bind()
@@ -119,6 +127,10 @@ namespace BrawlerServer.Server
                             if (!pair.Key.Equals(packet.RemoteEp))
                             {
                                 socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, pair.Key);
+                                if (packet.IsReliable)
+                                {
+                                    ReliablePackets.Add(packet);
+                                }
                             }
                         }
                     }
@@ -128,11 +140,22 @@ namespace BrawlerServer.Server
                     }
                 }
                 packetsToSend.Clear();
+                
 
                 ServerTick?.Invoke(this);
 
                 DeltaTime = watch.ElapsedMilliseconds - Time;
                 Thread.Sleep(Math.Max((int)(msLoopTime - DeltaTime), 0));
+
+                tAckResponseTime -= DeltaTime;
+                if (tAckResponseTime <= 0f)
+                {
+                    tAckResponseTime = AckResponseTime;
+                    foreach (Packet packet in ReliablePackets)
+                    {
+                        this.SendPacket(packet);
+                    }
+                } 
             }
             socket.Close();
         }
@@ -141,6 +164,40 @@ namespace BrawlerServer.Server
         {
             packetsToSend.Add(packet);
         }
+
+        #region AckPackets
+        //For testing purposes
+        public void AddReliablePacket(Packet packet)
+        {
+            ReliablePackets.Add(packet);
+        }
+
+        public bool HasReliablePacket(UInt32 AckPacketId)
+        {
+            foreach (Packet reliablePacket in ReliablePackets)
+            {
+                if (reliablePacket.Id == AckPacketId)
+                    return true;
+            }
+            return false;
+        }
+
+        public void AcknowledgeReliablePacket(UInt32 AckPacketId)
+        {
+            List<Packet> toRemove = new List<Packet>();
+            foreach (Packet reliablePacket in ReliablePackets)
+            {
+                if (reliablePacket.Id == AckPacketId)
+                {
+                    toRemove.Add(reliablePacket);
+                }
+            }
+            foreach (Packet packet in toRemove)
+            {
+                ReliablePackets.Remove(packet);
+            }
+        }
+        #endregion
 
         #region ClientsManagement
         public void AddClient(Client client)
