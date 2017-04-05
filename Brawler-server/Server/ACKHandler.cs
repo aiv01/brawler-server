@@ -14,7 +14,7 @@ namespace BrawlerServer.Server
             Packet = packet;
 
             Packet.Stream.Seek(Packet.PayloadOffset, SeekOrigin.Begin);
-            UInt32 ackPacketId = packet.Reader.ReadUInt32();
+            uint ackPacketId = packet.Reader.ReadUInt32();
 
             // first check if packet id is already in reliable packets
             if (!packet.Server.HasReliablePacket(ackPacketId))

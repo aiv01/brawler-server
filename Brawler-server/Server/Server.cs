@@ -22,6 +22,18 @@ namespace BrawlerServer.Server
         public string Reason;
     }
 
+    public struct ReliablePacket
+    {
+        public Packet Packet { get; private set; }
+        public float Time { get; private set; }
+
+        public ReliablePacket(Packet packet)
+        {
+            this.Packet = packet;
+            this.Time = packet.Server.Time + packet.Server.MaxAckResponseTime;
+        }
+    }
+
     public class Server
     {
         public delegate void ServerTickHandler(Server server);
@@ -39,9 +51,8 @@ namespace BrawlerServer.Server
 
         private readonly int packetsPerLoop;
 
-        private List<Packet> ReliablePackets;
-        private float AckResponseTime;
-        private float tAckResponseTime;
+        private Dictionary<uint, ReliablePacket> ReliablePackets;
+        public float MaxAckResponseTime { get; private set; }
 
         private readonly Dictionary<IPEndPoint, Client> clients;
 
@@ -65,9 +76,8 @@ namespace BrawlerServer.Server
 
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp) {Blocking = false};
 
-            this.ReliablePackets = new List<Packet>();
-            this.AckResponseTime = 5f;
-            this.tAckResponseTime = 0f;
+            this.ReliablePackets = new Dictionary<uint, ReliablePacket>();
+            this.MaxAckResponseTime = 5f;
         }
 
         public void Bind()
@@ -117,6 +127,15 @@ namespace BrawlerServer.Server
 
                     packetIndex++;
                 }
+                //Check if reliable packet has passed the time check limit
+                foreach (KeyValuePair<uint, ReliablePacket> reliablePacket in ReliablePackets)
+                {
+                    if (reliablePacket.Value.Time > this.Time)
+                    {
+                        this.SendPacket(reliablePacket.Value.Packet);
+                        ReliablePackets.Remove(reliablePacket.Key);
+                    }
+                }
                 // then send packets (do we need to send only a fixed number?)
                 foreach (var packet in packetsToSend)
                 {
@@ -129,7 +148,7 @@ namespace BrawlerServer.Server
                                 socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, pair.Key);
                                 if (packet.IsReliable)
                                 {
-                                    ReliablePackets.Add(packet);
+                                    ReliablePackets.Add(packet.Id, new ReliablePacket(packet));
                                 }
                             }
                         }
@@ -146,16 +165,6 @@ namespace BrawlerServer.Server
 
                 DeltaTime = watch.ElapsedMilliseconds - Time;
                 Thread.Sleep(Math.Max((int)(msLoopTime - DeltaTime), 0));
-
-                tAckResponseTime -= DeltaTime;
-                if (tAckResponseTime <= 0f)
-                {
-                    tAckResponseTime = AckResponseTime;
-                    foreach (Packet packet in ReliablePackets)
-                    {
-                        this.SendPacket(packet);
-                    }
-                } 
             }
             socket.Close();
         }
@@ -166,36 +175,20 @@ namespace BrawlerServer.Server
         }
 
         #region AckPackets
-        //For testing purposes
+        //For Tests purposes
         public void AddReliablePacket(Packet packet)
         {
-            ReliablePackets.Add(packet);
+            ReliablePackets.Add(packet.Id, new ReliablePacket(packet));
         }
 
-        public bool HasReliablePacket(UInt32 AckPacketId)
+        public bool HasReliablePacket(uint PacketId)
         {
-            foreach (Packet reliablePacket in ReliablePackets)
-            {
-                if (reliablePacket.Id == AckPacketId)
-                    return true;
-            }
-            return false;
+            return ReliablePackets.ContainsKey(PacketId);
         }
 
-        public void AcknowledgeReliablePacket(UInt32 AckPacketId)
+        public void AcknowledgeReliablePacket(uint AckPacketId)
         {
-            List<Packet> toRemove = new List<Packet>();
-            foreach (Packet reliablePacket in ReliablePackets)
-            {
-                if (reliablePacket.Id == AckPacketId)
-                {
-                    toRemove.Add(reliablePacket);
-                }
-            }
-            foreach (Packet packet in toRemove)
-            {
-                ReliablePackets.Remove(packet);
-            }
+            ReliablePackets.Remove(AckPacketId);
         }
         #endregion
 
