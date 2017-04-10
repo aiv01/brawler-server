@@ -62,7 +62,7 @@ namespace BrawlerServer.Server
 
             Id = id;
             IsReliable = reliable;
-            Command = (Commands) command;
+            Command = command;
             Time = Server.Time / 1000f;
 
             Writer.Write(id);
@@ -90,6 +90,13 @@ namespace BrawlerServer.Server
             if (IsReliable)
             {
                 Command = (Commands) Utilities.Utilities.SetBitOnByte((byte) Command, 7, false);
+
+                byte[] ackData = new byte[1024];
+                Packet ackPacket = new Packet(this.Server, ackData.Length, ackData, this.RemoteEp);
+                ackPacket.AddHeaderToData(Utilities.Utilities.GetPacketId(), false, Commands.Ack);
+                ackPacket.Stream.Seek(ackPacket.PayloadOffset, SeekOrigin.Begin);
+                ackPacket.Writer.Write(this.Id);
+                this.Server.SendPacket(ackPacket);
             }
             // rest is payload
             PayloadOffset = (int) Stream.Position;

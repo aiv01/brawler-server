@@ -65,6 +65,9 @@ namespace BrawlerServer.Server.Tests
 
             server.ServerPacketReceive += (s, p) =>
             {
+                if (p.Command != Commands.Leave)
+                    return;
+
                 s.IsRunning = false;
 
                 Assert.That(p, Is.Not.EqualTo(null));

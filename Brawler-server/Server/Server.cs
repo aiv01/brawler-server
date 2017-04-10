@@ -22,6 +22,18 @@ namespace BrawlerServer.Server
         public string Reason;
     }
 
+    public struct ReliablePacket
+    {
+        public Packet Packet { get; private set; }
+        public float Time { get; private set; }
+
+        public ReliablePacket(Packet packet)
+        {
+            this.Packet = packet;
+            this.Time = packet.Server.Time + packet.Server.MaxAckResponseTime;
+        }
+    }
+
     public class Server
     {
         public delegate void ServerTickHandler(Server server);
@@ -38,6 +50,9 @@ namespace BrawlerServer.Server
         private readonly BinaryWriter recvWriter;
 
         private readonly int packetsPerLoop;
+
+        private Dictionary<uint, ReliablePacket> ReliablePackets;
+        public float MaxAckResponseTime { get; private set; }
 
         private readonly Dictionary<IPEndPoint, Client> clients;
 
@@ -60,6 +75,9 @@ namespace BrawlerServer.Server
             recvWriter = new BinaryWriter(recvStream);
 
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp) {Blocking = false};
+
+            this.ReliablePackets = new Dictionary<uint, ReliablePacket>();
+            this.MaxAckResponseTime = 5f;
         }
 
         public void Bind()
@@ -109,6 +127,15 @@ namespace BrawlerServer.Server
 
                     packetIndex++;
                 }
+                //Check if reliable packet has passed the time check limit
+                foreach (KeyValuePair<uint, ReliablePacket> reliablePacket in ReliablePackets)
+                {
+                    if (reliablePacket.Value.Time > this.Time)
+                    {
+                        this.SendPacket(reliablePacket.Value.Packet);
+                        //Packet isn't removed here as it gets replaced when is sent, this may no longer work if we change the server behaviour
+                    }
+                }
                 // then send packets (do we need to send only a fixed number?)
                 foreach (var packet in packetsToSend)
                 {
@@ -119,6 +146,10 @@ namespace BrawlerServer.Server
                             if (!pair.Key.Equals(packet.RemoteEp))
                             {
                                 socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, pair.Key);
+                                if (packet.IsReliable)
+                                {
+                                    ReliablePackets.Add(packet.Id, new ReliablePacket(packet));
+                                }
                             }
                         }
                     }
@@ -128,6 +159,7 @@ namespace BrawlerServer.Server
                     }
                 }
                 packetsToSend.Clear();
+                
 
                 ServerTick?.Invoke(this);
 
@@ -141,6 +173,24 @@ namespace BrawlerServer.Server
         {
             packetsToSend.Add(packet);
         }
+
+        #region AckPackets
+        //For Tests purposes
+        public void AddReliablePacket(Packet packet)
+        {
+            ReliablePackets.Add(packet.Id, new ReliablePacket(packet));
+        }
+
+        public bool HasReliablePacket(uint PacketId)
+        {
+            return ReliablePackets.ContainsKey(PacketId);
+        }
+
+        public void AcknowledgeReliablePacket(uint AckPacketId)
+        {
+            ReliablePackets.Remove(AckPacketId);
+        }
+        #endregion
 
         #region ClientsManagement
         public void AddClient(Client client)

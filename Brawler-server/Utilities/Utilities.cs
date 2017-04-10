@@ -12,10 +12,16 @@ namespace BrawlerServer.Utilities
         Join = 0,
         Leave = 2,
         Move = 4,
+        Auth = 125,
+        
         // server -> client
         ClientJoined = 1,
         ClientLeft = 3,
-        ClientMoved = 5
+        ClientMoved = 5,
+        ClientAuthed = 126,
+
+        //Both Ways
+        Ack = 127
     }
 
     public static class Utilities
@@ -26,10 +32,9 @@ namespace BrawlerServer.Utilities
         // handlers per command (the array index is the command)
         private static readonly Dictionary<Commands, Type> Handlers = new Dictionary<Commands, Type> {
             { Commands.Join, typeof(JoinHandler) },
-            //{ 1, typeof(KickHandler) },
             { Commands.Leave, typeof(LeaveHandler) },
             { Commands.Move, typeof(MovedHandler) },
-
+            { Commands.Ack, typeof(ACKHandler) }
         };
 
         public static ICommandHandler GetHandler(Packet packet)
