@@ -133,7 +133,7 @@ namespace BrawlerServer.Server
                     if (reliablePacket.Value.Time > this.Time)
                     {
                         this.SendPacket(reliablePacket.Value.Packet);
-                        ReliablePackets.Remove(reliablePacket.Key);
+                        //Packet isn't removed here as it gets replaced when is sent, this may no longer work if we change the server behaviour
                     }
                 }
                 // then send packets (do we need to send only a fixed number?)

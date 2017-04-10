@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net;
-using System.Text;
-using BrawlerServer.Server;
+﻿using System.Net;
 using BrawlerServer.Utilities;
 using Newtonsoft.Json;
-using NUnit;
 using NUnit.Framework;
 
 namespace BrawlerServer.Server.Tests
@@ -60,6 +54,9 @@ namespace BrawlerServer.Server.Tests
 
             server.ServerPacketReceive += (s, p) =>
             {
+                if (p.Command != Commands.Join)
+                    return;
+
                 s.IsRunning = false;
 
                 Assert.That(p, Is.Not.EqualTo(null));
