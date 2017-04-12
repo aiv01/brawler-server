@@ -195,20 +195,34 @@ namespace BrawlerServer.Server
         #region ClientsManagement
         public void AddClient(Client client)
         {
-            ClientJoinJson jsonDataObject = new ClientJoinJson { Name = client.Name, Id = Utilities.Utilities.GetClientId() };
+            ClientJoinJson jsonDataObject = new ClientJoinJson { Name = client.Name, Id = client.Id };
             string jsonData = JsonConvert.SerializeObject(jsonDataObject);
 
             clients[client.EndPoint] = client;
             Logs.Log($"[{Time}] Added new Client: '{client}'.");
 
-            byte[] data = new byte[1024];
+            byte[] data = new byte[256];
 
+            // send a broadcast clientJoined packet
             Packet packetClientAdded = new Packet(this, data.Length, data, null);
             packetClientAdded.AddHeaderToData(true, Commands.ClientJoined);
             packetClientAdded.Broadcast = true;
             packetClientAdded.Writer.Write(jsonData);
+            SendPacket(packetClientAdded);
 
-            this.SendPacket(packetClientAdded);
+            foreach (var cl in clients.Values)
+            {
+                if (Equals(cl, client)) continue;
+                byte[] welcomeData = new byte[256];
+                ClientJoinJson welcomeJsonDataObject = new ClientJoinJson { Name = client.Name, Id = cl.Id };
+                string welcomeJsonData = JsonConvert.SerializeObject(welcomeJsonDataObject);
+
+                Packet welcomePacket = new Packet(this, data.Length, data, null);
+                welcomePacket.AddHeaderToData(true, Commands.ClientJoined);
+                welcomePacket.Writer.Write(welcomeJsonData);
+                SendPacket(welcomePacket);
+            }
+
         }
 
         public void RemoveClient(Client client, string Reason = "Unkown")
