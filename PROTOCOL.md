@@ -17,7 +17,7 @@
 Json Payload:  
 * Empty
 
-### CLIENT JOINED (command 1) Server > Client
+### CLIENT JOINED (command 1) Server > Client - Reliable
 Json Payload:
 * string Name: Player Name
 * uint Id: Client Unique Identifier
@@ -26,7 +26,7 @@ Json Payload:
 Json Payload:  
 * Empty
 
-### CLIENT LEFT (command 3) Server > Client  
+### CLIENT LEFT (command 3) Server > Client - Reliable
 Json Payload:  
 * uint Id: Client Unique Identifier
 * string: Reason
@@ -58,7 +58,7 @@ Binary Payload:
 Json Payload:
 * string AuthToken: Authentication Token
 
-### CLIENTAUTHED (command 126) Server > Client
+### CLIENTAUTHED (command 126) Server > Client - Reliable
 Json Payload:
 * string Ip: Client Ip
 * string Port: Client Port
