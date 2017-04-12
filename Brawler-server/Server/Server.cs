@@ -148,7 +148,7 @@ namespace BrawlerServer.Server
                                 socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, pair.Key);
                                 if (packet.IsReliable)
                                 {
-                                    ReliablePackets.Add(packet.Id, new ReliablePacket(packet));
+                                    AddReliablePacket(packet);
                                 }
                             }
                         }
@@ -175,10 +175,9 @@ namespace BrawlerServer.Server
         }
 
         #region AckPackets
-        //For Tests purposes
         public void AddReliablePacket(Packet packet)
         {
-            ReliablePackets.Add(packet.Id, new ReliablePacket(packet));
+            ReliablePackets[packet.Id] = new ReliablePacket(packet);
         }
 
         public bool HasReliablePacket(uint PacketId)
@@ -201,7 +200,7 @@ namespace BrawlerServer.Server
             clients[client.EndPoint] = client;
             Logs.Log($"[{Time}] Added new Client: '{client}'.");
 
-            byte[] data = new byte[256];
+            byte[] data = new byte[1024];
 
             // send a broadcast clientJoined packet
             Packet packetClientAdded = new Packet(this, data.Length, data, null);
@@ -213,11 +212,11 @@ namespace BrawlerServer.Server
             foreach (var cl in clients.Values)
             {
                 if (Equals(cl, client)) continue;
-                byte[] welcomeData = new byte[256];
+                byte[] welcomeData = new byte[1024];
                 ClientJoinJson welcomeJsonDataObject = new ClientJoinJson { Name = client.Name, Id = cl.Id };
                 string welcomeJsonData = JsonConvert.SerializeObject(welcomeJsonDataObject);
 
-                Packet welcomePacket = new Packet(this, data.Length, data, null);
+                Packet welcomePacket = new Packet(this, welcomeData.Length, welcomeData, client.EndPoint);
                 welcomePacket.AddHeaderToData(true, Commands.ClientJoined);
                 welcomePacket.Writer.Write(welcomeJsonData);
                 SendPacket(welcomePacket);
