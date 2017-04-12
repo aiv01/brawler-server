@@ -29,6 +29,10 @@ Sprint 2 - April 3 - April 19
 Sprint 3 - April 19 - May 3
 -
 
+* Implement packet text serialization (json ?)
+* Store serialized packets into influxdb
+* Send data to influxdb at regular interval
+
 (sprint meeting)
 
 Sprint 4 - May 3 - May 17
