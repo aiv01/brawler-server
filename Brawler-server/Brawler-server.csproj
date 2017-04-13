@@ -58,6 +58,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\ACKHandler.cs" />
+    <Compile Include="Server\AuthHandler.cs" />
     <Compile Include="Server\Client.cs" />
     <Compile Include="Server\ICommandHandler.cs" />
     <Compile Include="Server\JoinHandler.cs" />

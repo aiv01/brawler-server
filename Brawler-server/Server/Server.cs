@@ -22,6 +22,12 @@ namespace BrawlerServer.Server
         public string Reason;
     }
 
+    public class ClientAuthJson
+    {
+        public string Ip;
+        public string Port;
+    }
+
     public struct ReliablePacket
     {
         public Packet Packet { get; private set; }
@@ -54,6 +60,8 @@ namespace BrawlerServer.Server
         private Dictionary<uint, ReliablePacket> ReliablePackets;
         public float MaxAckResponseTime { get; private set; }
 
+        private readonly List<IPEndPoint> authedEndPoints;
+
         private readonly Dictionary<IPEndPoint, Client> clients;
 
         public bool IsRunning { get; set; }
@@ -65,6 +73,7 @@ namespace BrawlerServer.Server
         {
             packetsToSend = new List<Packet>();
             clients = new Dictionary<IPEndPoint, Client>();
+            authedEndPoints = new List<IPEndPoint>();
 
             this.packetsPerLoop = packetsPerLoop;
             this.BindEp = bindEp;
@@ -190,6 +199,15 @@ namespace BrawlerServer.Server
         {
             ReliablePackets.Remove(AckPacketId);
         }
+        #endregion
+
+        #region AuthEndPoint
+
+        public void AddAuthedEndPoint(IPEndPoint endPoint)
+        {
+            this.authedEndPoints.Add(endPoint);
+        }
+
         #endregion
 
         #region ClientsManagement
