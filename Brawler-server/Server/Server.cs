@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Net.Sockets;
 using System.Threading;
 using BrawlerServer.Utilities;
@@ -62,6 +63,8 @@ namespace BrawlerServer.Server
 
         private readonly List<IPEndPoint> authedEndPoints;
 
+        public readonly HttpClient HttpClient;
+
         private readonly Dictionary<IPEndPoint, Client> clients;
 
         public bool IsRunning { get; set; }
@@ -74,6 +77,7 @@ namespace BrawlerServer.Server
             packetsToSend = new List<Packet>();
             clients = new Dictionary<IPEndPoint, Client>();
             authedEndPoints = new List<IPEndPoint>();
+            HttpClient = new HttpClient();
 
             this.packetsPerLoop = packetsPerLoop;
             this.BindEp = bindEp;
@@ -206,6 +210,11 @@ namespace BrawlerServer.Server
         public void AddAuthedEndPoint(IPEndPoint endPoint)
         {
             this.authedEndPoints.Add(endPoint);
+        }
+
+        public bool CheckAuthedEndPoint(IPEndPoint endPoint)
+        {
+            return this.authedEndPoints.Contains(endPoint);
         }
 
         #endregion

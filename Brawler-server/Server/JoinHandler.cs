@@ -19,6 +19,11 @@ namespace BrawlerServer.Server
 
             JsonData = Utilities.Utilities.ParsePacketJson(packet, typeof(JoinHandlerJson));
 
+            //check if client has authed
+            if (!packet.Server.CheckAuthedEndPoint(packet.RemoteEp))
+            {
+                throw new Exception($"Client with remoteEp '{packet.RemoteEp}' tried to join but has not authenticated.");
+            }
             // first check if user is already in joined users
             if (packet.Server.HasClient(packet.RemoteEp))
             {

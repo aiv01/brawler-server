@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Server\AckHandlerTests.cs" />
+    <Compile Include="Server\AuthHandlerTests.cs" />
     <Compile Include="Server\ClientTests.cs" />
     <Compile Include="Server\JoinHandlerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
