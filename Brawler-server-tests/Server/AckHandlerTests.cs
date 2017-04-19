@@ -21,7 +21,7 @@ namespace BrawlerServer.Server.Tests
 
             var packet = new Packet(server, 1024, data, server.BindEp);
 
-            var jsonDataObject = new JoinHandlerJson();
+            var jsonDataObject = new Json.JoinHandler();
             var jsonData = JsonConvert.SerializeObject(jsonDataObject);
 
             packet.AddHeaderToData(ackPacketId, true, Commands.Join);
@@ -72,7 +72,7 @@ namespace BrawlerServer.Server.Tests
 
                 packet = new Packet(server, 1024, new byte[1024], server.BindEp);
 
-                var jsonDataObject = new JoinHandlerJson();
+                var jsonDataObject = new Json.JoinHandler();
                 var jsonData = JsonConvert.SerializeObject(jsonDataObject);
 
                 packet.AddHeaderToData(ackPacketId, true, Commands.Join);

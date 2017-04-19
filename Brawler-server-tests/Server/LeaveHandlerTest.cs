@@ -25,6 +25,7 @@ namespace BrawlerServer.Server.Tests
             packet.AddHeaderToData(17, true, 0);
             packet.Writer.Write(jsonData);
             packet.PacketSize = (int)packet.Stream.Position;
+            packet.Server.AddAuthedEndPoint(packet.RemoteEp, new Client(packet.RemoteEp));
             packet.ParseHeaderFromData();
 
             packet = new Packet(server, 1024, LeaveData, server.BindEp);

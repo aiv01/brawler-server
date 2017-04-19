@@ -11,24 +11,6 @@ using Newtonsoft.Json;
 
 namespace BrawlerServer.Server
 {
-    public class ClientJoinJson
-    {
-        public uint Id;
-        public string Name;
-    }
-
-    public class ClientLeftJson
-    {
-        public uint Id;
-        public string Reason;
-    }
-
-    public class ClientAuthJson
-    {
-        public string Ip;
-        public string Port;
-    }
-
     public struct ReliablePacket
     {
         public Packet Packet { get; private set; }
@@ -61,7 +43,7 @@ namespace BrawlerServer.Server
         private Dictionary<uint, ReliablePacket> ReliablePackets;
         public float MaxAckResponseTime { get; private set; }
 
-        private readonly List<IPEndPoint> authedEndPoints;
+        private readonly Dictionary<IPEndPoint, Client> authedEndPoints;
 
         public readonly HttpClient HttpClient;
 
@@ -76,7 +58,7 @@ namespace BrawlerServer.Server
         {
             packetsToSend = new List<Packet>();
             clients = new Dictionary<IPEndPoint, Client>();
-            authedEndPoints = new List<IPEndPoint>();
+            authedEndPoints = new Dictionary<IPEndPoint, Client>();
             HttpClient = new HttpClient();
 
             this.packetsPerLoop = packetsPerLoop;
@@ -207,14 +189,19 @@ namespace BrawlerServer.Server
 
         #region AuthEndPoint
 
-        public void AddAuthedEndPoint(IPEndPoint endPoint)
+        public void AddAuthedEndPoint(IPEndPoint endPoint, Client client)
         {
-            this.authedEndPoints.Add(endPoint);
+            this.authedEndPoints.Add(endPoint, client);
         }
 
         public bool CheckAuthedEndPoint(IPEndPoint endPoint)
         {
-            return this.authedEndPoints.Contains(endPoint);
+            return this.authedEndPoints.ContainsKey(endPoint);
+        }
+
+        public Client GetClientFromAuthedEndPoint(IPEndPoint endPoint)
+        {
+            return this.authedEndPoints[endPoint];
         }
 
         #endregion
@@ -222,7 +209,7 @@ namespace BrawlerServer.Server
         #region ClientsManagement
         public void AddClient(Client client)
         {
-            ClientJoinJson jsonDataObject = new ClientJoinJson { Name = client.Name, Id = client.Id };
+            Json.ClientJoined jsonDataObject = new Json.ClientJoined { Name = client.Name, Id = client.Id };
             string jsonData = JsonConvert.SerializeObject(jsonDataObject);
 
             clients[client.EndPoint] = client;
@@ -241,7 +228,7 @@ namespace BrawlerServer.Server
             {
                 if (Equals(cl, client)) continue;
                 byte[] welcomeData = new byte[256];
-                ClientJoinJson welcomeJsonDataObject = new ClientJoinJson { Name = client.Name, Id = cl.Id };
+                Json.ClientJoined welcomeJsonDataObject = new Json.ClientJoined { Name = client.Name, Id = cl.Id };
                 string welcomeJsonData = JsonConvert.SerializeObject(welcomeJsonDataObject);
 
                 Packet welcomePacket = new Packet(this, data.Length, data, null);
@@ -261,7 +248,7 @@ namespace BrawlerServer.Server
         {
             var removedClient = clients[endPoint];
 
-            ClientLeftJson jsonDataObject = new ClientLeftJson { Reason = Reason, Id = removedClient.Id };
+            Json.ClientLeft jsonDataObject = new Json.ClientLeft { Reason = Reason, Id = removedClient.Id };
             string jsonData = JsonConvert.SerializeObject(jsonDataObject);
 
             clients.Remove(endPoint);

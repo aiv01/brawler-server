@@ -54,7 +54,7 @@ Binary Payload:
 * Rw (float): W component of the quaternion rotation;
 * Id (uint): Client Unique Identifier;
 
-### AUTH (command 125) Client > Server - Reliable
+### AUTH (command 125) Client > Server
 Json Payload:
 * string AuthToken: Authentication Token
 

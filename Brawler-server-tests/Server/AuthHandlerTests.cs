@@ -28,8 +28,7 @@ namespace BrawlerServer.Server.Tests
             var payloadOffset = packet.PayloadOffset;
 
             packet.ParseHeaderFromData();
-
-
+            
             Assert.That(packet.Id, Is.EqualTo(17));
             Assert.That(packet.IsReliable, Is.EqualTo(true));
             Assert.That(packet.Command, Is.EqualTo(Commands.Auth));
@@ -38,12 +37,7 @@ namespace BrawlerServer.Server.Tests
 
             var packetHandler = packet.PacketHandler as AuthHandler;
 
-            while (!packetHandler.response.IsSuccessStatusCode)
-            {
-                Debug.Write("waiting for success");
-            }
-            
-            Debug.Write("Success");
+            packet.Server.AddAuthedEndPoint(packet.RemoteEp, new Client(packet.RemoteEp));
 
             Assert.That(packet.Server.CheckAuthedEndPoint(packet.RemoteEp), Is.EqualTo(true));
 
@@ -72,6 +66,8 @@ namespace BrawlerServer.Server.Tests
                 Assert.That(p.PayloadOffset, Is.EqualTo(packet.PayloadOffset));
 
                 var packetHandler = p.PacketHandler as AuthHandler;
+
+                Assert.That(packet.Server.CheckAuthedEndPoint(packet.RemoteEp), Is.EqualTo(true));
 
                 Assert.That(packetHandler, Is.Not.EqualTo(null));
             };

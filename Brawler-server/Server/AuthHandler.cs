@@ -5,6 +5,8 @@ using System.Net;
 using System.Net.Http;
 using BrawlerServer.Utilities;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace BrawlerServer.Server
 {
@@ -18,8 +20,10 @@ namespace BrawlerServer.Server
         public Packet Packet { get; private set; }
         public AuthHandlerJson JsonData { get; private set; }
         public IPEndPoint EndPoint { get; private set; }
-        public HttpResponseMessage response { get; private set; }
-        public string responseString { get; private set; }
+        public Client Client { get; private set; }
+        public HttpResponseMessage Response { get; private set; }
+        public string ResponseString { get; private set; }
+        public Json.AuthPlayerPost JsonAuthPlayer { get; private set; }
 
         public async void Init(Packet packet)
         {
@@ -27,7 +31,7 @@ namespace BrawlerServer.Server
 
             JsonData = Utilities.Utilities.ParsePacketJson(packet, typeof(AuthHandlerJson));
 
-            response = new HttpResponseMessage(HttpStatusCode.Continue);
+            Response = new HttpResponseMessage(HttpStatusCode.Continue);
 
 
             // check if remoteEp is already authed
@@ -44,17 +48,42 @@ namespace BrawlerServer.Server
             Logs.Log($"[{packet.Server.Time}] Received Auth token from '{packet.RemoteEp}'.");
 
             //TODO Connect to webService and check auth token
-            Dictionary<string, string> requestValues = new Dictionary<string, string>();
-            requestValues.Add("token", JsonData.AuthToken);
-            requestValues.Add("ip", packet.RemoteEp.Address.ToString());
+            Dictionary<string, string> requestValues = new Dictionary<string, string>
+            {
+                { "token", JsonData.AuthToken },
+                { "ip", packet.RemoteEp.Address.ToString() }
+            };
             FormUrlEncodedContent content = new FormUrlEncodedContent(requestValues);
-            response = await packet.Server.HttpClient.PostAsync("http://taiga.aiv01.it/players/server-auth/", content);
-            responseString = await response.Content.ReadAsStringAsync();
-            Debug.Write(responseString);
+            Response = await packet.Server.HttpClient.PostAsync("http://taiga.aiv01.it/players/server-auth/", content);
+            ResponseString = await Response.Content.ReadAsStringAsync();
 
-            EndPoint = packet.RemoteEp;
-            packet.Server.AddAuthedEndPoint(EndPoint);
-            Logs.Log($"[{packet.Server.Time}] Player with remoteEp '{packet.RemoteEp}' successfully authed");
+            JsonAuthPlayer = Json.Deserialize(ResponseString, typeof(Json.AuthPlayerPost));
+
+            if (JsonAuthPlayer.auth_ok)
+            {
+                EndPoint = packet.RemoteEp;
+                Client = new Client(EndPoint);
+                Client.SetName(JsonAuthPlayer.nickname);
+                packet.Server.AddAuthedEndPoint(EndPoint, Client);
+                Logs.Log($"[{packet.Server.Time}] Player with remoteEp '{packet.RemoteEp}' successfully authed");
+
+                Json.ClientAuthed JsonClientAuthed = new Json.ClientAuthed()
+                {
+                    Ip = packet.RemoteEp.Address.ToString(),
+                    Port = packet.RemoteEp.Port.ToString()
+                };
+                string JsonClientAuthedData = JsonConvert.SerializeObject(JsonClientAuthed);
+                
+                byte[] data = new byte[1024];
+                Packet ClientAuthedPacket = new Packet(packet.Server, data.Length, data, null);
+                ClientAuthedPacket.AddHeaderToData(true, Commands.ClientAuthed);
+                packet.Writer.Write(JsonClientAuthedData);
+                packet.Server.SendPacket(ClientAuthedPacket);
+            }
+            else
+            {
+                throw new Exception($"Client with remoteEp '{packet.RemoteEp}' failed to authenticate ({JsonAuthPlayer.fields}: {JsonAuthPlayer.info})");
+            }
         }
     }
 }

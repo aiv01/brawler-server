@@ -12,7 +12,7 @@ namespace BrawlerServer.Server.Tests
         {
             var joinData = new byte[1024];
 
-            var jsonDataObject = new JoinHandlerJson();
+            var jsonDataObject = new Json.JoinHandler();
             var jsonData = JsonConvert.SerializeObject(jsonDataObject);
 
             var packet = new Packet(server, 1024, joinData, server.BindEp);
@@ -25,6 +25,8 @@ namespace BrawlerServer.Server.Tests
             Assert.That(packet.Command, Is.EqualTo(Commands.Join));
             Assert.That(packet.RemoteEp, Is.EqualTo(server.BindEp));
             var payloadOffset = packet.PayloadOffset;
+
+            packet.Server.AddAuthedEndPoint(packet.RemoteEp, new Client(packet.RemoteEp));
 
             packet.ParseHeaderFromData();
 
