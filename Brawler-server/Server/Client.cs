@@ -20,6 +20,11 @@ namespace BrawlerServer.Server
         public Client(IPEndPoint endPoint) : this(Utilities.Utilities.GetClientId(), endPoint)
         { }
 
+        public void SetName(string name)
+        {
+            this.Name = name;
+        }
+
         public override string ToString()
         {
             return $"client:[name:'{Name}', endPoint:'{EndPoint}']";

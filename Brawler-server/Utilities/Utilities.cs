@@ -34,7 +34,8 @@ namespace BrawlerServer.Utilities
             { Commands.Join, typeof(JoinHandler) },
             { Commands.Leave, typeof(LeaveHandler) },
             { Commands.Move, typeof(MovedHandler) },
-            { Commands.Ack, typeof(ACKHandler) }
+            { Commands.Ack, typeof(ACKHandler) },
+            { Commands.Auth, typeof(AuthHandler) }
         };
 
         public static ICommandHandler GetHandler(Packet packet)
