@@ -30,8 +30,8 @@ Sprint 3 - April 19 - May 3
 -
 
 * Implement packet text serialization (json ?)
-* Store serialized packets into influxdb
-* Send data to influxdb at regular interval
+* Store serialized packets into influxdb (spare)
+* Send data to influxdb at regular interval (spare)
 
 (sprint meeting)
 
