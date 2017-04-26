@@ -44,7 +44,7 @@ namespace BrawlerServer.Server
             Rw = packet.Reader.ReadSingle();
             Id = packet.Server.GetClientFromEndPoint(packet.RemoteEp).Id;
 
-            Packet packetToSend = new Packet(Packet.Server, 1024, packet.Data, packet.RemoteEp);
+            Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, packet.RemoteEp);
             packetToSend.Broadcast = true;
             packetToSend.AddHeaderToData(false, Commands.ClientMoved);
             packetToSend.Writer.Write(Id);

@@ -68,7 +68,7 @@ namespace BrawlerServer.Server
                 };
                 string JsonClientAuthedData = JsonConvert.SerializeObject(JsonClientAuthed);
                 
-                byte[] data = new byte[1024];
+                byte[] data = new byte[512];
                 Packet ClientAuthedPacket = new Packet(packet.Server, data.Length, data, null);
                 ClientAuthedPacket.AddHeaderToData(true, Commands.ClientAuthed);
                 packet.Writer.Write(JsonClientAuthedData);

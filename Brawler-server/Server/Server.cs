@@ -54,7 +54,7 @@ namespace BrawlerServer.Server
         // does NOT count looptime
         public float DeltaTime { get; private set; }
 
-        public Server(IPEndPoint bindEp, int bufferSize = 1024, int packetsPerLoop = 256)
+        public Server(IPEndPoint bindEp, int bufferSize = 512, int packetsPerLoop = 256)
         {
             packetsToSend = new List<Packet>();
             clients = new Dictionary<IPEndPoint, Client>();
@@ -214,7 +214,7 @@ namespace BrawlerServer.Server
             clients[client.EndPoint] = client;
             Logs.Log($"[{Time}] Added new Client: '{client}'.");
 
-            byte[] data = new byte[1024];
+            byte[] data = new byte[512];
 
             // send a broadcast clientJoined packet
             Packet packetClientAdded = new Packet(this, data.Length, data, null);
@@ -226,7 +226,7 @@ namespace BrawlerServer.Server
             foreach (var cl in clients.Values)
             {
                 if (Equals(cl, client)) continue;
-                byte[] welcomeData = new byte[1024];
+                byte[] welcomeData = new byte[512];
                 Json.ClientJoined welcomeJsonDataObject = new Json.ClientJoined() { Name = client.Name, Id = cl.Id };
                 string welcomeJsonData = JsonConvert.SerializeObject(welcomeJsonDataObject);
 
@@ -253,7 +253,7 @@ namespace BrawlerServer.Server
             clients.Remove(endPoint);
             Logs.Log($"[{Time}] Removed Client: '{removedClient}'.");
 
-            byte[] data = new byte[1024];
+            byte[] data = new byte[512];
 
             Packet packetRemoveClient = new Packet(this, data.Length, data, null);
             packetRemoveClient.AddHeaderToData(true, Commands.ClientLeft);
