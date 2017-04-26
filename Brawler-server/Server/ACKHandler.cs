@@ -4,7 +4,6 @@ using BrawlerServer.Utilities;
 
 namespace BrawlerServer.Server
 {
-
     public class ACKHandler : ICommandHandler
     {
         public Packet Packet { get; private set; }

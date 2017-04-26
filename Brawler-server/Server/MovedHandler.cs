@@ -9,6 +9,8 @@ namespace BrawlerServer.Server
     {
         public Packet Packet { get; private set; }
         public Client Client { get; private set; }
+        public Json.MoveHandler JsonData { get; private set; }
+        public string JsonSerialized { get; private set; }
         public byte MoveType { get; private set; }
         public float X { get; private set; }
         public float Y { get; private set; }
@@ -55,6 +57,19 @@ namespace BrawlerServer.Server
             packetToSend.Writer.Write(Rz);
             packetToSend.Writer.Write(Rw);
             Packet.Server.SendPacket(packetToSend);
+
+            JsonData = new Json.MoveHandler()
+            {
+                MoveType = this.MoveType,
+                X = this.X,
+                Y = this.Y,
+                Z = this.Z,
+                Rx = this.Rx,
+                Ry = this.Ry,
+                Rz = this.Rz,
+                Rw = this.Rw,
+            };
+            JsonSerialized = JsonConvert.SerializeObject(JsonData);
         }
     }
 }

@@ -10,15 +10,10 @@ using Newtonsoft.Json.Serialization;
 
 namespace BrawlerServer.Server
 {
-    public class AuthHandlerJson
-    {
-        public string AuthToken;
-    }
-
     public class AuthHandler : ICommandHandler
     {
         public Packet Packet { get; private set; }
-        public AuthHandlerJson JsonData { get; private set; }
+        public Json.AuthHandler JsonData { get; private set; }
         public IPEndPoint EndPoint { get; private set; }
         public Client Client { get; private set; }
         public HttpResponseMessage Response { get; private set; }
@@ -29,7 +24,7 @@ namespace BrawlerServer.Server
         {
             Packet = packet;
 
-            JsonData = Utilities.Utilities.ParsePacketJson(packet, typeof(AuthHandlerJson));
+            JsonData = Utilities.Utilities.ParsePacketJson(packet, typeof(Json.AuthHandler));
 
             Response = new HttpResponseMessage(HttpStatusCode.Continue);
 
@@ -46,8 +41,7 @@ namespace BrawlerServer.Server
             }
 
             Logs.Log($"[{packet.Server.Time}] Received Auth token from '{packet.RemoteEp}'.");
-
-            //TODO Connect to webService and check auth token
+            
             Dictionary<string, string> requestValues = new Dictionary<string, string>
             {
                 { "token", JsonData.AuthToken },
