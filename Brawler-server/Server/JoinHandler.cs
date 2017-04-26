@@ -1,12 +1,14 @@
 ﻿using System;
 using BrawlerServer.Utilities;
+using Newtonsoft.Json;
 
 namespace BrawlerServer.Server
 {
     public class JoinHandler : ICommandHandler
     {
         public Packet Packet { get; private set; }
-        public Json.JoinHandler JsonData { get; private set; }
+        public Json.ClientJoined JsonData { get; private set; }
+        public string JsonSerialized { get; private set; }
         public Client Client { get; private set; }
 
         public void Init(Packet packet)
@@ -30,6 +32,8 @@ namespace BrawlerServer.Server
             Client = packet.Server.GetClientFromAuthedEndPoint(packet.RemoteEp);
             packet.Server.AddClient(Client);
             Logs.Log($"[{packet.Server.Time}] Player with remoteEp '{packet.RemoteEp}' joined the server");
+
+            JsonSerialized = JsonConvert.SerializeObject(JsonData);
         }
     }
 }

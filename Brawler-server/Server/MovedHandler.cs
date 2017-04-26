@@ -9,6 +9,8 @@ namespace BrawlerServer.Server
     {
         public Packet Packet { get; private set; }
         public Client Client { get; private set; }
+        public Json.MoveHandler JsonData { get; private set; }
+        public string JsonSerialized { get; private set; }
         public byte MoveType { get; private set; }
         public float X { get; private set; }
         public float Y { get; private set; }
@@ -17,7 +19,7 @@ namespace BrawlerServer.Server
         public float Ry { get; private set; }
         public float Rz { get; private set; }
         public float Rw { get; private set; }
-        public float Id { get; private set; }
+        public uint Id { get; private set; }
 
         public void Init(Packet packet)
         {
@@ -42,9 +44,10 @@ namespace BrawlerServer.Server
             Rw = packet.Reader.ReadSingle();
             Id = packet.Server.GetClientFromEndPoint(packet.RemoteEp).Id;
 
-            Packet packetToSend = new Packet(Packet.Server, 1024, packet.Data, packet.RemoteEp);
+            Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, packet.RemoteEp);
             packetToSend.Broadcast = true;
             packetToSend.AddHeaderToData(false, Commands.ClientMoved);
+            packetToSend.Writer.Write(Id);
             packetToSend.Writer.Write(MoveType);
             packetToSend.Writer.Write(X);
             packetToSend.Writer.Write(Y);
@@ -53,8 +56,20 @@ namespace BrawlerServer.Server
             packetToSend.Writer.Write(Ry);
             packetToSend.Writer.Write(Rz);
             packetToSend.Writer.Write(Rw);
-            packetToSend.Writer.Write(Id);
             Packet.Server.SendPacket(packetToSend);
+
+            JsonData = new Json.MoveHandler()
+            {
+                MoveType = this.MoveType,
+                X = this.X,
+                Y = this.Y,
+                Z = this.Z,
+                Rx = this.Rx,
+                Ry = this.Ry,
+                Rz = this.Rz,
+                Rw = this.Rw,
+            };
+            JsonSerialized = JsonConvert.SerializeObject(JsonData);
         }
     }
 }

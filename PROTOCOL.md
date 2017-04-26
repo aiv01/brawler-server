@@ -44,6 +44,7 @@ Binary Payload:
 
 ### CLIENT MOVED (command 5) Server > Client
 Binary Payload:  
+* Id (uint): Client Unique Identifier;
 * MoveType (byte): Movement type of the player (like camera lock)
 * X (float): X position of the player;
 * Y (float): Y position of the player;
@@ -52,7 +53,6 @@ Binary Payload:
 * Ry (float): Y component of the quaternion rotation;
 * Rz (float): Z component of the quaternion rotation;
 * Rw (float): W component of the quaternion rotation;
-* Id (uint): Client Unique Identifier;
 
 ### AUTH (command 125) Client > Server
 Json Payload:

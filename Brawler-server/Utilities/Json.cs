@@ -7,7 +7,29 @@ namespace BrawlerServer.Utilities
     {
         public class JoinHandler
         {
+            
+        }
 
+        public class LeaveHandler
+        {
+            
+        }
+
+        public class MoveHandler
+        {
+            public byte MoveType;
+            public float X;
+            public float Y;
+            public float Z;
+            public float Rx;
+            public float Ry;
+            public float Rz;
+            public float Rw;
+        }
+
+        public class AuthHandler
+        {
+            public string AuthToken;
         }
 
         public class ClientJoined

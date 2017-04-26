@@ -15,7 +15,7 @@ namespace BrawlerServer.Utilities
 
         public void Write(string message, string category)
         {
-            Console.WriteLine(message);
+            Console.WriteLine(String.Format($"[{category}]{message}"));
         }
     }
     
@@ -34,7 +34,7 @@ namespace BrawlerServer.Utilities
         public static void Log(string message)
         {
             if (Level != DebugLevel.Full) return;
-            Listener.Write(message);
+            Listener.Write(message, "debug");
         }
 
         public static void LogWarning(string message)

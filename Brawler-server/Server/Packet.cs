@@ -91,7 +91,7 @@ namespace BrawlerServer.Server
             {
                 Command = (Commands) Utilities.Utilities.SetBitOnByte((byte) Command, 7, false);
 
-                byte[] ackData = new byte[1024];
+                byte[] ackData = new byte[512];
                 Packet ackPacket = new Packet(this.Server, ackData.Length, ackData, this.RemoteEp);
                 ackPacket.AddHeaderToData(Utilities.Utilities.GetPacketId(), false, Commands.Ack);
                 ackPacket.Stream.Seek(ackPacket.PayloadOffset, SeekOrigin.Begin);
