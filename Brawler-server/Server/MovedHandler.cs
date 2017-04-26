@@ -17,7 +17,7 @@ namespace BrawlerServer.Server
         public float Ry { get; private set; }
         public float Rz { get; private set; }
         public float Rw { get; private set; }
-        public float Id { get; private set; }
+        public uint Id { get; private set; }
 
         public void Init(Packet packet)
         {
@@ -45,6 +45,7 @@ namespace BrawlerServer.Server
             Packet packetToSend = new Packet(Packet.Server, 1024, packet.Data, packet.RemoteEp);
             packetToSend.Broadcast = true;
             packetToSend.AddHeaderToData(false, Commands.ClientMoved);
+            packetToSend.Writer.Write(Id);
             packetToSend.Writer.Write(MoveType);
             packetToSend.Writer.Write(X);
             packetToSend.Writer.Write(Y);
@@ -53,7 +54,6 @@ namespace BrawlerServer.Server
             packetToSend.Writer.Write(Ry);
             packetToSend.Writer.Write(Rz);
             packetToSend.Writer.Write(Rw);
-            packetToSend.Writer.Write(Id);
             Packet.Server.SendPacket(packetToSend);
         }
     }
