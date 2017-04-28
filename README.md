@@ -30,8 +30,11 @@ Sprint 3 - April 19 - May 3
 -
 
 * Implement packet text serialization (json ?)
-* Store serialized packets into influxdb (spare)
-* Send data to influxdb at regular interval (spare)
+* Store serialized packets into elasticsearch (spare)
+* Send data to elasticsearch at regular interval (spare)
+* Implement interface for sending json data to external storages (like elasticsearch)
+
+20170428 - Install a Linux System (Ubuntu) and install elasticsearch
 
 (sprint meeting)
 
