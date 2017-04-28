@@ -141,7 +141,6 @@ namespace BrawlerServer.Server
                             if (!pair.Key.Equals(packet.RemoteEp))
                             {
                                 socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, pair.Key);
-                                Logs.Log("Sent packet broadcast");
                                 if (packet.IsReliable)
                                 {
                                     AddReliablePacket(packet);
@@ -152,7 +151,10 @@ namespace BrawlerServer.Server
                     else
                     {
                         socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, packet.RemoteEp);
-                        Logs.Log("Sent packet not broadcast");
+                        for (int i = 0; i < packet.Data.Length; i++)
+                        {
+                            Logs.Log(packet.Data[i].ToString());
+                        }
                     }
                 }
                 packetsToSend.Clear();
