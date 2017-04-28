@@ -67,7 +67,7 @@ namespace BrawlerServer.Server
                     Port = packet.RemoteEp.Port.ToString()
                 };
                 string JsonClientAuthedData = JsonConvert.SerializeObject(JsonClientAuthed);
-                
+                Logs.Log(JsonClientAuthedData);
                 byte[] data = new byte[512];
                 Packet ClientAuthedPacket = new Packet(packet.Server, data.Length, data, EndPoint);
                 ClientAuthedPacket.AddHeaderToData(true, Commands.ClientAuthed);
