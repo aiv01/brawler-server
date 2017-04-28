@@ -33,7 +33,7 @@ namespace BrawlerServer.Utilities
         private static readonly Dictionary<Commands, Type> Handlers = new Dictionary<Commands, Type> {
             { Commands.Join, typeof(JoinHandler) },
             { Commands.Leave, typeof(LeaveHandler) },
-            { Commands.Move, typeof(MovedHandler) },
+            { Commands.Move, typeof(MoveHandler) },
             { Commands.Ack, typeof(ACKHandler) },
             { Commands.Auth, typeof(AuthHandler) }
         };

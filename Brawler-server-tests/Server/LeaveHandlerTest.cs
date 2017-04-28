@@ -18,7 +18,7 @@ namespace BrawlerServer.Server.Tests
         {
             var LeaveData = new byte[1024];
 
-            var jsonDataObject = new LeaveHandlerJson();
+            var jsonDataObject = new Json.LeaveHandler();
             var jsonData = JsonConvert.SerializeObject(jsonDataObject);
 
             var packet = new Packet(server, 1024, LeaveData, server.BindEp);

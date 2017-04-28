@@ -7,7 +7,7 @@ namespace BrawlerServer.Server
     public class JoinHandler : ICommandHandler
     {
         public Packet Packet { get; private set; }
-        public Json.ClientJoined JsonData { get; private set; }
+        public Json.JoinHandler JsonData { get; private set; }
         public string JsonSerialized { get; private set; }
         public Client Client { get; private set; }
 

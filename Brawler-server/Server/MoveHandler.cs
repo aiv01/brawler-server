@@ -5,7 +5,7 @@ using System.Text;
 
 namespace BrawlerServer.Server
 {
-    public class MovedHandler : ICommandHandler
+    public class MoveHandler : ICommandHandler
     {
         public Packet Packet { get; private set; }
         public Client Client { get; private set; }
@@ -34,6 +34,7 @@ namespace BrawlerServer.Server
             Logs.Log($"[{packet.Server.Time}] Received update packet from '{packet.RemoteEp}'.");
 
             packet.Stream.Seek(packet.PayloadOffset, System.IO.SeekOrigin.Begin);
+            Id = packet.Server.GetClientFromEndPoint(packet.RemoteEp).Id;
             MoveType = packet.Reader.ReadByte();
             X = packet.Reader.ReadSingle();
             Y = packet.Reader.ReadSingle();
@@ -42,7 +43,6 @@ namespace BrawlerServer.Server
             Ry = packet.Reader.ReadSingle();
             Rz = packet.Reader.ReadSingle();
             Rw = packet.Reader.ReadSingle();
-            Id = packet.Server.GetClientFromEndPoint(packet.RemoteEp).Id;
 
             Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, packet.RemoteEp);
             packetToSend.Broadcast = true;
