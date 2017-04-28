@@ -151,10 +151,6 @@ namespace BrawlerServer.Server
                     else
                     {
                         socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, packet.RemoteEp);
-                        for (int i = 0; i < packet.Data.Length; i++)
-                        {
-                            Logs.Log(packet.Data[i].ToString());
-                        }
                     }
                 }
                 packetsToSend.Clear();
