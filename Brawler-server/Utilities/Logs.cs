@@ -15,7 +15,8 @@ namespace BrawlerServer.Utilities
 
         public void Write(string message, string category)
         {
-            Console.WriteLine(String.Format($"[{category}]{message}"));
+            //Console.WriteLine(String.Format($"[{category}]{message}"));
+            Console.WriteLine(message);
         }
     }
     
