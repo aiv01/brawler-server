@@ -40,7 +40,7 @@ namespace BrawlerServer.Server
 
         private readonly int packetsPerLoop;
 
-        private Dictionary<uint, ReliablePacket> ReliablePackets;
+        private Dictionary<long, ReliablePacket> ReliablePackets;
         public int MaxAckResponseTime { get; private set; }
 
         private readonly Dictionary<IPEndPoint, Client> authedEndPoints;
@@ -144,7 +144,7 @@ namespace BrawlerServer.Server
                     this.RemoveClient(client, "Kicked for Idle Timeout");
                 }
                 //Check if reliable packet has passed the time check limit
-                foreach (KeyValuePair<uint, ReliablePacket> reliablePacket in ReliablePackets)
+                foreach (KeyValuePair<long, ReliablePacket> reliablePacket in ReliablePackets)
                 {
                     if (reliablePacket.Value.Time > this.Time)
                     {
