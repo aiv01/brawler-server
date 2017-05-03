@@ -148,6 +148,7 @@ namespace BrawlerServer.Server
                 {
                     if (reliablePacket.Value.Time > this.Time)
                     {
+                        Logs.Log($"{reliablePacket.Value.Time} {this.Time}");
                         this.SendPacket(reliablePacket.Value.Packet);
                         //Packet isn't removed here as it gets replaced when is sent, this may no longer work if we change the server behaviour
                     }
