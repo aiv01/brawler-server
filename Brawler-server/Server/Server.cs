@@ -73,7 +73,7 @@ namespace BrawlerServer.Server
 
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp) {Blocking = false};
 
-            this.ReliablePackets = new Dictionary<uint, ReliablePacket>();
+            this.ReliablePackets = new Dictionary<long, ReliablePacket>();
             this.MaxAckResponseTime = 5000;
 
             this.MaxIdleTimeout = 10000;
