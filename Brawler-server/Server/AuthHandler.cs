@@ -35,11 +35,6 @@ namespace BrawlerServer.Server
             {
                 throw new Exception($"Client with remoteEp '{packet.RemoteEp}' tried to authenticate but has already authenticated.");
             }
-            // check if remoteEp has already joined 
-            if (packet.Server.HasClient(packet.RemoteEp))
-            {
-                throw new Exception($"Client with remoteEp '{packet.RemoteEp}' tried to join but has never authenticated.");
-            }
 
             Logs.Log($"[{packet.Server.Time}] Received Auth token from '{packet.RemoteEp}'.");
             
