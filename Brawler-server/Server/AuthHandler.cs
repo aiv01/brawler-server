@@ -28,6 +28,7 @@ namespace BrawlerServer.Server
 
             Response = new HttpResponseMessage(HttpStatusCode.Continue);
 
+            Logs.Log(packet.Reader.ReadString());
 
             // check if remoteEp is already authed
             if (packet.Server.CheckAuthedEndPoint(packet.RemoteEp))
