@@ -131,12 +131,17 @@ namespace BrawlerServer.Server
                     packetIndex++;
                 }
                 //Check if client didn't send any packet in MaxIdleTimeout seconds
+                List<Client> clientsToRemove = new List<Client>();
                 foreach (Client client in clients.Values)
                 {
                     if (this.Time - client.TimeLastPacketSent > MaxIdleTimeout)
                     {
-                        this.RemoveClient(client, "Kicked for Idle Timeout");
+                        clientsToRemove.Add(client);
                     }
+                }
+                foreach (Client client in clientsToRemove)
+                {
+                    this.RemoveClient(client, "Kicked for Idle Timeout");
                 }
                 //Check if reliable packet has passed the time check limit
                 foreach (KeyValuePair<uint, ReliablePacket> reliablePacket in ReliablePackets)
