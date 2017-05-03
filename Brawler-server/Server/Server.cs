@@ -174,7 +174,7 @@ namespace BrawlerServer.Server
                     else
                     {
                         socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, packet.RemoteEp);
-                        Logs.Log($"Sent packet with command {packet.Command} to client {clients[(IPEndPoint)packet.RemoteEp]}");
+                        Logs.Log($"Sent packet with command {packet.Command} to remoteEp {packet.RemoteEp}");
                     }
                 }
                 packetsToSend.Clear();
