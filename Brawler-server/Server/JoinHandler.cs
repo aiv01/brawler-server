@@ -30,6 +30,7 @@ namespace BrawlerServer.Server
             Logs.Log($"[{packet.Server.Time}] Received join message from '{packet.RemoteEp}'.");
             // create client and add it to the server's clients
             Client = packet.Server.GetClientFromAuthedEndPoint(packet.RemoteEp);
+            Client.TimeLastPacketSent = packet.Server.Time;
             packet.Server.AddClient(Client);
             Logs.Log($"[{packet.Server.Time}] Player with remoteEp '{packet.RemoteEp}' client {Client}' joined the server");
 
