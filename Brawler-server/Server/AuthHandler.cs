@@ -28,8 +28,6 @@ namespace BrawlerServer.Server
 
             Response = new HttpResponseMessage(HttpStatusCode.Continue);
 
-            //packet.Stream.Seek(packet.PayloadOffset, System.IO.SeekOrigin.Begin);
-
             // check if remoteEp is already authed
             if (packet.Server.CheckAuthedEndPoint(packet.RemoteEp))
             {
@@ -55,7 +53,7 @@ namespace BrawlerServer.Server
                 Client = new Client(EndPoint);
                 Client.SetName(JsonAuthPlayer.nickname);
                 packet.Server.AddAuthedEndPoint(EndPoint, Client);
-                Logs.Log($"[{packet.Server.Time}] Player with remoteEp '{packet.RemoteEp}' and name '{Client.Name}' successfully authed");
+                Logs.Log($"[{packet.Server.Time}] Player with authToken '{JsonData.AuthToken}', remoteEp '{packet.RemoteEp}' and name '{Client.Name}' successfully authed");
 
                 Json.ClientAuthed JsonClientAuthed = new Json.ClientAuthed()
                 {
