@@ -169,7 +169,7 @@ namespace BrawlerServer.Server
                                 }
                             }
                         }
-                        Logs.Log($"Sent packet broadcast with command {packet.Command}");
+                        Logs.Log($"Sent packet broadcast with command {packet.Command}. Packets in this block {packetsToSend.Count}");
                     }
                     else
                     {
