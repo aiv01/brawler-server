@@ -29,7 +29,7 @@ Json Payload:
 ### CLIENT LEFT (command 3) Server > Client - Reliable
 Json Payload:  
 * uint Id: Client Unique Identifier
-* string: Reason
+* string Reason: Reason for leaving (kicked, quit, ...)
 
 ### MOVE (command 4) Client > Server
 Binary Payload:  

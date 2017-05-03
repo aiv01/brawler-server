@@ -54,6 +54,8 @@ namespace BrawlerServer.Server
         // does NOT count looptime
         public float DeltaTime { get; private set; }
 
+        public float MaxIdleTimeout { get; private set; }
+
         public Server(IPEndPoint bindEp, int bufferSize = 512, int packetsPerLoop = 256)
         {
             packetsToSend = new List<Packet>();
@@ -73,6 +75,8 @@ namespace BrawlerServer.Server
 
             this.ReliablePackets = new Dictionary<uint, ReliablePacket>();
             this.MaxAckResponseTime = 5f;
+
+            this.MaxIdleTimeout = 10f;
         }
 
         public void Bind()
@@ -106,8 +110,12 @@ namespace BrawlerServer.Server
                     Packet packet = null;
                     try
                     {
-                        packet = new Packet(this, size, recvBuffer, (IPEndPoint) remoteEp, recvStream, recvReader,
+                        packet = new Packet(this, size, recvBuffer, (IPEndPoint)remoteEp, recvStream, recvReader,
                             recvWriter);
+                        if (clients.ContainsKey((IPEndPoint)remoteEp))
+                        {
+                            clients[(IPEndPoint)remoteEp].TimeLastPacketSent = this.Time;
+                        }
                         packet.ParseHeaderFromData();
                     }
                     catch (Exception e)
@@ -121,6 +129,14 @@ namespace BrawlerServer.Server
                     }
 
                     packetIndex++;
+                }
+                //Check if client didn't send any packet in MaxIdleTimeout seconds
+                foreach (Client client in clients.Values)
+                {
+                    if (this.Time - client.TimeLastPacketSent > MaxIdleTimeout)
+                    {
+                        this.RemoveClient(client, "Kicked for Idle Timeout");
+                    }
                 }
                 //Check if reliable packet has passed the time check limit
                 foreach (KeyValuePair<uint, ReliablePacket> reliablePacket in ReliablePackets)
