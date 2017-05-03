@@ -28,8 +28,8 @@ namespace BrawlerServer.Server
 
             Response = new HttpResponseMessage(HttpStatusCode.Continue);
 
-            packet.Stream.Seek(packet.PayloadOffset, System.IO.SeekOrigin.Begin);
-            Logs.Log(packet.Reader.ReadString());
+            //packet.Stream.Seek(packet.PayloadOffset, System.IO.SeekOrigin.Begin);
+            //Logs.Log(packet.Reader.ReadString());
 
             // check if remoteEp is already authed
             if (packet.Server.CheckAuthedEndPoint(packet.RemoteEp))
