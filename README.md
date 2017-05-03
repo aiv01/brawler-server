@@ -41,6 +41,10 @@ Sprint 3 - April 19 - May 3
 Sprint 4 - May 3 - May 17
 -
 
+* (TD) study elasticsearch
+* true non-blocking http calls
+* (TD) lobbying and movements
+
 (sprint meeting)
 
 Sprint 5 - May 17 - May 31
