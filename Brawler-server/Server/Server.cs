@@ -136,7 +136,6 @@ namespace BrawlerServer.Server
                 {
                     if (this.Time - client.TimeLastPacketSent > MaxIdleTimeout)
                     {
-                        Logs.Log($"{this.Time} {client.TimeLastPacketSent} {this.Time - client.TimeLastPacketSent} {MaxIdleTimeout}");
                         clientsToRemove.Add(client);
                     }
                 }
