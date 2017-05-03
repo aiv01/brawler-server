@@ -14,7 +14,7 @@ namespace BrawlerServer.Server
     public struct ReliablePacket
     {
         public Packet Packet { get; private set; }
-        public float Time { get; private set; }
+        public long Time { get; private set; }
 
         public ReliablePacket(Packet packet)
         {
@@ -41,7 +41,7 @@ namespace BrawlerServer.Server
         private readonly int packetsPerLoop;
 
         private Dictionary<uint, ReliablePacket> ReliablePackets;
-        public float MaxAckResponseTime { get; private set; }
+        public int MaxAckResponseTime { get; private set; }
 
         private readonly Dictionary<IPEndPoint, Client> authedEndPoints;
 
@@ -50,11 +50,11 @@ namespace BrawlerServer.Server
         private readonly Dictionary<IPEndPoint, Client> clients;
 
         public bool IsRunning { get; set; }
-        public float Time { get; private set; }
+        public long Time { get; private set; }
         // does NOT count looptime
-        public float DeltaTime { get; private set; }
+        public long DeltaTime { get; private set; }
 
-        public float MaxIdleTimeout { get; private set; }
+        public long MaxIdleTimeout { get; private set; }
 
         public Server(IPEndPoint bindEp, int bufferSize = 512, int packetsPerLoop = 256)
         {
@@ -74,9 +74,9 @@ namespace BrawlerServer.Server
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp) {Blocking = false};
 
             this.ReliablePackets = new Dictionary<uint, ReliablePacket>();
-            this.MaxAckResponseTime = 5f;
+            this.MaxAckResponseTime = 5000;
 
-            this.MaxIdleTimeout = 10f;
+            this.MaxIdleTimeout = 10000;
         }
 
         public void Bind()
