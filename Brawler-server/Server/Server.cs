@@ -169,10 +169,12 @@ namespace BrawlerServer.Server
                                 }
                             }
                         }
+                        Logs.Log($"Sent packet broadcast with command {packet.Command}");
                     }
                     else
                     {
                         socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, packet.RemoteEp);
+                        Logs.Log($"Sent packet broadcast with command {packet.Command}");
                     }
                 }
                 packetsToSend.Clear();
