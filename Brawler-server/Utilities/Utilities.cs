@@ -21,7 +21,8 @@ namespace BrawlerServer.Utilities
         ClientAuthed = 126,
 
         //Both Ways
-        Ack = 127
+        Ack = 127,
+        Chat = 124
     }
 
     public static class Utilities
@@ -35,7 +36,8 @@ namespace BrawlerServer.Utilities
             { Commands.Leave, typeof(LeaveHandler) },
             { Commands.Move, typeof(MoveHandler) },
             { Commands.Ack, typeof(ACKHandler) },
-            { Commands.Auth, typeof(AuthHandler) }
+            { Commands.Auth, typeof(AuthHandler) },
+            { Commands.Chat, typeof(ChatHandler) }
         };
 
         public static ICommandHandler GetHandler(Packet packet)
