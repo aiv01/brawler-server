@@ -56,7 +56,7 @@ Binary Payload:
 
 ### CHAT (command 124) Client > Server && Server > Client
 Json Payload:
-* string text: Chat text (max 128 characters)
+* string Text: Chat text (max 128 characters)
 
 ### AUTH (command 125) Client > Server
 Json Payload:
