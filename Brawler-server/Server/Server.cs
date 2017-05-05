@@ -21,6 +21,11 @@ namespace BrawlerServer.Server
             this.Packet = packet;
             this.Time = packet.Server.Time;
         }
+
+        public void UpdateTime()
+        {
+            this.Time = Packet.Server.Time;
+        }
     }
 
     public class Server
@@ -169,7 +174,10 @@ namespace BrawlerServer.Server
                                 socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, pair.Key);
                                 if (packet.IsReliable)
                                 {
-                                    AddReliablePacket(packet);
+                                    if (HasReliablePacket(packet.Id))
+                                        ReliablePackets[packet.Id].UpdateTime();
+                                    else
+                                        AddReliablePacket(packet);
                                 }
                             }
                         }
