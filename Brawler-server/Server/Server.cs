@@ -147,7 +147,7 @@ namespace BrawlerServer.Server
                 Dictionary<long, ReliablePacket> reliablePacketsToRemove = new Dictionary<long, ReliablePacket>();
                 foreach (KeyValuePair<long, ReliablePacket> reliablePacket in ReliablePackets)
                 {
-                    if (reliablePacket.Value.Time + this.MaxAckResponseTime > this.Time)
+                    if (this.Time > reliablePacket.Value.Time + this.MaxAckResponseTime)
                     {
                         Logs.Log($"Reliable: {reliablePacket.Value.Time} {this.Time} {reliablePacket.Value.Time + this.MaxAckResponseTime}");
                         this.SendPacket(reliablePacket.Value.Packet);
