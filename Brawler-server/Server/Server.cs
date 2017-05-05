@@ -288,9 +288,6 @@ namespace BrawlerServer.Server
             Json.ClientLeft jsonDataObject = new Json.ClientLeft { Reason = Reason, Id = removedClient.Id };
             string jsonData = JsonConvert.SerializeObject(jsonDataObject);
 
-            clients.Remove(endPoint);
-            Logs.Log($"[{Time}] Removed Client: '{removedClient}' for '{Reason}'.");
-
             byte[] data = new byte[512];
 
             Packet packetRemoveClient = new Packet(this, data.Length, data, null);
@@ -299,6 +296,9 @@ namespace BrawlerServer.Server
             packetRemoveClient.Writer.Write(jsonData);
 
             this.SendPacket(packetRemoveClient);
+
+            clients.Remove(endPoint);
+            Logs.Log($"[{Time}] Removed Client: '{removedClient}' for '{Reason}'.");
         }
 
         public Client GetClientFromEndPoint(IPEndPoint endPoint)
