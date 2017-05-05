@@ -112,7 +112,7 @@ namespace BrawlerServer.Server
                 while (packetIndex < packetsPerLoop && socket.Available > 0)
                 {
                     var size = socket.ReceiveFrom(recvBuffer, ref remoteEp);
-                    //Logs.Log($"[{Time}] Received message from '{remoteEp}', size: '{size}'.");
+                    Logs.Log($"[{Time}] Received message from '{remoteEp}', size: '{size}'.");
                     Packet packet = null;
                     try
                     {
@@ -123,6 +123,7 @@ namespace BrawlerServer.Server
                             clients[(IPEndPoint)remoteEp].TimeLastPacketSent = this.Time;
                         }
                         packet.ParseHeaderFromData();
+                        Logs.Log($"[{Time}] Received packet with id '{packet.Id}' command '{packet.Command}' isReliable '{packet.IsReliable}'.");
                     }
                     catch (Exception e)
                     {
