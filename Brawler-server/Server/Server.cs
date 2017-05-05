@@ -40,7 +40,7 @@ namespace BrawlerServer.Server
 
         private readonly int packetsPerLoop;
 
-        private Dictionary<long, ReliablePacket> ReliablePackets;
+        private Dictionary<uint, ReliablePacket> ReliablePackets;
         public int MaxAckResponseTime { get; private set; }
 
         private readonly Dictionary<IPEndPoint, Client> authedEndPoints;
@@ -73,7 +73,7 @@ namespace BrawlerServer.Server
 
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp) {Blocking = false};
 
-            this.ReliablePackets = new Dictionary<long, ReliablePacket>();
+            this.ReliablePackets = new Dictionary<uint, ReliablePacket>();
             this.MaxAckResponseTime = 5000;
 
             this.MaxIdleTimeout = 10000;
@@ -144,17 +144,16 @@ namespace BrawlerServer.Server
                     this.RemoveClient(client, "Kicked for Idle Timeout");
                 }
                 //Check if reliable packet has passed the time check limit
-                Dictionary<long, ReliablePacket> reliablePacketsToRemove = new Dictionary<long, ReliablePacket>();
-                foreach (KeyValuePair<long, ReliablePacket> reliablePacket in ReliablePackets)
+                Dictionary<uint, ReliablePacket> reliablePacketsToRemove = new Dictionary<uint, ReliablePacket>();
+                foreach (KeyValuePair<uint, ReliablePacket> reliablePacket in ReliablePackets)
                 {
                     if (this.Time > reliablePacket.Value.Time + this.MaxAckResponseTime)
                     {
-                        Logs.Log($"Reliable: {reliablePacket.Value.Time} {this.Time} {reliablePacket.Value.Time + this.MaxAckResponseTime}");
                         this.SendPacket(reliablePacket.Value.Packet);
                         reliablePacketsToRemove.Add(reliablePacket.Key, reliablePacket.Value);
                     }
                 }
-                foreach(KeyValuePair<long, ReliablePacket> reliablePacket in reliablePacketsToRemove)
+                foreach(KeyValuePair<uint, ReliablePacket> reliablePacket in reliablePacketsToRemove)
                 {
                     ReliablePackets.Remove(reliablePacket.Key);
                 }
@@ -202,6 +201,7 @@ namespace BrawlerServer.Server
         public void AddReliablePacket(Packet packet)
         {
             ReliablePackets[packet.Id] = new ReliablePacket(packet);
+            Logs.Log($"Added Reliable Packet with Packet id '{packet.Id}'");
         }
 
         public bool HasReliablePacket(uint PacketId)
@@ -212,6 +212,7 @@ namespace BrawlerServer.Server
         public void AcknowledgeReliablePacket(uint AckPacketId)
         {
             ReliablePackets.Remove(AckPacketId);
+            Logs.Log($"Acknowledged Reliable Packet with Packet id '{AckPacketId}'");
         }
         #endregion
 
