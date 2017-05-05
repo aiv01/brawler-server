@@ -19,7 +19,7 @@ namespace BrawlerServer.Server
         public ReliablePacket(Packet packet)
         {
             this.Packet = packet;
-            this.Time = packet.Server.Time + packet.Server.MaxAckResponseTime;
+            this.Time = packet.Server.Time;
         }
     }
 
@@ -147,9 +147,9 @@ namespace BrawlerServer.Server
                 Dictionary<long, ReliablePacket> reliablePacketsToRemove = new Dictionary<long, ReliablePacket>();
                 foreach (KeyValuePair<long, ReliablePacket> reliablePacket in ReliablePackets)
                 {
-                    if (reliablePacket.Value.Time > this.Time + this.MaxAckResponseTime)
+                    if (reliablePacket.Value.Time + this.MaxAckResponseTime > this.Time)
                     {
-                        Logs.Log($"Reliable: {reliablePacket.Value.Time} {this.Time} {this.MaxAckResponseTime} {this.Time + this.MaxAckResponseTime}");
+                        Logs.Log($"Reliable: {reliablePacket.Value.Time} {this.Time} {reliablePacket.Value.Time + this.MaxAckResponseTime}");
                         this.SendPacket(reliablePacket.Value.Packet);
                         reliablePacketsToRemove.Add(reliablePacket.Key, reliablePacket.Value);
                     }
