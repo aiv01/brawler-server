@@ -51,7 +51,7 @@ namespace BrawlerServer.Server.Tests
             var packet = CreateAndTestJoinPacket(server);
             var client = ((JoinHandler)packet.PacketHandler).Client;
 
-            server.RemoveClient(client);
+            server.QueueRemoveClient(client);
             Assert.That(server.HasClient(client), Is.EqualTo(false));
 
             server.ServerPacketReceive += (s, p) =>

@@ -25,7 +25,7 @@ namespace BrawlerServer.Server
             Logs.Log($"[{packet.Server.Time}] Received leave message from '{packet.RemoteEp}'.");
             // create client and add it to the server's clients
             Client = packet.Server.GetClientFromEndPoint(packet.RemoteEp);
-            packet.Server.RemoveClient(packet.RemoteEp, "left the game");
+            packet.Server.QueueRemoveClient(packet.RemoteEp, "left the game");
             Logs.Log($"[{packet.Server.Time}] Player with remoteEp '{packet.RemoteEp}' left the server");
 
             JsonSerialized = JsonConvert.SerializeObject(JsonData);

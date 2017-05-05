@@ -148,7 +148,7 @@ namespace BrawlerServer.Server
                 }
                 foreach (Client client in clientsToRemove)
                 {
-                    this.RemoveClient(client, "Kicked for Idle Timeout");
+                    this.QueueRemoveClient(client, "Kicked for Idle Timeout");
                 }
                 //Check if reliable packet has passed the time check limit
                 Dictionary<uint, ReliablePacket> reliablePacketsToRemove = new Dictionary<uint, ReliablePacket>();
@@ -188,6 +188,9 @@ namespace BrawlerServer.Server
                         socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, packet.RemoteEp);
                         Logs.Log($"Sent packet with command {packet.Command} to remoteEp {packet.RemoteEp}");
                     }
+
+                    //remove Queued Clients
+                    RemoveClients();
                 }
                 packetsToSend.Clear();
                 
@@ -276,12 +279,14 @@ namespace BrawlerServer.Server
 
         }
 
-        public void RemoveClient(Client client, string Reason = "Unkown")
+        List<Client> QueuedClientsToRemove = new List<Client>();
+
+        public void QueueRemoveClient(Client client, string Reason = "Unkown")
         {
-            RemoveClient(client.EndPoint, Reason);
+            QueueRemoveClient(client.EndPoint, Reason);
         }
 
-        public void RemoveClient(IPEndPoint endPoint, string Reason)
+        public void QueueRemoveClient(IPEndPoint endPoint, string Reason)
         {
             var removedClient = clients[endPoint];
 
@@ -297,8 +302,15 @@ namespace BrawlerServer.Server
 
             this.SendPacket(packetRemoveClient);
 
-            clients.Remove(endPoint);
             Logs.Log($"[{Time}] Removed Client: '{removedClient}' for '{Reason}'.");
+        }
+
+        public void RemoveClients()
+        {
+            foreach(Client client in QueuedClientsToRemove)
+            {
+                clients.Remove(client.EndPoint);
+            }
         }
 
         public Client GetClientFromEndPoint(IPEndPoint endPoint)
