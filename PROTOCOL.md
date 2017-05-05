@@ -54,6 +54,10 @@ Binary Payload:
 * Rz (float): Z component of the quaternion rotation;
 * Rw (float): W component of the quaternion rotation;
 
+### CHAT (command 124) Client > Server && Server > Client
+Json Payload:
+* string text: Chat text (max 128 characters)
+
 ### AUTH (command 125) Client > Server
 Json Payload:
 * string AuthToken: Authentication Token
