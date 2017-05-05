@@ -144,14 +144,19 @@ namespace BrawlerServer.Server
                     this.RemoveClient(client, "Kicked for Idle Timeout");
                 }
                 //Check if reliable packet has passed the time check limit
+                Dictionary<long, ReliablePacket> reliablePacketsToRemove = new Dictionary<long, ReliablePacket>();
                 foreach (KeyValuePair<long, ReliablePacket> reliablePacket in ReliablePackets)
                 {
                     if (reliablePacket.Value.Time > this.Time + this.MaxAckResponseTime)
                     {
-                        Logs.Log($"{reliablePacket.Value.Time} {this.Time} {this.MaxAckResponseTime} {this.Time + this.MaxAckResponseTime}");
+                        Logs.Log($"Reliable: {reliablePacket.Value.Time} {this.Time} {this.MaxAckResponseTime} {this.Time + this.MaxAckResponseTime}");
                         this.SendPacket(reliablePacket.Value.Packet);
-                        //Packet isn't removed here as it gets replaced when is sent, this may no longer work if we change the server behaviour
+                        reliablePacketsToRemove.Add(reliablePacket.Key, reliablePacket.Value);
                     }
+                }
+                foreach(KeyValuePair<long, ReliablePacket> reliablePacket in reliablePacketsToRemove)
+                {
+                    ReliablePackets.Remove(reliablePacket.Key);
                 }
                 // then send packets (do we need to send only a fixed number?)
                 foreach (var packet in packetsToSend)
