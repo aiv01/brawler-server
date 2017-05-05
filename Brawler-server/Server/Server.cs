@@ -146,9 +146,9 @@ namespace BrawlerServer.Server
                 //Check if reliable packet has passed the time check limit
                 foreach (KeyValuePair<long, ReliablePacket> reliablePacket in ReliablePackets)
                 {
-                    if (reliablePacket.Value.Time > this.Time)
+                    if (reliablePacket.Value.Time > this.Time + this.MaxAckResponseTime)
                     {
-                        Logs.Log($"{reliablePacket.Value.Time} {this.Time}");
+                        Logs.Log($"{reliablePacket.Value.Time} {this.Time} {this.MaxAckResponseTime} {this.Time + this.MaxAckResponseTime}");
                         this.SendPacket(reliablePacket.Value.Packet);
                         //Packet isn't removed here as it gets replaced when is sent, this may no longer work if we change the server behaviour
                     }
