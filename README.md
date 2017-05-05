@@ -44,6 +44,7 @@ Sprint 4 - May 3 - May 17
 * (TD) study elasticsearch
 * true non-blocking http calls
 * (TD) lobbying and movements
+* CHAT command
 
 (sprint meeting)
 
