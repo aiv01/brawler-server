@@ -25,6 +25,7 @@ namespace BrawlerServer.Server
         public void UpdateTime()
         {
             this.Time = Packet.Server.Time;
+            Logs.Log($"Updated Reliable Packet ({Packet.Id}) time");
         }
     }
 
@@ -289,7 +290,7 @@ namespace BrawlerServer.Server
             string jsonData = JsonConvert.SerializeObject(jsonDataObject);
 
             clients.Remove(endPoint);
-            Logs.Log($"[{Time}] Removed Client: '{removedClient}'.");
+            Logs.Log($"[{Time}] Removed Client: '{removedClient}' for '{Reason}'.");
 
             byte[] data = new byte[512];
 
