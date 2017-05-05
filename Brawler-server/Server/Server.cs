@@ -111,7 +111,7 @@ namespace BrawlerServer.Server
                 while (packetIndex < packetsPerLoop && socket.Available > 0)
                 {
                     var size = socket.ReceiveFrom(recvBuffer, ref remoteEp);
-                    Logs.Log($"[{Time}] Received message from '{remoteEp}', size: '{size}'.");
+                    //Logs.Log($"[{Time}] Received message from '{remoteEp}', size: '{size}'.");
                     Packet packet = null;
                     try
                     {
