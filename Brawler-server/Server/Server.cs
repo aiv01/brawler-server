@@ -171,16 +171,14 @@ namespace BrawlerServer.Server
                     {
                         foreach (var pair in clients)
                         {
-                            if (!pair.Key.Equals(packet.RemoteEp))
+                            socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, pair.Key);
+                            Logs.Log($"Sent broadcast packet to '{pair.Key}'");
+                            if (packet.IsReliable)
                             {
-                                socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, pair.Key);
-                                if (packet.IsReliable)
-                                {
-                                    if (HasReliablePacket(packet.Id))
-                                        ReliablePackets[packet.Id].UpdateTime();
-                                    else
-                                        AddReliablePacket(packet);
-                                }
+                                if (HasReliablePacket(packet.Id))
+                                    ReliablePackets[packet.Id].UpdateTime();
+                                else
+                                    AddReliablePacket(packet);
                             }
                         }
                         Logs.Log($"Sent packet broadcast with command {packet.Command}. Packets in this block {packetsToSend.Count}");
