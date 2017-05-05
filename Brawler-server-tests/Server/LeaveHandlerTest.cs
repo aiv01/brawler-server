@@ -50,7 +50,7 @@ namespace BrawlerServer.Server.Tests
             var packetHandler = packet.PacketHandler as LeaveHandler;
 
             Assert.That(packetHandler, Is.Not.EqualTo(null));
-            Assert.That(server.HasClient(packetHandler.Client), Is.EqualTo(false));
+            Assert.That(server.QueuedClientsToRemove.Contains(packetHandler.Client), Is.EqualTo(true));
 
             return packet;
         }
@@ -62,7 +62,7 @@ namespace BrawlerServer.Server.Tests
             var packet = CreateAndTestLeavePacket(server);
             var client = ((LeaveHandler)packet.PacketHandler).Client;
             
-            Assert.That(server.HasClient(client), Is.EqualTo(false));
+            Assert.That(server.QueuedClientsToRemove.Contains(client), Is.EqualTo(true));
 
             server.ServerPacketReceive += (s, p) =>
             {

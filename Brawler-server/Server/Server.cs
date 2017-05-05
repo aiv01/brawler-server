@@ -279,7 +279,7 @@ namespace BrawlerServer.Server
 
         }
 
-        List<Client> QueuedClientsToRemove = new List<Client>();
+        public List<Client> QueuedClientsToRemove = new List<Client>();
 
         public void QueueRemoveClient(Client client, string Reason = "Unkown")
         {
@@ -302,7 +302,9 @@ namespace BrawlerServer.Server
 
             this.SendPacket(packetRemoveClient);
 
-            Logs.Log($"[{Time}] Removed Client: '{removedClient}' for '{Reason}'.");
+            QueuedClientsToRemove.Add(removedClient);
+
+            Logs.Log($"[{Time}] Queued Client to Remove: '{removedClient}' for '{Reason}'.");
         }
 
         public void RemoveClients()
