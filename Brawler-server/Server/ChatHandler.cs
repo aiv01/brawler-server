@@ -16,10 +16,10 @@ namespace BrawlerServer.Server
             JsonData = Utilities.Utilities.ParsePacketJson(packet, typeof(Json.ChatHandler));
             
             // first check if user is already in joined users
-            if (!packet.Server.HasClient(packet.RemoteEp))
-            {
-                throw new Exception($"Client with remoteEp '{packet.RemoteEp}' tried to chat but has never joined.");
-            }
+            //if (!packet.Server.HasClient(packet.RemoteEp))
+            //{
+            //    throw new Exception($"Client with remoteEp '{packet.RemoteEp}' tried to chat but has never joined.");
+            //}
             Logs.Log($"[{packet.Server.Time}] Received chat message from '{packet.RemoteEp}' with text '{JsonData.Text}'.");
             
             byte[] data = new byte[512];
