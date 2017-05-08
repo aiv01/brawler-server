@@ -65,7 +65,7 @@ namespace BrawlerServer.Server.Tests
 
                     Assert.That(p, Is.Not.EqualTo(null));
 
-                    Assert.That(p.Id, Is.EqualTo(packet.Id));
+                    //Assert.That(p.Id, Is.GreaterThan(packet.Id));
                     Assert.That(p.IsReliable, Is.EqualTo(false));
                     Assert.That(p.Command, Is.EqualTo(Commands.Chat));
                     Assert.That(p.RemoteEp, Is.EqualTo(server.BindEp));
