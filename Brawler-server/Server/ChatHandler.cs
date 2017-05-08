@@ -25,7 +25,7 @@ namespace BrawlerServer.Server
             byte[] data = new byte[512];
             string JsonChatData = JsonConvert.SerializeObject(JsonData);
             Packet ChatPacket = new Packet(packet.Server, data.Length, data, null);
-            ChatPacket.AddHeaderToData(false, Commands.ClientAuthed);
+            ChatPacket.AddHeaderToData(false, Commands.Chat);
             ChatPacket.Broadcast = true;
             ChatPacket.Writer.Write(JsonChatData);
             ChatPacket.Server.SendPacket(ChatPacket);
