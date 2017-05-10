@@ -82,7 +82,7 @@ namespace BrawlerServer.Server
             this.ReliablePackets = new Dictionary<uint, ReliablePacket>();
             this.MaxAckResponseTime = 5000;
 
-            this.MaxIdleTimeout = 100000;
+            this.MaxIdleTimeout = 10000;
         }
 
         public void Bind()
