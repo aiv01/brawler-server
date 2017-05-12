@@ -77,7 +77,7 @@ namespace BrawlerServer.Server
             recvReader = new BinaryReader(recvStream);
             recvWriter = new BinaryWriter(recvStream);
 
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp) {Blocking = false};
+            socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp) { Blocking = false };
 
             this.ReliablePackets = new Dictionary<uint, ReliablePacket>();
             this.MaxAckResponseTime = 5000;
@@ -90,7 +90,7 @@ namespace BrawlerServer.Server
             if (!socket.IsBound)
             {
                 socket.Bind(BindEp);
-                BindEp = (IPEndPoint) socket.LocalEndPoint;
+                BindEp = (IPEndPoint)socket.LocalEndPoint;
             }
         }
 
@@ -160,7 +160,7 @@ namespace BrawlerServer.Server
                         reliablePacketsToRemove.Add(reliablePacket.Key, reliablePacket.Value);
                     }
                 }
-                foreach(KeyValuePair<uint, ReliablePacket> reliablePacket in reliablePacketsToRemove)
+                foreach (KeyValuePair<uint, ReliablePacket> reliablePacket in reliablePacketsToRemove)
                 {
                     ReliablePackets.Remove(reliablePacket.Key);
                 }
@@ -193,7 +193,7 @@ namespace BrawlerServer.Server
                     RemoveClients();
                 }
                 packetsToSend.Clear();
-                
+
 
                 ServerTick?.Invoke(this);
 
@@ -202,7 +202,7 @@ namespace BrawlerServer.Server
             }
             socket.Close();
         }
-        
+
         public void SendPacket(Packet packet)
         {
             packetsToSend.Add(packet);
@@ -229,9 +229,18 @@ namespace BrawlerServer.Server
 
         #region AuthEndPoint
 
-        public void AddAuthedEndPoint(IPEndPoint endPoint, Client client)
+        public bool AddAuthedEndPoint(IPEndPoint endPoint, Client client)
         {
-            this.authedEndPoints.Add(endPoint, client);
+            try
+            {
+                this.authedEndPoints.Add(endPoint, client);
+            }
+            catch (Exception e)
+            {
+                Logs.LogError($"[{Time} Client Tried to authenticate but has already authenticated]");
+                return false;
+            }
+            return true;
         }
 
         public bool CheckAuthedEndPoint(IPEndPoint endPoint)
@@ -309,7 +318,7 @@ namespace BrawlerServer.Server
 
         public void RemoveClients()
         {
-            foreach(Client client in QueuedClientsToRemove)
+            foreach (Client client in QueuedClientsToRemove)
             {
                 clients.Remove(client.EndPoint);
             }
