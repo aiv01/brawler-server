@@ -32,8 +32,7 @@ Sprint 3 - April 19 - May 3
 - [ ] Store serialized packets into elasticsearch (spare)
 - [ ] Send data to elasticsearch at regular interval (spare)
 - [ ] Implement interface for sending json data to external storages (like elasticsearch)
-
-20170428 - [x] Install a Linux System (Ubuntu) and install elasticsearch
+- [x] 20170428 Install a Linux System (Ubuntu) and install elasticsearch
 
 (sprint meeting)
 
