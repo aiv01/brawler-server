@@ -28,11 +28,12 @@ namespace BrawlerServer.Server
 
             Response = new HttpResponseMessage(HttpStatusCode.Continue);
 
-            // check if remoteEp is already authed
-            //if (packet.Server.CheckAuthedEndPoint(packet.RemoteEp))
-            //{
-            //    throw new Exception($"Client with remoteEp '{packet.RemoteEp}' tried to authenticate but has already authenticated.");
-            //}
+            //check if remoteEp is already authed
+            if (packet.Server.CheckAuthedEndPoint(packet.RemoteEp))
+            {
+                Logs.Log($"[{packet.Server.Time}] Client with remoteEp '{packet.RemoteEp}' tried to authenticate but has already authenticated.");
+                return;
+            }
 
             Logs.Log($"[{packet.Server.Time}] Received Auth token from '{packet.RemoteEp}'.");
 
