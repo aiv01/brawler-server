@@ -212,7 +212,7 @@ namespace BrawlerServer.Server
         public void AddReliablePacket(Packet packet)
         {
             ReliablePackets[packet.Id] = new ReliablePacket(packet);
-            Logs.Log($"{Time} Added Reliable Packet with Packet id '{packet.Id}'");
+            Logs.Log($"[{Time}] Added Reliable Packet with Packet id '{packet.Id}'");
         }
 
         public bool HasReliablePacket(uint PacketId)

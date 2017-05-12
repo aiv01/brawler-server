@@ -23,12 +23,12 @@ namespace BrawlerServer.Server
             Logs.Log($"[{packet.Server.Time}] Received chat message from '{packet.RemoteEp}' with text '{JsonData.Text}'.");
             
             byte[] data = new byte[512];
-            string JsonChatData = JsonConvert.SerializeObject(JsonData);
-            Packet ChatPacket = new Packet(packet.Server, data.Length, data, null);
-            ChatPacket.AddHeaderToData(false, Commands.Chat);
-            ChatPacket.Broadcast = true;
-            ChatPacket.Writer.Write(JsonChatData);
-            ChatPacket.Server.SendPacket(ChatPacket);
+            Json.ClientChatted JsonChatData = new Json.ClientChatted() { Text = JsonData.Text, Name = packet.Server.GetClientFromEndPoint(packet.RemoteEp).Name };
+            Packet ClientChattedPacket = new Packet(packet.Server, data.Length, data, null);
+            ClientChattedPacket.AddHeaderToData(false, Commands.ClientChatted);
+            ClientChattedPacket.Broadcast = true;
+            ClientChattedPacket.Writer.Write(JsonConvert.SerializeObject(JsonChatData));
+            ClientChattedPacket.Server.SendPacket(ClientChattedPacket);
         }
     }
 }

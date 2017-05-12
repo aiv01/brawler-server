@@ -63,6 +63,12 @@ namespace BrawlerServer.Utilities
             public string Text;
         }
 
+        public class ClientChatted
+        {
+            public string Text;
+            public string Name;
+        }
+
         public static dynamic Deserialize(string data, Type type)
         {
             return JsonConvert.DeserializeObject(data, type);

@@ -12,17 +12,18 @@ namespace BrawlerServer.Utilities
         Join = 0,
         Leave = 2,
         Move = 4,
+        Chat = 123,
         Auth = 125,
         
         // server -> client
         ClientJoined = 1,
         ClientLeft = 3,
         ClientMoved = 5,
+        ClientChatted = 124,
         ClientAuthed = 126,
 
         //Both Ways
-        Ack = 127,
-        Chat = 124
+        Ack = 127
     }
 
     public static class Utilities
