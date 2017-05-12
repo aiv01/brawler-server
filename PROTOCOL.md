@@ -29,7 +29,7 @@ Json Payload:
 ### CLIENT LEFT (command 3) Server > Client - Reliable
 Json Payload:  
 * uint Id: Client Unique Identifier
-* string: Reason
+* string Reason: Reason for leaving (kicked, quit, ...)
 
 ### MOVE (command 4) Client > Server
 Binary Payload:  
@@ -53,6 +53,10 @@ Binary Payload:
 * Ry (float): Y component of the quaternion rotation;
 * Rz (float): Z component of the quaternion rotation;
 * Rw (float): W component of the quaternion rotation;
+
+### CHAT (command 124) Client > Server && Server > Client
+Json Payload:
+* string Text: Chat text (max 128 characters)
 
 ### AUTH (command 125) Client > Server
 Json Payload:

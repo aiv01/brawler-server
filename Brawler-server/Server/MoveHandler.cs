@@ -5,12 +5,13 @@ using System.Text;
 
 namespace BrawlerServer.Server
 {
-    public class MovedHandler : ICommandHandler
+    public class MoveHandler : ICommandHandler
     {
         public Packet Packet { get; private set; }
         public Client Client { get; private set; }
         public Json.MoveHandler JsonData { get; private set; }
         public string JsonSerialized { get; private set; }
+        public uint Id { get; private set; }
         public byte MoveType { get; private set; }
         public float X { get; private set; }
         public float Y { get; private set; }
@@ -19,7 +20,6 @@ namespace BrawlerServer.Server
         public float Ry { get; private set; }
         public float Rz { get; private set; }
         public float Rw { get; private set; }
-        public uint Id { get; private set; }
 
         public void Init(Packet packet)
         {
@@ -27,13 +27,13 @@ namespace BrawlerServer.Server
 
             if (!packet.Server.HasClient(packet.RemoteEp))
             {
-                throw new Exception($"Client with remoteEp '{packet.RemoteEp}' sent an update but has never joined.");
+                throw new Exception($"[{packet.Server.Time}] Client with remoteEp '{packet.RemoteEp}' sent an update but has never joined.");
             }
             Client = packet.Server.GetClientFromEndPoint(packet.RemoteEp);
 
-            Logs.Log($"[{packet.Server.Time}] Received update packet from '{packet.RemoteEp}'.");
 
             packet.Stream.Seek(packet.PayloadOffset, System.IO.SeekOrigin.Begin);
+            Id = packet.Server.GetClientFromEndPoint(packet.RemoteEp).Id;
             MoveType = packet.Reader.ReadByte();
             X = packet.Reader.ReadSingle();
             Y = packet.Reader.ReadSingle();
@@ -42,7 +42,8 @@ namespace BrawlerServer.Server
             Ry = packet.Reader.ReadSingle();
             Rz = packet.Reader.ReadSingle();
             Rw = packet.Reader.ReadSingle();
-            Id = packet.Server.GetClientFromEndPoint(packet.RemoteEp).Id;
+
+            Logs.Log($"[{packet.Server.Time}] Received update packet (({Id},{MoveType}){X},{Y},{Z},{Rx},{Ry},{Rz},{Rw}) from '{packet.RemoteEp}'.");
 
             Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, packet.RemoteEp);
             packetToSend.Broadcast = true;

@@ -28,20 +28,14 @@ namespace BrawlerServer.Server
 
             Response = new HttpResponseMessage(HttpStatusCode.Continue);
 
-
             // check if remoteEp is already authed
-            if (packet.Server.CheckAuthedEndPoint(packet.RemoteEp))
-            {
-                throw new Exception($"Client with remoteEp '{packet.RemoteEp}' tried to authenticate but has already authenticated.");
-            }
-            // check if remoteEp has already joined 
-            if (packet.Server.HasClient(packet.RemoteEp))
-            {
-                throw new Exception($"Client with remoteEp '{packet.RemoteEp}' tried to join but has never authenticated.");
-            }
+            //if (packet.Server.CheckAuthedEndPoint(packet.RemoteEp))
+            //{
+            //    throw new Exception($"Client with remoteEp '{packet.RemoteEp}' tried to authenticate but has already authenticated.");
+            //}
 
             Logs.Log($"[{packet.Server.Time}] Received Auth token from '{packet.RemoteEp}'.");
-            
+
             Dictionary<string, string> requestValues = new Dictionary<string, string>
             {
                 { "token", JsonData.AuthToken },
@@ -59,7 +53,7 @@ namespace BrawlerServer.Server
                 Client = new Client(EndPoint);
                 Client.SetName(JsonAuthPlayer.nickname);
                 packet.Server.AddAuthedEndPoint(EndPoint, Client);
-                Logs.Log($"[{packet.Server.Time}] Player with remoteEp '{packet.RemoteEp}' successfully authed");
+                Logs.Log($"[{packet.Server.Time}] Player with authToken '{JsonData.AuthToken}', remoteEp '{packet.RemoteEp}' and name '{Client.Name}' successfully authed");
 
                 Json.ClientAuthed JsonClientAuthed = new Json.ClientAuthed()
                 {
@@ -67,16 +61,15 @@ namespace BrawlerServer.Server
                     Port = packet.RemoteEp.Port.ToString()
                 };
                 string JsonClientAuthedData = JsonConvert.SerializeObject(JsonClientAuthed);
-                
                 byte[] data = new byte[512];
-                Packet ClientAuthedPacket = new Packet(packet.Server, data.Length, data, null);
+                Packet ClientAuthedPacket = new Packet(packet.Server, data.Length, data, EndPoint);
                 ClientAuthedPacket.AddHeaderToData(true, Commands.ClientAuthed);
-                packet.Writer.Write(JsonClientAuthedData);
-                packet.Server.SendPacket(ClientAuthedPacket);
+                ClientAuthedPacket.Writer.Write(JsonClientAuthedData);
+                ClientAuthedPacket.Server.SendPacket(ClientAuthedPacket);
             }
             else
             {
-                throw new Exception($"Client with remoteEp '{packet.RemoteEp}' failed to authenticate ({JsonAuthPlayer.fields}: {JsonAuthPlayer.info})");
+                Logs.Log($"[{packet.Server.Time}] Client with remoteEp '{packet.RemoteEp}' failed to authenticate ({JsonAuthPlayer.fields}: {JsonAuthPlayer.info})");
             }
         }
     }

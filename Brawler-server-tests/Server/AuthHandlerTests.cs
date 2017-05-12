@@ -13,7 +13,7 @@ namespace BrawlerServer.Server.Tests
         {
             var authData = new byte[1024];
 
-            var jsonDataObject = new AuthHandlerJson() { AuthToken = "e1cdcd42-0b98-4d12-82fd-53d0fb241ec6" };
+            var jsonDataObject = new Json.AuthHandler() { AuthToken = "e1cdcd42-0b98-4d12-82fd-53d0fb241ec6" };
             var jsonData = JsonConvert.SerializeObject(jsonDataObject);
 
             var packet = new Packet(server, 1024, authData, server.BindEp);
