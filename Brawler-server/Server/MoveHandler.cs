@@ -27,7 +27,7 @@ namespace BrawlerServer.Server
 
             if (!packet.Server.HasClient(packet.RemoteEp))
             {
-                throw new Exception($"Client with remoteEp '{packet.RemoteEp}' sent an update but has never joined.");
+                throw new Exception($"[{packet.Server.Time}] Client with remoteEp '{packet.RemoteEp}' sent an update but has never joined.");
             }
             Client = packet.Server.GetClientFromEndPoint(packet.RemoteEp);
 

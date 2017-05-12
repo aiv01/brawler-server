@@ -69,7 +69,7 @@ namespace BrawlerServer.Server
             }
             else
             {
-                Logs.Log($"Client with remoteEp '{packet.RemoteEp}' failed to authenticate ({JsonAuthPlayer.fields}: {JsonAuthPlayer.info})");
+                Logs.Log($"[{packet.Server.Time}] Client with remoteEp '{packet.RemoteEp}' failed to authenticate ({JsonAuthPlayer.fields}: {JsonAuthPlayer.info})");
             }
         }
     }

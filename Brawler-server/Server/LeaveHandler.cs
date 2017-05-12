@@ -20,7 +20,7 @@ namespace BrawlerServer.Server
             // first check if user is not in joined users
             if (!packet.Server.HasClient(packet.RemoteEp))
             {
-                throw new Exception($"Client with remoteEp '{packet.RemoteEp}' tried to leave but has never joined.");
+                throw new Exception($"[{packet.Server.Time}] Client with remoteEp '{packet.RemoteEp}' tried to leave but has never joined.");
             }
             Logs.Log($"[{packet.Server.Time}] Received leave message from '{packet.RemoteEp}'.");
             // create client and add it to the server's clients

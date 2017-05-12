@@ -172,7 +172,7 @@ namespace BrawlerServer.Server
                         foreach (var pair in clients)
                         {
                             socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, pair.Key);
-                            Logs.Log($"Sent broadcast packet to '{pair.Key}'");
+                            Logs.Log($"[{Time}] Sent broadcast packet to '{pair.Key}'");
                             if (packet.IsReliable)
                             {
                                 if (HasReliablePacket(packet.Id))
@@ -181,12 +181,12 @@ namespace BrawlerServer.Server
                                     AddReliablePacket(packet);
                             }
                         }
-                        Logs.Log($"Sent packet broadcast with command {packet.Command}. Packets in this block {packetsToSend.Count}");
+                        Logs.Log($"[{Time}] Sent packet broadcast with command {packet.Command}. Packets in this block {packetsToSend.Count}");
                     }
                     else
                     {
                         socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, packet.RemoteEp);
-                        Logs.Log($"Sent packet with command {packet.Command} to remoteEp {packet.RemoteEp}");
+                        Logs.Log($"[{Time}] Sent packet with command {packet.Command} to remoteEp {packet.RemoteEp}");
                     }
 
                     //remove Queued Clients
@@ -212,7 +212,7 @@ namespace BrawlerServer.Server
         public void AddReliablePacket(Packet packet)
         {
             ReliablePackets[packet.Id] = new ReliablePacket(packet);
-            Logs.Log($"Added Reliable Packet with Packet id '{packet.Id}'");
+            Logs.Log($"{Time} Added Reliable Packet with Packet id '{packet.Id}'");
         }
 
         public bool HasReliablePacket(uint PacketId)
@@ -223,7 +223,7 @@ namespace BrawlerServer.Server
         public void AcknowledgeReliablePacket(uint AckPacketId)
         {
             ReliablePackets.Remove(AckPacketId);
-            Logs.Log($"Acknowledged Reliable Packet with Packet id '{AckPacketId}'");
+            Logs.Log($"{Time} Acknowledged Reliable Packet with Packet id '{AckPacketId}'");
         }
         #endregion
 

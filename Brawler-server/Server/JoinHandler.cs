@@ -20,12 +20,12 @@ namespace BrawlerServer.Server
             //check if client has authed
             if (!packet.Server.CheckAuthedEndPoint(packet.RemoteEp))
             {
-                throw new Exception($"Client with remoteEp '{packet.RemoteEp}' tried to join but has not authenticated.");
+                throw new Exception($"[{packet.Server.Time}] Client with remoteEp '{packet.RemoteEp}' tried to join but has not authenticated.");
             }
             // first check if user is already in joined users
             if (packet.Server.HasClient(packet.RemoteEp))
             {
-                throw new Exception($"Client with remoteEp '{packet.RemoteEp}' tried to join but has already joined.");
+                throw new Exception($"[{packet.Server.Time}] Client with remoteEp '{packet.RemoteEp}' tried to join but has already joined.");
             }
             Logs.Log($"[{packet.Server.Time}] Received join message from '{packet.RemoteEp}'.");
             // create client and add it to the server's clients
