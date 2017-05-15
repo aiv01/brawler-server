@@ -144,6 +144,7 @@ namespace BrawlerServer.Server
                     if (this.Time - client.TimeLastPacketSent > MaxIdleTimeout)
                     {
                         clientsToRemove.Add(client);
+                        Logs.Log($"[{Time}] Queueing {client} removal, last packet sent at {client.TimeLastPacketSent}, {this.Time - client.TimeLastPacketSent}, {MaxIdleTimeout}");
                     }
                 }
                 foreach (Client client in clientsToRemove)
@@ -181,7 +182,6 @@ namespace BrawlerServer.Server
                                     AddReliablePacket(packet);
                             }
                         }
-                        Logs.Log($"[{Time}] Sent packet broadcast with command {packet.Command}. Packets in this block {packetsToSend.Count}");
                     }
                     else
                     {
