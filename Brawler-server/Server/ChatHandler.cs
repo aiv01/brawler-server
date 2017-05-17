@@ -29,6 +29,7 @@ namespace BrawlerServer.Server
             ClientChattedPacket.Broadcast = true;
             ClientChattedPacket.Writer.Write(JsonConvert.SerializeObject(JsonChatData));
             ClientChattedPacket.Server.SendPacket(ClientChattedPacket);
+            Logs.Log($"[{packet.Server.Time}] Sent chat message from '{packet.RemoteEp}' with text '{JsonData.Text}'.");
         }
     }
 }
