@@ -206,7 +206,6 @@ namespace BrawlerServer.Server
         public void SendPacket(Packet packet)
         {
             packetsToSend.Add(packet);
-            Logs.Log($"Added packet with id {packet.Id}, command {packet.Command} to send queue");
         }
 
         #region AckPackets
