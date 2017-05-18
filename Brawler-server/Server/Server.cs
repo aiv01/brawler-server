@@ -173,7 +173,7 @@ namespace BrawlerServer.Server
                         foreach (var pair in clients)
                         {
                             socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, pair.Key);
-                            Logs.Log($"[{Time}] Sent broadcast packet to '{pair.Key}'");
+                            Logs.Log($"[{Time}] Sent broadcast packet to '{pair.Key}' with id '{packet.Id}', command '{packet.Command}'");
                             if (packet.IsReliable)
                             {
                                 if (HasReliablePacket(packet.Id))
