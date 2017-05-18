@@ -54,6 +54,14 @@ Binary Payload:
 * Rz (float): Z component of the quaternion rotation;
 * Rw (float): W component of the quaternion rotation;
 
+### PING (command 121) Client > Server
+Binary Payload:
+* Empty
+
+### CLIENT PINGED (command 122) Server > Client
+Binary Payload:
+* uint Id: Client Unique Identifier
+
 ### CHAT (command 123) Client > Server
 Json Payload:
 * string Text: Chat text (max 128 characters)

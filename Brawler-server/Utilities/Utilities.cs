@@ -12,6 +12,7 @@ namespace BrawlerServer.Utilities
         Join = 0,
         Leave = 2,
         Move = 4,
+        Ping = 121,
         Chat = 123,
         Auth = 125,
         
@@ -19,6 +20,7 @@ namespace BrawlerServer.Utilities
         ClientJoined = 1,
         ClientLeft = 3,
         ClientMoved = 5,
+        ClientPinged = 122,
         ClientChatted = 124,
         ClientAuthed = 126,
 
@@ -38,7 +40,8 @@ namespace BrawlerServer.Utilities
             { Commands.Move, typeof(MoveHandler) },
             { Commands.Ack, typeof(ACKHandler) },
             { Commands.Auth, typeof(AuthHandler) },
-            { Commands.Chat, typeof(ChatHandler) }
+            { Commands.Chat, typeof(ChatHandler) },
+            { Commands.Ping, typeof(PingHandler) }
         };
 
         public static ICommandHandler GetHandler(Packet packet)
