@@ -16,23 +16,18 @@ namespace BrawlerServer.Server
         public Json.AuthHandler JsonData { get; private set; }
         public IPEndPoint EndPoint { get; private set; }
         public Client Client { get; private set; }
-        public HttpResponseMessage Response { get; private set; }
-        public string ResponseString { get; private set; }
-        public Json.AuthPlayerPost JsonAuthPlayer { get; private set; }
 
-        public async void Init(Packet packet)
+        public void Init(Packet packet)
         {
             Packet = packet;
 
             JsonData = Utilities.Utilities.ParsePacketJson(packet, typeof(Json.AuthHandler));
 
-            Response = new HttpResponseMessage(HttpStatusCode.Continue);
-
-            //check if remoteEp is already authed
-            //if (packet.Server.CheckAuthedEndPoint(packet.RemoteEp))
-            //{
-            //    Logs.Log($"[{packet.Server.Time}] Client with remoteEp '{packet.RemoteEp}' tried to authenticate but has already authenticated.");
-            //}
+            // check if remoteEp is already authed
+            if (packet.Server.CheckAuthedEndPoint(packet.RemoteEp))
+            {
+                Logs.Log($"[{packet.Server.Time}] Client with remoteEp '{packet.RemoteEp}' tried to authenticate but has already authenticated.");
+            }
 
             Logs.Log($"[{packet.Server.Time}] Received Auth token from '{packet.RemoteEp}'.");
 
@@ -41,38 +36,35 @@ namespace BrawlerServer.Server
                 { "token", JsonData.AuthToken },
                 { "ip", packet.RemoteEp.Address.ToString() }
             };
+
             FormUrlEncodedContent content = new FormUrlEncodedContent(requestValues);
-            Response = await packet.Server.HttpClient.PostAsync("http://taiga.aiv01.it/players/server-auth/", content);
-            ResponseString = await Response.Content.ReadAsStringAsync();
+            packet.Server.AddAsyncRequest(AsyncRequest.RequestMethod.POST, "http://taiga.aiv01.it/players/server-auth/", packet.RemoteEp, AsyncRequest.RequestType.Authentication, content);
+            
+        }
 
-            JsonAuthPlayer = Json.Deserialize(ResponseString, typeof(Json.AuthPlayerPost));
-
+        public static void HandleResponse(Json.AuthPlayerPost JsonAuthPlayer, IPEndPoint remoteEp, Server server)
+        {
             if (JsonAuthPlayer.auth_ok)
             {
-                EndPoint = packet.RemoteEp;
-                Client = new Client(EndPoint);
+                Client Client = new Client(remoteEp);
                 Client.SetName(JsonAuthPlayer.nickname);
-                if (!packet.Server.AddAuthedEndPoint(EndPoint, Client))
-                {
-                    return;
-                } 
-                Logs.Log($"[{packet.Server.Time}] Player with authToken '{JsonData.AuthToken}', remoteEp '{packet.RemoteEp}' and name '{Client.Name}' successfully authed");
+                Logs.Log($"[{server.Time}] Player with remoteEp '{remoteEp}' and name '{Client.Name}' successfully authed");
 
                 Json.ClientAuthed JsonClientAuthed = new Json.ClientAuthed()
                 {
-                    Ip = packet.RemoteEp.Address.ToString(),
-                    Port = packet.RemoteEp.Port.ToString()
+                    Ip = remoteEp.Address.ToString(),
+                    Port = remoteEp.Port.ToString()
                 };
                 string JsonClientAuthedData = JsonConvert.SerializeObject(JsonClientAuthed);
                 byte[] data = new byte[512];
-                Packet ClientAuthedPacket = new Packet(packet.Server, data.Length, data, EndPoint);
+                Packet ClientAuthedPacket = new Packet(server, data.Length, data, remoteEp);
                 ClientAuthedPacket.AddHeaderToData(true, Commands.ClientAuthed);
                 ClientAuthedPacket.Writer.Write(JsonClientAuthedData);
                 ClientAuthedPacket.Server.SendPacket(ClientAuthedPacket);
             }
             else
             {
-                Logs.Log($"[{packet.Server.Time}] Client with remoteEp '{packet.RemoteEp}' failed to authenticate ({JsonAuthPlayer.fields}: {JsonAuthPlayer.info})");
+                Logs.Log($"[{server.Time}] Client with remoteEp '{remoteEp}' failed to authenticate: ({JsonAuthPlayer.fields}: {JsonAuthPlayer.info})");
             }
         }
     }

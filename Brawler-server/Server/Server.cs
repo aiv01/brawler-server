@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Threading;
 using BrawlerServer.Utilities;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace BrawlerServer.Server
 {
@@ -26,6 +27,64 @@ namespace BrawlerServer.Server
         {
             this.Time = Packet.Server.Time;
             Logs.Log($"{Time} Updated Reliable Packet ({Packet.Id}) time");
+        }
+    }
+
+    public class AsyncRequest
+    {
+        public enum RequestMethod
+        {
+            GET,
+            POST
+        }
+
+        public enum RequestType
+        {
+            Authentication
+        }
+
+        private static readonly Dictionary<RequestType, Type> Jsons = new Dictionary<RequestType, Type> {
+            { RequestType.Authentication, typeof(Json.AuthPlayerPost) }
+        };
+
+        public Task<HttpResponseMessage> Response { get; private set; }
+        public Task<string> ResponseString { get; private set; }
+        public RequestType requestType;
+        public bool requestedString;
+
+        public IPEndPoint RemoteEp { get; private set; }
+
+        public AsyncRequest(RequestMethod requestMethod, string uri, HttpClient HttpClient, IPEndPoint remoteEp, RequestType requestType, FormUrlEncodedContent content)
+        {
+            requestedString = false;
+            this.requestType = requestType;
+            if (requestMethod == RequestMethod.GET)
+            {
+                Response = HttpClient.GetAsync(uri);
+            }
+            else if (requestMethod == RequestMethod.POST)
+            {
+                Response = HttpClient.PostAsync(uri, content);
+            }
+        }
+
+        public void ReadString()
+        {
+            Response.Result.Content.ReadAsStringAsync();
+        }
+
+        public void CallHandler(object JsonData, Server server)
+        {
+
+            if (requestType == RequestType.Authentication)
+            {
+                AuthHandler.HandleResponse(JsonData as Json.AuthPlayerPost, RemoteEp, server);
+            }
+        }
+
+        public static Type GetJsonType(RequestType requestType)
+        {
+            return Jsons[requestType];
         }
     }
 
@@ -50,8 +109,6 @@ namespace BrawlerServer.Server
         public int MaxAckResponseTime { get; private set; }
 
         private readonly Dictionary<IPEndPoint, Client> authedEndPoints;
-
-        public readonly HttpClient HttpClient;
 
         private readonly Dictionary<IPEndPoint, Client> clients;
 
@@ -208,6 +265,46 @@ namespace BrawlerServer.Server
             packetsToSend.Add(packet);
         }
 
+        #region AsyncOperations
+
+        public readonly HttpClient HttpClient;
+        public List<AsyncRequest> requests;
+
+        public void AddAsyncRequest(AsyncRequest.RequestMethod requestMethod, string uri, IPEndPoint remoteEp, AsyncRequest.RequestType requestType, FormUrlEncodedContent content)
+        {
+            AsyncRequest asyncRequest = new AsyncRequest(requestMethod, uri, HttpClient, remoteEp, requestType, content);
+        }
+
+        public void CheckForResponse()
+        {
+            foreach (var request in requests)
+            {
+                if (request.Response.Status == TaskStatus.RanToCompletion && !request.requestedString)
+                {
+                    request.ReadString();
+                }
+            }
+        }
+
+        public void CheckForResponseString()
+        {
+            List<AsyncRequest> asyncRequestsToRemove = new List<AsyncRequest>();
+            foreach (var request in requests)
+            {
+                if (request.ResponseString.Status == TaskStatus.RanToCompletion)
+                {
+                    request.CallHandler(Json.Deserialize(request.ResponseString.Result, AsyncRequest.GetJsonType(request.requestType)), this);
+                    asyncRequestsToRemove.Add(request);
+                }
+            }
+            foreach (var request in asyncRequestsToRemove)
+            {
+                requests.Remove(request);
+            }
+        }
+
+        #endregion
+
         #region AckPackets
         public void AddReliablePacket(Packet packet)
         {
@@ -229,18 +326,9 @@ namespace BrawlerServer.Server
 
         #region AuthEndPoint
 
-        public bool AddAuthedEndPoint(IPEndPoint endPoint, Client client)
+        public void AddAuthedEndPoint(IPEndPoint endPoint, Client client)
         {
-            try
-            {
-                this.authedEndPoints.Add(endPoint, client);
-            }
-            catch (Exception e)
-            {
-                Logs.LogError($"[{Time} Client Tried to authenticate but has already authenticated]");
-                return false;
-            }
-            return true;
+            this.authedEndPoints.Add(endPoint, client);
         }
 
         public bool CheckAuthedEndPoint(IPEndPoint endPoint)
