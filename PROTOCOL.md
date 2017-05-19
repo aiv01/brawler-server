@@ -56,19 +56,45 @@ Binary Payload:
 
 ### DODGE (command 6) Client > Server
 Binary Payload:
-* Empty
+* X (float): X position of the player;
+* Y (float): Y position of the player;
+* Z (float): Z position of the player;
+* Rx (float): X component of the quaternion rotation;
+* Ry (float): Y component of the quaternion rotation;
+* Rz (float): Z component of the quaternion rotation;
+* Rw (float): W component of the quaternion rotation;
 
-### CLIENT DODGED (command 7) Server > Client
+### CLIENT DODGED (command 7) Server > Client - Reliable
 Binary Payload:
 * Id (uint): Client Unique Identifier
+* X (float): X position of the player;
+* Y (float): Y position of the player;
+* Z (float): Z position of the player;
+* Rx (float): X component of the quaternion rotation;
+* Ry (float): Y component of the quaternion rotation;
+* Rz (float): Z component of the quaternion rotation;
+* Rw (float): W component of the quaternion rotation;
 
 ### TAUNT (command 8) Client > Server
 Binary Payload:
-* Empty
+* X (float): X position of the player;
+* Y (float): Y position of the player;
+* Z (float): Z position of the player;
+* Rx (float): X component of the quaternion rotation;
+* Ry (float): Y component of the quaternion rotation;
+* Rz (float): Z component of the quaternion rotation;
+* Rw (float): W component of the quaternion rotation;
 
-### CLIENT TAUNTED (command 9) Server > Client
+### CLIENT TAUNTED (command 9) Server > Client - Reliable
 Binary Payload:
 * Id (uint): Client Unique Identifier
+* X (float): X position of the player;
+* Y (float): Y position of the player;
+* Z (float): Z position of the player;
+* Rx (float): X component of the quaternion rotation;
+* Ry (float): Y component of the quaternion rotation;
+* Rz (float): Z component of the quaternion rotation;
+* Rw (float): W component of the quaternion rotation;
 
 ### PING (command 121) Client > Server
 Binary Payload:
