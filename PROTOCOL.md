@@ -54,6 +54,14 @@ Binary Payload:
 * Rz (float): Z component of the quaternion rotation;
 * Rw (float): W component of the quaternion rotation;
 
+### DODGE (command 6) Client > Server
+Binary Payload:
+* Empty
+
+### CLIENT DODGE (command 7) Server > Client
+Binary Payload:
+* Empty
+
 ### PING (command 121) Client > Server
 Binary Payload:
 * Empty
