@@ -13,6 +13,7 @@ namespace BrawlerServer.Utilities
         Leave = 2,
         Move = 4,
         Dodge = 6,
+        Taunt = 8,
         Chat = 123,
         Auth = 125,
         
@@ -21,6 +22,7 @@ namespace BrawlerServer.Utilities
         ClientLeft = 3,
         ClientMoved = 5,
         ClientDodged = 7,
+        ClientTaunted = 9,
         ClientPinged = 122,
         ClientChatted = 124,
         ClientAuthed = 126,
@@ -42,7 +44,8 @@ namespace BrawlerServer.Utilities
             { Commands.Ack, typeof(ACKHandler) },
             { Commands.Auth, typeof(AuthHandler) },
             { Commands.Chat, typeof(ChatHandler) },
-            { Commands.Dodge, typeof(DodgeHandler) }
+            { Commands.Dodge, typeof(DodgeHandler) },
+            { Commands.Taunt, typeof(TauntHandler) }
         };
 
         public static ICommandHandler GetHandler(Packet packet)
