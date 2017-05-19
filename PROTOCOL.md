@@ -60,7 +60,7 @@ Binary Payload:
 
 ### CLIENT DODGE (command 7) Server > Client
 Binary Payload:
-* Empty
+* Id (uint): Client Unique Identifier
 
 ### PING (command 121) Client > Server
 Binary Payload:
