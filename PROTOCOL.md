@@ -58,7 +58,15 @@ Binary Payload:
 Binary Payload:
 * Empty
 
-### CLIENT DODGE (command 7) Server > Client
+### CLIENT DODGED (command 7) Server > Client
+Binary Payload:
+* Id (uint): Client Unique Identifier
+
+### TAUNT (command 8) Client > Server
+Binary Payload:
+* Empty
+
+### CLIENT TAUNTED (command 9) Server > Client
 Binary Payload:
 * Id (uint): Client Unique Identifier
 
