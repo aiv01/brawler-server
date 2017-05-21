@@ -287,7 +287,7 @@ namespace BrawlerServer.Server
         {
             foreach (var request in requests)
             {
-                Logs.Log($"[{this.Time}] {request.Response.Status}");
+                Logs.Log($"[{this.Time}] {request.requestType}: {request.Response.Status}");
                 if (request.Response.Status == TaskStatus.RanToCompletion && !request.requestedString)
                 {
                     request.ReadString();
@@ -301,7 +301,7 @@ namespace BrawlerServer.Server
             List<AsyncRequest> asyncRequestsToRemove = new List<AsyncRequest>();
             foreach (var request in requests)
             {
-                Logs.Log($"[{this.Time}] {request.Response.Status}");
+                Logs.Log($"[{this.Time}] ReadString{request.requestType}: {request.ResponseString.Status}");
                 if (request.ResponseString != null && request.ResponseString.Status == TaskStatus.RanToCompletion)
                 {
                     request.CallHandler(Json.Deserialize(request.ResponseString.Result, AsyncRequest.GetJsonType(request.requestType)), this);
