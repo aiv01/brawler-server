@@ -188,7 +188,7 @@ namespace BrawlerServer.Server
                     }
                     catch (Exception e)
                     {
-                        Logs.LogError($"Error while parsing packet from '{remoteEp}', with size of '{size}':\n{e}");
+                        Logs.LogError($"[{Time}] Error while parsing packet from '{remoteEp}', with size of '{size}':\n{e}");
                         continue;
                     }
                     finally
@@ -287,7 +287,6 @@ namespace BrawlerServer.Server
         {
             foreach (var request in requests)
             {
-                Logs.Log($"[{this.Time}] {request.requestType}: {request.Response.Status}");
                 if (request.Response.Status == TaskStatus.RanToCompletion && !request.requestedString)
                 {
                     request.ReadString();
@@ -303,7 +302,6 @@ namespace BrawlerServer.Server
             {
                 if (request.ResponseString != null)
                 {
-                    Logs.Log($"[{this.Time}] ReadString {request.requestType}: {request.ResponseString.Status}");
                     if (request.ResponseString.Status == TaskStatus.RanToCompletion)
                     {
                         request.CallHandler(Json.Deserialize(request.ResponseString.Result, AsyncRequest.GetJsonType(request.requestType)), this);
