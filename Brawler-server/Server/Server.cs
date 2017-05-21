@@ -252,6 +252,9 @@ namespace BrawlerServer.Server
                 }
                 packetsToSend.Clear();
 
+                CheckForResponse();
+                CheckForResponseString();
+
 
                 ServerTick?.Invoke(this);
 
