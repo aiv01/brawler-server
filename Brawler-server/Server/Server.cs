@@ -272,7 +272,7 @@ namespace BrawlerServer.Server
         #region AsyncOperations
 
         public readonly HttpClient HttpClient;
-        public List<AsyncRequest> requests;
+        public List<AsyncRequest> requests = new List<AsyncRequest>();
 
         public void AddAsyncRequest(AsyncRequest.RequestMethod requestMethod, string uri, IPEndPoint remoteEp, AsyncRequest.RequestType requestType, FormUrlEncodedContent content)
         {
