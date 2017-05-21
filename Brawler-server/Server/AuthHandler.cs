@@ -49,6 +49,7 @@ namespace BrawlerServer.Server
                 Client Client = new Client(remoteEp);
                 Client.SetName(JsonAuthPlayer.nickname);
                 Logs.Log($"[{server.Time}] Player with remoteEp '{remoteEp}' and name '{Client.Name}' successfully authed");
+                server.AddAuthedEndPoint(remoteEp, Client);
 
                 Json.ClientAuthed JsonClientAuthed = new Json.ClientAuthed()
                 {
