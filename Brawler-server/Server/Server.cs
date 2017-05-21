@@ -58,6 +58,8 @@ namespace BrawlerServer.Server
         {
             requestedString = false;
             this.requestType = requestType;
+            RemoteEp = remoteEp;
+
             if (requestMethod == RequestMethod.GET)
             {
                 Response = HttpClient.GetAsync(uri);
@@ -72,6 +74,7 @@ namespace BrawlerServer.Server
         public void ReadString()
         {
             Response.Result.Content.ReadAsStringAsync();
+            requestedString = true;
         }
 
         public void CallHandler(object JsonData, Server server)
@@ -288,7 +291,7 @@ namespace BrawlerServer.Server
                 if (request.Response.Status == TaskStatus.RanToCompletion && !request.requestedString)
                 {
                     request.ReadString();
-                    Logs.Log($"[{this.Time}] Got response for request type {request.requestType} for {request.RemoteEp})");
+                    Logs.Log($"[{this.Time}] Got response for request type {request.requestType} for {request.RemoteEp}");
                 }
             }
         }
@@ -298,6 +301,7 @@ namespace BrawlerServer.Server
             List<AsyncRequest> asyncRequestsToRemove = new List<AsyncRequest>();
             foreach (var request in requests)
             {
+                Logs.Log($"[{this.Time}] {request.Response.Status}");
                 if (request.ResponseString != null && request.ResponseString.Status == TaskStatus.RanToCompletion)
                 {
                     request.CallHandler(Json.Deserialize(request.ResponseString.Result, AsyncRequest.GetJsonType(request.requestType)), this);
