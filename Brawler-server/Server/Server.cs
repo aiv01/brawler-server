@@ -277,6 +277,7 @@ namespace BrawlerServer.Server
         public void AddAsyncRequest(AsyncRequest.RequestMethod requestMethod, string uri, IPEndPoint remoteEp, AsyncRequest.RequestType requestType, FormUrlEncodedContent content)
         {
             AsyncRequest asyncRequest = new AsyncRequest(requestMethod, uri, HttpClient, remoteEp, requestType, content);
+            requests.Add(asyncRequest);
         }
 
         public void CheckForResponse()
