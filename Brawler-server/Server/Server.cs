@@ -301,12 +301,15 @@ namespace BrawlerServer.Server
             List<AsyncRequest> asyncRequestsToRemove = new List<AsyncRequest>();
             foreach (var request in requests)
             {
-                Logs.Log($"[{this.Time}] ReadString{request.requestType}: {request.ResponseString.Status}");
-                if (request.ResponseString != null && request.ResponseString.Status == TaskStatus.RanToCompletion)
+                if (request.ResponseString != null)
                 {
-                    request.CallHandler(Json.Deserialize(request.ResponseString.Result, AsyncRequest.GetJsonType(request.requestType)), this);
-                    asyncRequestsToRemove.Add(request);
-                    Logs.Log($"[{this.Time}] Got string for request type {request.requestType} for {request.RemoteEp}: {request.ResponseString.Result})");
+                    Logs.Log($"[{this.Time}] ReadString{request.requestType}: {request.ResponseString.Status}");
+                    if (request.ResponseString.Status == TaskStatus.RanToCompletion)
+                    {
+                        request.CallHandler(Json.Deserialize(request.ResponseString.Result, AsyncRequest.GetJsonType(request.requestType)), this);
+                        asyncRequestsToRemove.Add(request);
+                        Logs.Log($"[{this.Time}] Got string for request type {request.requestType} for {request.RemoteEp}: {request.ResponseString.Result})");
+                    }
                 }
             }
             foreach (var request in asyncRequestsToRemove)
