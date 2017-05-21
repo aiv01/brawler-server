@@ -298,11 +298,11 @@ namespace BrawlerServer.Server
             List<AsyncRequest> asyncRequestsToRemove = new List<AsyncRequest>();
             foreach (var request in requests)
             {
-                if (request.ResponseString.Status == TaskStatus.RanToCompletion)
+                if (request.ResponseString != null && request.ResponseString.Status == TaskStatus.RanToCompletion)
                 {
                     request.CallHandler(Json.Deserialize(request.ResponseString.Result, AsyncRequest.GetJsonType(request.requestType)), this);
                     asyncRequestsToRemove.Add(request);
-                    Logs.Log($"Got string for request type {request.requestType} for {request.RemoteEp}: {request.ResponseString.Result})");
+                    Logs.Log($"[{this.Time}] Got string for request type {request.requestType} for {request.RemoteEp}: {request.ResponseString.Result})");
                 }
             }
             foreach (var request in asyncRequestsToRemove)
