@@ -73,7 +73,7 @@ namespace BrawlerServer.Server
 
         public void ReadString()
         {
-            Response.Result.Content.ReadAsStringAsync();
+            this.ResponseString = Response.Result.Content.ReadAsStringAsync();
             requestedString = true;
         }
 
@@ -303,7 +303,7 @@ namespace BrawlerServer.Server
             {
                 if (request.ResponseString != null)
                 {
-                    Logs.Log($"[{this.Time}] ReadString{request.requestType}: {request.ResponseString.Status}");
+                    Logs.Log($"[{this.Time}] ReadString {request.requestType}: {request.ResponseString.Status}");
                     if (request.ResponseString.Status == TaskStatus.RanToCompletion)
                     {
                         request.CallHandler(Json.Deserialize(request.ResponseString.Result, AsyncRequest.GetJsonType(request.requestType)), this);
