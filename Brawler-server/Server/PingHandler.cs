@@ -18,7 +18,7 @@ namespace BrawlerServer.Server
             //Check if client is connected
             if (!packet.Server.HasClient(packet.RemoteEp))
             {
-                throw new Exception($"[{packet.Server.Time}] '{packet.RemoteEp}' sent a ping but has never joined.");
+                throw new Exception($"'{packet.RemoteEp}' sent a ping but has never joined.");
             }
             Client = packet.Server.GetClientFromEndPoint(packet.RemoteEp);
             

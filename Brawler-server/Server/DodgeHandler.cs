@@ -26,7 +26,7 @@ namespace BrawlerServer.Server
 
             if (!packet.Server.HasClient(packet.RemoteEp))
             {
-                throw new Exception($"[{packet.Server.Time}] RemoteEp '{packet.RemoteEp}' sent a dodge but has never joined.");
+                throw new Exception($"RemoteEp '{packet.RemoteEp}' sent a dodge but has never joined.");
             }
             Client = packet.Server.GetClientFromEndPoint(packet.RemoteEp);
 

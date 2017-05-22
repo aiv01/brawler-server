@@ -18,7 +18,7 @@ namespace BrawlerServer.Server
             // first check if user has joined
             if (!packet.Server.HasClient(packet.RemoteEp))
             {
-                throw new Exception($"[{packet.Server.Time}] RemoteEp '{packet.RemoteEp}' tried to chat but has never joined.");
+                throw new Exception($"RemoteEp '{packet.RemoteEp}' tried to chat but has never joined.");
             }
             Client client = packet.Server.GetClientFromEndPoint(packet.RemoteEp);
             Logs.Log($"[{packet.Server.Time}] Received chat message from '{client}' with text '{JsonData.Text}'.");
