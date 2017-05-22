@@ -20,13 +20,12 @@ namespace BrawlerServer.Server
             // first check if user is not in joined users
             if (!packet.Server.HasClient(packet.RemoteEp))
             {
-                throw new Exception($"[{packet.Server.Time}] Client with remoteEp '{packet.RemoteEp}' tried to leave but has never joined.");
+                throw new Exception($"[{packet.Server.Time}] RemoteEp '{packet.RemoteEp}' tried to leave but has never joined.");
             }
-            Logs.Log($"[{packet.Server.Time}] Received leave message from '{packet.RemoteEp}'.");
             // create client and add it to the server's clients
             Client = packet.Server.GetClientFromEndPoint(packet.RemoteEp);
+            Logs.Log($"[{packet.Server.Time}] Received leave message from '{Client}'.");
             packet.Server.QueueRemoveClient(packet.RemoteEp, "left the game");
-            Logs.Log($"[{packet.Server.Time}] Player with remoteEp '{packet.RemoteEp}' left the server");
 
             JsonSerialized = JsonConvert.SerializeObject(JsonData);
         }
