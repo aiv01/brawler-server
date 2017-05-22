@@ -27,7 +27,7 @@ namespace BrawlerServer.Server
 
             Logs.Log($"[{packet.Server.Time}] Received ping packet from {Client}");
 
-            Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, null);
+            Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, packet.RemoteEp);
             packetToSend.Broadcast = true;
             packetToSend.AddHeaderToData(false, Commands.Ping);
             packetToSend.Writer.Write(Id);
