@@ -25,15 +25,15 @@ namespace BrawlerServer.Server
             // first check if user is already in joined users
             if (packet.Server.HasClient(packet.RemoteEp))
             {
-                throw new Exception($"'{packet.Server.GetClientFromAuthedEndPoint(packet.RemoteEp)}' tried to join but has already joined.");
+                throw new Exception($"{packet.Server.GetClientFromAuthedEndPoint(packet.RemoteEp)} tried to join but has already joined.");
             }
             // create client and add it to the server's clients
             Client = packet.Server.GetClientFromAuthedEndPoint(packet.RemoteEp);
-            Logs.Log($"[{packet.Server.Time}] Received join message from '{Client}'.");
+            Logs.Log($"[{packet.Server.Time}] Received join message from {Client}.");
             //ToDo Remove
             Client.TimeLastPacketSent = packet.Server.Time;
             packet.Server.AddClient(Client);
-            Logs.Log($"[{packet.Server.Time}] '{Client}' joined the server");
+            Logs.Log($"[{packet.Server.Time}] {Client} joined the server");
 
             JsonSerialized = JsonConvert.SerializeObject(JsonData);
         }

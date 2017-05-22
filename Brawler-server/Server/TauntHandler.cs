@@ -41,7 +41,7 @@ namespace BrawlerServer.Server
             Rz = packet.Reader.ReadSingle();
             Rw = packet.Reader.ReadSingle();
 
-            Logs.Log($"[{packet.Server.Time}] Received taunt packet (({Id}){X},{Y},{Z},{Rx},{Ry},{Rz},{Rw}) from '{Client}'.");
+            Logs.Log($"[{packet.Server.Time}] Received taunt packet ({X},{Y},{Z},{Rx},{Ry},{Rz},{Rw}) from '{Client}'.");
 
             Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, packet.RemoteEp);
             packetToSend.Broadcast = true;

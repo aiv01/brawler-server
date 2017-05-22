@@ -173,7 +173,7 @@ namespace BrawlerServer.Server
                 while (packetIndex < packetsPerLoop && socket.Available > 0)
                 {
                     var size = socket.ReceiveFrom(recvBuffer, ref remoteEp);
-                    Logs.Log($"[{Time}] Received message from '{remoteEp}', size: '{size}'.");
+                    Logs.Log($"[{Time}] Received message from '{remoteEp}', size: {size}.");
                     Packet packet = null;
                     try
                     {
@@ -184,11 +184,11 @@ namespace BrawlerServer.Server
                             clients[(IPEndPoint)remoteEp].TimeLastPacketSent = this.Time;
                         }
                         packet.ParseHeaderFromData();
-                        Logs.Log($"[{Time}] Received {packet}'.");
+                        Logs.Log($"[{Time}] Received {packet}.");
                     }
                     catch (Exception e)
                     {
-                        Logs.LogError($"[{Time}] Error while parsing packet from '{remoteEp}', with size of '{size}':");
+                        Logs.LogError($"[{Time}] Error while parsing packet from '{remoteEp}', with size of {size}:");
                         Logs.LogError($"[{Time}] {e}");
                         continue;
                     }
@@ -235,7 +235,7 @@ namespace BrawlerServer.Server
                         foreach (var pair in clients)
                         {
                             socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, pair.Key);
-                            Logs.Log($"[{Time}] Sent broadcast {packet} to '{pair.Value}'.");
+                            Logs.Log($"[{Time}] Sent broadcast {packet} to {pair.Value}.");
                             if (packet.IsReliable)
                             {
                                 if (HasReliablePacket(packet.Id))
@@ -364,7 +364,7 @@ namespace BrawlerServer.Server
             string jsonData = JsonConvert.SerializeObject(jsonDataObject);
 
             clients[client.EndPoint] = client;
-            Logs.Log($"[{Time}] Added new '{client}'.");
+            Logs.Log($"[{Time}] Added new {client}.");
 
             byte[] data = new byte[512];
 
@@ -375,6 +375,7 @@ namespace BrawlerServer.Server
             packetClientAdded.Writer.Write(jsonData);
             SendPacket(packetClientAdded);
 
+            //ToDo Check this ... ?
             foreach (var cl in clients.Values)
             {
                 if (Equals(cl, client)) continue;
