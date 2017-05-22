@@ -334,7 +334,7 @@ namespace BrawlerServer.Server
         public void AcknowledgeReliablePacket(uint AckPacketId)
         {
             ReliablePackets.Remove(AckPacketId);
-            Logs.Log($"{Time} Acknowledged Reliable Packet with Packet id '{AckPacketId}'");
+            Logs.Log($"[{Time}] Acknowledged Reliable Packet with Packet id '{AckPacketId}'");
         }
         #endregion
 
