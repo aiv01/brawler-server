@@ -233,8 +233,9 @@ namespace BrawlerServer.Server
                     {
                         foreach (var pair in clients)
                         {
-                            if (packet.RemoteEp == pair.Key)
-                                continue;
+                            //TODO Fails tests for Move, Taunt and Dodge ... Loses the last float value
+                            //if (packet.RemoteEp == pair.Key)
+                            //    continue;
                             socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, pair.Key);
                             Logs.Log($"[{Time}] Sent broadcast packet to '{pair.Key}' with id '{packet.Id}', command '{packet.Command}'");
                             if (packet.IsReliable)
