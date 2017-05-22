@@ -102,15 +102,15 @@ Binary Payload:
 
 ### PING (command 121) Server > Client
 Binary Payload:
-* Empty
+* uint Id: Client (PONGED) Unique Identifier
 
 ### CLIENT PINGED aka PONG (command 122) Client > Server
 Binary Payload:
-* uint Id: Client (ponged) Unique Identifier
+* uint Id: Client (PONGED) Unique Identifier
 
 ### CLIENT PINGED aka PONG (command 122) Server > Client
 Binary Payload:
-* uint Id: Client (ponged) Unique Identifier
+* uint Id: Client (PINGED) Unique Identifier
 
 ### CHAT (command 123) Client > Server
 Json Payload:
