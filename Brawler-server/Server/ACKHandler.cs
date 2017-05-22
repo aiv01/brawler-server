@@ -20,7 +20,7 @@ namespace BrawlerServer.Server
             // first check if packet id is already in reliable packets
             if (!packet.Server.HasReliablePacket(ackPacketId))
             {
-                throw new Exception($"Client with remoteEp '{packet.RemoteEp}' tried to send ack for not-reliable / already acknowleged packet.");
+                throw new Exception($"RemoteEp '{packet.RemoteEp}' tried to send ack for not-reliable / already acknowleged packet.");
             }
 
             packet.Server.AcknowledgeReliablePacket(ackPacketId);
