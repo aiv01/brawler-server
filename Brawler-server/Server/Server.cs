@@ -189,7 +189,7 @@ namespace BrawlerServer.Server
                     catch (Exception e)
                     {
                         Logs.LogError($"[{Time}] Error while parsing packet from '{remoteEp}', with size of '{size}':");
-                        Logs.LogError($"[{Time}] {e}")
+                        Logs.LogError($"[{Time}] {e}");
                         continue;
                     }
                     finally
