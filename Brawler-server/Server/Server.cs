@@ -430,6 +430,18 @@ namespace BrawlerServer.Server
             return clients[endPoint];
         }
 
+        public Client GetClientFromId(uint id)
+        {
+            foreach(Client client in clients.Values)
+            {
+                if (client.Id == id)
+                {
+                    return client;
+                }
+            }
+            return null;
+        }
+
         public bool HasClient(IPEndPoint endPoint)
         {
             return clients.ContainsKey(endPoint);

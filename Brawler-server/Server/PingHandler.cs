@@ -23,13 +23,13 @@ namespace BrawlerServer.Server
             Client = packet.Server.GetClientFromEndPoint(packet.RemoteEp);
             
             packet.Stream.Seek(packet.PayloadOffset, System.IO.SeekOrigin.Begin);
-            Id = packet.Server.GetClientFromEndPoint(packet.RemoteEp).Id;
+            Id = Client.Id;
 
-            Logs.Log($"[{packet.Server.Time}] Received ping packet from {Client} with id {Id}");
+            Logs.Log($"[{packet.Server.Time}] Received ping packet from {Client}");
 
             Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, null);
             packetToSend.Broadcast = true;
-            packetToSend.AddHeaderToData(false, Commands.ClientPinged);
+            packetToSend.AddHeaderToData(false, Commands.Ping);
             packetToSend.Writer.Write(Id);
             Packet.Server.SendPacket(packetToSend);
         }
