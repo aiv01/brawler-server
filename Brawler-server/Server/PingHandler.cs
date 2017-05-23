@@ -29,12 +29,7 @@ namespace BrawlerServer.Server
 
             Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, packet.RemoteEp);
             packetToSend.Broadcast = true;
-<<<<<<< HEAD
             packetToSend.AddHeaderToData(false, Commands.Ping);
-=======
-            //ToDo Fix, should be Ping and not Client Pinged
-            packetToSend.AddHeaderToData(false, Commands.ClientPinged);
->>>>>>> inDev
             packetToSend.Writer.Write(Id);
             Packet.Server.SendPacket(packetToSend);
         }
