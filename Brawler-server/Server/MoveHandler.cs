@@ -27,7 +27,7 @@ namespace BrawlerServer.Server
 
             if (!packet.Server.HasClient(packet.RemoteEp))
             {
-                throw new Exception($"'{packet.RemoteEp}' sent an update but has never joined.");
+                throw new Exception($"'{packet.RemoteEp}' sent a move but has never joined.");
             }
             Client = packet.Server.GetClientFromEndPoint(packet.RemoteEp);
 
@@ -43,7 +43,7 @@ namespace BrawlerServer.Server
             Rz = packet.Reader.ReadSingle();
             Rw = packet.Reader.ReadSingle();
 
-            Logs.Log($"[{packet.Server.Time}] Received update packet ({MoveType},{X},{Y},{Z},{Rx},{Ry},{Rz},{Rw}) from {Client}.");
+            Logs.Log($"[{packet.Server.Time}] Received move packet ({MoveType},{X},{Y},{Z},{Rx},{Ry},{Rz},{Rw}) from {Client}.");
 
             Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, packet.RemoteEp);
             packetToSend.Broadcast = true;
