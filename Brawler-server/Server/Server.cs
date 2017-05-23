@@ -221,7 +221,7 @@ namespace BrawlerServer.Server
                 {
                     if (this.Time > reliablePacket.Value.Time + this.MaxAckResponseTime)
                     {
-                        Logs.LogWarning($"{this.Time} {reliablePacket.Value.Time}");
+                        Logs.LogWarning($"[{this.Time}] Queued Reliable {reliablePacket.Value.Packet} with time {Time}.");
                         this.SendPacket(reliablePacket.Value.Packet);
                     }
                 }
