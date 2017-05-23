@@ -10,7 +10,7 @@ namespace BrawlerServer.Server
         public IPEndPoint EndPoint { get; private set; }
         public string Name { get; private set; }
         public uint Id { get; private set; }
-        public long TimeLastPacketSent { get; set; }
+        public uint TimeLastPacketSent { get; set; }
 
         public Client(uint id, IPEndPoint endPoint)
         {

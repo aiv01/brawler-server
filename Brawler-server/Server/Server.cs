@@ -15,7 +15,7 @@ namespace BrawlerServer.Server
     public struct ReliablePacket
     {
         public Packet Packet { get; private set; }
-        public long Time { get; private set; }
+        public uint Time { get; private set; }
 
         public ReliablePacket(Packet packet)
         {
@@ -110,18 +110,18 @@ namespace BrawlerServer.Server
         private readonly int packetsPerLoop;
 
         private Dictionary<uint, ReliablePacket> ReliablePackets;
-        public int MaxAckResponseTime { get; private set; }
+        public uint MaxAckResponseTime { get; private set; }
 
         private readonly Dictionary<IPEndPoint, Client> authedEndPoints;
 
         private readonly Dictionary<IPEndPoint, Client> clients;
 
         public bool IsRunning { get; set; }
-        public long Time { get; private set; }
+        public uint Time { get; private set; }
         // does NOT count looptime
-        public long DeltaTime { get; private set; }
+        public uint DeltaTime { get; private set; }
 
-        public long MaxIdleTimeout { get; private set; }
+        public uint MaxIdleTimeout { get; private set; }
 
         public Server(IPEndPoint bindEp, int bufferSize = 512, int packetsPerLoop = 256)
         {
@@ -166,7 +166,9 @@ namespace BrawlerServer.Server
             var watch = Stopwatch.StartNew();
             while (IsRunning)
             {
-                Time = watch.ElapsedMilliseconds;
+                if (watch.ElapsedMilliseconds > UInt32.MaxValue)
+                    watch.Restart();
+                Time = (uint)watch.ElapsedMilliseconds;
 
                 // first receive packets
                 var packetIndex = 0;
@@ -189,7 +191,8 @@ namespace BrawlerServer.Server
                     catch (Exception e)
                     {
                         Logs.LogError($"[{Time}] Error while parsing packet from '{remoteEp}', with size of {size}:");
-                        Logs.LogError($"[{Time}] {e}");
+                        foreach(string line in e.Message.Split('\n'))
+                            Logs.LogError($"[{Time}] {line}");
                         continue;
                     }
                     finally
@@ -259,7 +262,7 @@ namespace BrawlerServer.Server
 
                 ServerTick?.Invoke(this);
 
-                DeltaTime = watch.ElapsedMilliseconds - Time;
+                DeltaTime = (uint)watch.ElapsedMilliseconds - Time;
                 Thread.Sleep(Math.Max((int)(msLoopTime - DeltaTime), 0));
             }
             socket.Close();
