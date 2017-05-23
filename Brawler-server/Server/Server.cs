@@ -26,7 +26,7 @@ namespace BrawlerServer.Server
         public void UpdateTime()
         {
             this.Time = Packet.Server.Time;
-            Logs.Log($"[{Time}] Updated Reliable Packet '{Packet.Id}' time.");
+            Logs.Log($"[{Time}] Updated Reliable {Packet} time.");
         }
     }
 
