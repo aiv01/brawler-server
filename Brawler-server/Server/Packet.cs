@@ -107,5 +107,10 @@ namespace BrawlerServer.Server
                 PacketHandler.Init(this);
             }
         }
+
+        public override string ToString()
+        {
+            return $"packet:[Id:'{Id}', Bc:'{Broadcast}', ack:'{IsReliable}', command:'{Command}']";
+        }
     }
 }
