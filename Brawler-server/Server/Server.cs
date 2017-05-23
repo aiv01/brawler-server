@@ -374,11 +374,12 @@ namespace BrawlerServer.Server
             packetClientAdded.Broadcast = true;
             packetClientAdded.Writer.Write(jsonData);
             SendPacket(packetClientAdded);
-
-            //ToDo Check this ... ?
+            
+            //Send every client already joined to the new client joined
             foreach (var cl in clients.Values)
             {
                 if (Equals(cl, client)) continue;
+
                 byte[] welcomeData = new byte[512];
                 Json.ClientJoined welcomeJsonDataObject = new Json.ClientJoined() { Name = client.Name, Id = cl.Id };
                 string welcomeJsonData = JsonConvert.SerializeObject(welcomeJsonDataObject);
