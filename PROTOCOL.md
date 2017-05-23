@@ -4,8 +4,8 @@
 4 byte (UInt32): Id  
 * Packet Id
 
-4 byte (Single): Timestamp  
-* Time elapsed from the start of the server (in seconds)
+4 byte (uint): Timestamp  
+* Time elapsed from the start of the server (in milliseconds)
 
 1 byte: Packet Infos  
 * Most Significant Bit: 1 if reliable, otherwise 0;
