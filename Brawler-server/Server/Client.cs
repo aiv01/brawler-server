@@ -27,7 +27,7 @@ namespace BrawlerServer.Server
 
         public override string ToString()
         {
-            return $"client:[name:'{Name}', endPoint:'{EndPoint}']";
+            return $"client:[name:'{Name}', endPoint:'{EndPoint}', id:'{Id}']";
         }
 
         protected bool Equals(Client other)

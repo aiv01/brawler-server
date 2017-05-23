@@ -26,7 +26,7 @@ namespace BrawlerServer.Server
         public void UpdateTime()
         {
             this.Time = Packet.Server.Time;
-            Logs.Log($"{Time} Updated Reliable Packet ({Packet.Id}) time");
+            Logs.Log($"[{Time}] Updated Reliable Packet '{Packet.Id}' time.");
         }
     }
 
@@ -68,7 +68,7 @@ namespace BrawlerServer.Server
             {
                 Response = HttpClient.PostAsync(uri, content);
             }
-            Logs.Log($"[MissingTime] Sent {requestMethod} request to {uri} from {remoteEp}, request type {requestType}");
+            Logs.Log($"[LongAgo] Sent {requestMethod} request to {uri} from {remoteEp} with request type {requestType}.");
         }
 
         public void ReadString()
@@ -173,7 +173,7 @@ namespace BrawlerServer.Server
                 while (packetIndex < packetsPerLoop && socket.Available > 0)
                 {
                     var size = socket.ReceiveFrom(recvBuffer, ref remoteEp);
-                    Logs.Log($"[{Time}] Received message from '{remoteEp}', size: '{size}'.");
+                    Logs.Log($"[{Time}] Received message from '{remoteEp}', size: {size}.");
                     Packet packet = null;
                     try
                     {
@@ -184,11 +184,12 @@ namespace BrawlerServer.Server
                             clients[(IPEndPoint)remoteEp].TimeLastPacketSent = this.Time;
                         }
                         packet.ParseHeaderFromData();
-                        Logs.Log($"[{Time}] Received packet with id '{packet.Id}' command '{packet.Command}' isReliable '{packet.IsReliable}'.");
+                        Logs.Log($"[{Time}] Received {packet}.");
                     }
                     catch (Exception e)
                     {
-                        Logs.LogError($"[{Time}] Error while parsing packet from '{remoteEp}', with size of '{size}':\n{e}");
+                        Logs.LogError($"[{Time}] Error while parsing packet from '{remoteEp}', with size of {size}:");
+                        Logs.LogError($"[{Time}] {e}");
                         continue;
                     }
                     finally
@@ -237,7 +238,7 @@ namespace BrawlerServer.Server
                             //if (packet.RemoteEp == pair.Key)
                             //    continue;
                             socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, pair.Key);
-                            Logs.Log($"[{Time}] Sent broadcast packet to '{pair.Key}' with id '{packet.Id}', command '{packet.Command}'");
+                            Logs.Log($"[{Time}] Sent broadcast {packet} to {pair.Value}.");
                             if (packet.IsReliable)
                             {
                                 if (HasReliablePacket(packet.Id))
@@ -250,7 +251,7 @@ namespace BrawlerServer.Server
                     else
                     {
                         socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, packet.RemoteEp);
-                        Logs.Log($"[{Time}] Sent packet with command {packet.Command} to remoteEp {packet.RemoteEp}");
+                        Logs.Log($"[{Time}] Sent {packet} to {packet.RemoteEp}");
                     }
 
                     //remove Queued Clients
@@ -293,7 +294,7 @@ namespace BrawlerServer.Server
                 if (request.Response.Status == TaskStatus.RanToCompletion && !request.requestedString)
                 {
                     request.ReadString();
-                    Logs.Log($"[{this.Time}] Got response for request type {request.requestType} for {request.RemoteEp}");
+                    Logs.Log($"[{this.Time}] Got response for request type '{request.requestType}' for '{request.RemoteEp}'");
                 }
             }
         }
@@ -309,7 +310,7 @@ namespace BrawlerServer.Server
                     {
                         request.CallHandler(Json.Deserialize(request.ResponseString.Result, AsyncRequest.GetJsonType(request.requestType)), this);
                         asyncRequestsToRemove.Add(request);
-                        Logs.Log($"[{this.Time}] Got string for request type {request.requestType} for {request.RemoteEp}: {request.ResponseString.Result})");
+                        Logs.Log($"[{this.Time}] Got string for request type '{request.requestType}' for '{request.RemoteEp}': '{request.ResponseString.Result})'.");
                     }
                 }
             }
@@ -325,7 +326,7 @@ namespace BrawlerServer.Server
         public void AddReliablePacket(Packet packet)
         {
             ReliablePackets[packet.Id] = new ReliablePacket(packet);
-            Logs.Log($"[{Time}] Added Reliable Packet with Packet id '{packet.Id}'");
+            Logs.Log($"[{Time}] Added Reliable {packet}");
         }
 
         public bool HasReliablePacket(uint PacketId)
@@ -336,7 +337,7 @@ namespace BrawlerServer.Server
         public void AcknowledgeReliablePacket(uint AckPacketId)
         {
             ReliablePackets.Remove(AckPacketId);
-            Logs.Log($"{Time} Acknowledged Reliable Packet with Packet id '{AckPacketId}'");
+            Logs.Log($"[{Time}] Acknowledged Reliable Packet with Packet id '{AckPacketId}'");
         }
         #endregion
 
@@ -366,7 +367,7 @@ namespace BrawlerServer.Server
             string jsonData = JsonConvert.SerializeObject(jsonDataObject);
 
             clients[client.EndPoint] = client;
-            Logs.Log($"[{Time}] Added new Client: '{client}'.");
+            Logs.Log($"[{Time}] Added new {client}.");
 
             byte[] data = new byte[512];
 
@@ -376,10 +377,12 @@ namespace BrawlerServer.Server
             packetClientAdded.Broadcast = true;
             packetClientAdded.Writer.Write(jsonData);
             SendPacket(packetClientAdded);
-
+            
+            //Send every client already joined to the new client joined
             foreach (var cl in clients.Values)
             {
                 if (Equals(cl, client)) continue;
+
                 byte[] welcomeData = new byte[512];
                 Json.ClientJoined welcomeJsonDataObject = new Json.ClientJoined() { Name = client.Name, Id = cl.Id };
                 string welcomeJsonData = JsonConvert.SerializeObject(welcomeJsonDataObject);
@@ -394,7 +397,7 @@ namespace BrawlerServer.Server
 
         public List<Client> QueuedClientsToRemove = new List<Client>();
 
-        public void QueueRemoveClient(Client client, string Reason = "Unkown")
+        public void QueueRemoveClient(Client client, string Reason = "Unknown")
         {
             QueueRemoveClient(client.EndPoint, Reason);
         }
@@ -417,7 +420,7 @@ namespace BrawlerServer.Server
 
             QueuedClientsToRemove.Add(removedClient);
 
-            Logs.Log($"[{Time}] Queued Client to Remove: '{removedClient}' for '{Reason}'.");
+            Logs.Log($"[{Time}] Queued {removedClient} to remove for '{Reason}'.");
         }
 
         public void RemoveClients()
