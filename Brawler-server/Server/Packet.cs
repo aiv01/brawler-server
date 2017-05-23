@@ -110,7 +110,7 @@ namespace BrawlerServer.Server
 
         public override string ToString()
         {
-            return $"packet:[Id:'{Id}', Bc:'{Broadcast}', ack:'{IsReliable}', command:'{Command}']";
+            return $"packet:[Timestamp:'{Time}', Id:'{Id}', Bc:'{Broadcast}', ack:'{IsReliable}', command:'{Command}']";
         }
     }
 }
