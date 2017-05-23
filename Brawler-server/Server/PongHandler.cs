@@ -25,7 +25,7 @@ namespace BrawlerServer.Server
             //Check if client that pinged is still in game
             if (Packet.Server.GetClientFromId(Id) == null)
             {
-                throw new Exception($"[{packet.Server.Time}] Client that sent ping left the game.");
+                throw new Exception($"[{packet.Server.Time}] Client that sent ping's missing.");
             }
             Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, Packet.Server.GetClientFromId(Id).EndPoint);
             packetToSend.AddHeaderToData(false, Commands.Pong);
