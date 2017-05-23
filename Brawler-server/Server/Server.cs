@@ -239,19 +239,19 @@ namespace BrawlerServer.Server
                             //    continue;
                             socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, pair.Key);
                             Logs.Log($"[{Time}] Sent broadcast {packet} to {pair.Value}.");
-                            if (packet.IsReliable)
-                            {
-                                if (HasReliablePacket(packet.Id))
-                                    ReliablePackets[packet.Id].UpdateTime();
-                                else
-                                    AddReliablePacket(packet);
-                            }
                         }
                     }
                     else
                     {
                         socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, packet.RemoteEp);
                         Logs.Log($"[{Time}] Sent {packet} to {packet.RemoteEp}");
+                    }
+                    if (packet.IsReliable)
+                    {
+                        if (HasReliablePacket(packet.Id))
+                            ReliablePackets[packet.Id].UpdateTime();
+                        else
+                            AddReliablePacket(packet);
                     }
 
                     //remove Queued Clients
