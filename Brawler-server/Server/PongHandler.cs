@@ -28,7 +28,7 @@ namespace BrawlerServer.Server
                 throw new Exception($"[{packet.Server.Time}] Client that sent ping left the game.");
             }
             Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, Packet.Server.GetClientFromId(Id).EndPoint);
-            packetToSend.AddHeaderToData(false, Commands.ClientPinged);
+            packetToSend.AddHeaderToData(false, Commands.Pong);
             packetToSend.Writer.Write(Client.Id);
             Packet.Server.SendPacket(packetToSend);
         }

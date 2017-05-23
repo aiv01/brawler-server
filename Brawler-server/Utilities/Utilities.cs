@@ -28,7 +28,7 @@ namespace BrawlerServer.Utilities
 
         //Both Ways
         Ping = 121,
-        ClientPinged = 122,
+        Pong = 122,
         Ack = 127
     }
 
@@ -48,7 +48,7 @@ namespace BrawlerServer.Utilities
             { Commands.Dodge, typeof(DodgeHandler) },
             { Commands.Taunt, typeof(TauntHandler) },
             { Commands.Ping, typeof(PingHandler) },
-            { Commands.ClientPinged, typeof(PongHandler) }
+            { Commands.Pong, typeof(PongHandler) }
         };
 
         public static ICommandHandler GetHandler(Packet packet)

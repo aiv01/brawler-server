@@ -23,13 +23,13 @@ namespace BrawlerServer.Server.Tests
 
             var packetId = Utilities.Utilities.GetPacketId();
             var packet = new Packet(server, 1024, UpdateData, server.BindEp);
-            packet.AddHeaderToData(packetId, false, Commands.ClientPinged);
+            packet.AddHeaderToData(packetId, false, Commands.Pong);
             packet.Writer.Write(client.Id);
             packet.PacketSize = (int)packet.Stream.Position;
 
             Assert.That(packet.Id, Is.EqualTo(packetId));
             Assert.That(packet.IsReliable, Is.EqualTo(false));
-            Assert.That(packet.Command, Is.EqualTo(Commands.ClientPinged));
+            Assert.That(packet.Command, Is.EqualTo(Commands.Pong));
             Assert.That(packet.RemoteEp, Is.EqualTo(server.BindEp));
             var payloadOffset = packet.PayloadOffset;
 
@@ -37,7 +37,7 @@ namespace BrawlerServer.Server.Tests
 
             Assert.That(packet.Id, Is.EqualTo(packetId));
             Assert.That(packet.IsReliable, Is.EqualTo(false));
-            Assert.That(packet.Command, Is.EqualTo(Commands.ClientPinged));
+            Assert.That(packet.Command, Is.EqualTo(Commands.Pong));
             Assert.That(packet.RemoteEp, Is.EqualTo(server.BindEp));
             Assert.That(packet.PayloadOffset, Is.EqualTo(payloadOffset));
 
@@ -57,7 +57,7 @@ namespace BrawlerServer.Server.Tests
 
             server.ServerPacketReceive += (s, p) =>
             {
-                if (p.Command == Commands.ClientPinged)
+                if (p.Command == Commands.Pong)
                 {
                     s.IsRunning = false;
 
@@ -65,7 +65,7 @@ namespace BrawlerServer.Server.Tests
 
                     Assert.That(p.Id, Is.GreaterThan(packet.Id));
                     Assert.That(p.IsReliable, Is.EqualTo(false));
-                    Assert.That(p.Command, Is.EqualTo(Commands.ClientPinged));
+                    Assert.That(p.Command, Is.EqualTo(Commands.Pong));
                     Assert.That(p.RemoteEp, Is.EqualTo(server.BindEp));
                     Assert.That(p.PayloadOffset, Is.EqualTo(packet.PayloadOffset));
 
