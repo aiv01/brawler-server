@@ -105,6 +105,7 @@ namespace BrawlerServer.Server
 
         private Dictionary<uint, ReliablePacket> ReliablePackets;
         public uint MaxAckResponseTime { get; private set; }
+        public uint MaxAckSendTime { get; private set; }
 
         private readonly Dictionary<IPEndPoint, Client> authedEndPoints;
 
@@ -136,6 +137,7 @@ namespace BrawlerServer.Server
 
             this.ReliablePackets = new Dictionary<uint, ReliablePacket>();
             this.MaxAckResponseTime = 5000;
+            this.MaxAckSendTime = 30000;
 
             this.MaxIdleTimeout = 10000;
         }
@@ -214,6 +216,11 @@ namespace BrawlerServer.Server
                 List<uint> reliablePacketsToRemove = new List<uint>();
                 foreach (KeyValuePair<uint, ReliablePacket> reliablePacket in ReliablePackets)
                 {
+                    if (this.Time > reliablePacket.Value.Packet.Time + this.MaxAckSendTime)
+                    {
+                        reliablePacketsToRemove.Add(reliablePacket.Key);
+                    }
+
                     if (this.Time > reliablePacket.Value.Time + this.MaxAckResponseTime)
                     {
                         this.SendPacket(reliablePacket.Value.Packet);
