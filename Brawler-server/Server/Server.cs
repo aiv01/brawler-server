@@ -221,10 +221,10 @@ namespace BrawlerServer.Server
                         reliablePacketsToRemove.Add(reliablePacket.Key);
                     }
 
-                    if (!this.HasClient(reliablePacket.Value.Packet.RemoteEp))
+                    /*if (!this.HasClient(reliablePacket.Value.Packet.RemoteEp))
                     {
                         reliablePacketsToRemove.Add(reliablePacket.Key);
-                    }
+                    }*/
 
                     if (this.Time > reliablePacket.Value.Time + this.MaxAckResponseTime)
                     {
