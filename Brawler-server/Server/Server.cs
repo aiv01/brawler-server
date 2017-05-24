@@ -221,11 +221,6 @@ namespace BrawlerServer.Server
                         reliablePacketsToRemove.Add(reliablePacket.Key);
                     }
 
-                    /*if (!this.HasClient(reliablePacket.Value.Packet.RemoteEp))
-                    {
-                        reliablePacketsToRemove.Add(reliablePacket.Key);
-                    }*/
-
                     if (this.Time > reliablePacket.Value.Time + this.MaxAckResponseTime)
                     {
                         this.SendPacket(reliablePacket.Value.Packet);
@@ -396,6 +391,7 @@ namespace BrawlerServer.Server
                 Packet welcomePacket = new Packet(this, welcomeData.Length, welcomeData, client.EndPoint);
                 welcomePacket.AddHeaderToData(true, Commands.ClientJoined);
                 welcomePacket.Writer.Write(welcomeJsonData);
+                Logs.Log($"Welcome {welcomePacket}");
                 SendPacket(welcomePacket);
             }
 
