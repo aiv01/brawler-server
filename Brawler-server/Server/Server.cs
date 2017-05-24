@@ -22,12 +22,6 @@ namespace BrawlerServer.Server
             this.Packet = packet;
             this.Time = packet.Server.Time;
         }
-
-        public void UpdateTime()
-        {
-            this.Time = Packet.Server.Time;
-            Logs.Log($"[{Packet.Server.Time}] Updated Reliable {Packet} time to {Time}.");
-        }
     }
 
     public class AsyncRequest
@@ -217,13 +211,18 @@ namespace BrawlerServer.Server
                     this.QueueRemoveClient(client, "Kicked for Idle Timeout");
                 }
                 //Check if reliable packet has passed the time check limit
+                List<uint> reliablePacketsToRemove = new List<uint>();
                 foreach (KeyValuePair<uint, ReliablePacket> reliablePacket in ReliablePackets)
                 {
                     if (this.Time > reliablePacket.Value.Time + this.MaxAckResponseTime)
                     {
-                        Logs.LogWarning($"[{this.Time}] Queued Reliable {reliablePacket.Value.Packet} with time {Time}.");
                         this.SendPacket(reliablePacket.Value.Packet);
+                        reliablePacketsToRemove.Add(reliablePacket.Key);
                     }
+                }
+                foreach (uint reliablePacketId in reliablePacketsToRemove)
+                {
+                    ReliablePackets.Remove(reliablePacketId);
                 }
                 // then send packets (do we need to send only a fixed number?)
                 foreach (var packet in packetsToSend)
@@ -246,10 +245,7 @@ namespace BrawlerServer.Server
                     }
                     if (packet.IsReliable)
                     {
-                        if (HasReliablePacket(packet.Id))
-                            ReliablePackets[packet.Id].UpdateTime();
-                        else
-                            AddReliablePacket(packet);
+                        AddReliablePacket(packet);
                     }
 
                     //remove Queued Clients
