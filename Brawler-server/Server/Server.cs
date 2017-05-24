@@ -385,7 +385,7 @@ namespace BrawlerServer.Server
                 if (Equals(cl, client)) continue;
 
                 byte[] welcomeData = new byte[512];
-                Json.ClientJoined welcomeJsonDataObject = new Json.ClientJoined() { Name = client.Name, Id = cl.Id };
+                Json.ClientJoined welcomeJsonDataObject = new Json.ClientJoined() { Name = client.Name, Id = client.Id };
                 string welcomeJsonData = JsonConvert.SerializeObject(welcomeJsonDataObject);
 
                 Packet welcomePacket = new Packet(this, welcomeData.Length, welcomeData, client.EndPoint);
