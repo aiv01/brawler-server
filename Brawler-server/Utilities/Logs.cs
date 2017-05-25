@@ -15,12 +15,6 @@ namespace BrawlerServer.Utilities
 
         public void Write(string message, string category)
         {
-            if (category == "Debug")
-                Console.ForegroundColor = ConsoleColor.White;
-            else if (category == "Warning")
-                Console.ForegroundColor = ConsoleColor.DarkYellow;
-            else if (category == "Error")
-                Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.WriteLine($"[{category}]{message}");
             //Console.WriteLine(message);
         }
