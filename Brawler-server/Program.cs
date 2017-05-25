@@ -11,6 +11,8 @@ namespace BrawlerServer
     {
         static void Main(string[] args)
         {
+            Logs.Level = Logs.DebugLevel.WarningsOnly;
+
             Logs.Log($"Brawler Server started!\nHostname: {args[0]}\nPort: {args[1]}");
 
             var bindEp = new IPEndPoint(IPAddress.Parse(args[0]), Convert.ToInt32(args[1]));
