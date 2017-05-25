@@ -4,8 +4,8 @@
 4 byte (UInt32): Id  
 * Packet Id
 
-4 byte (Single): Timestamp  
-* Time elapsed from the start of the server (in seconds)
+4 byte (uint): Timestamp  
+* Time elapsed from the start of the server (in milliseconds)
 
 1 byte: Packet Infos  
 * Most Significant Bit: 1 if reliable, otherwise 0;
@@ -54,9 +54,72 @@ Binary Payload:
 * Rz (float): Z component of the quaternion rotation;
 * Rw (float): W component of the quaternion rotation;
 
-### CHAT (command 124) Client > Server && Server > Client
+### DODGE (command 6) Client > Server
+Binary Payload:
+* X (float): X position of the player;
+* Y (float): Y position of the player;
+* Z (float): Z position of the player;
+* Rx (float): X component of the quaternion rotation;
+* Ry (float): Y component of the quaternion rotation;
+* Rz (float): Z component of the quaternion rotation;
+* Rw (float): W component of the quaternion rotation;
+
+### CLIENT DODGED (command 7) Server > Client - Reliable
+Binary Payload:
+* Id (uint): Client Unique Identifier
+* X (float): X position of the player;
+* Y (float): Y position of the player;
+* Z (float): Z position of the player;
+* Rx (float): X component of the quaternion rotation;
+* Ry (float): Y component of the quaternion rotation;
+* Rz (float): Z component of the quaternion rotation;
+* Rw (float): W component of the quaternion rotation;
+
+### TAUNT (command 8) Client > Server
+Binary Payload:
+* X (float): X position of the player;
+* Y (float): Y position of the player;
+* Z (float): Z position of the player;
+* Rx (float): X component of the quaternion rotation;
+* Ry (float): Y component of the quaternion rotation;
+* Rz (float): Z component of the quaternion rotation;
+* Rw (float): W component of the quaternion rotation;
+
+### CLIENT TAUNTED (command 9) Server > Client - Reliable
+Binary Payload:
+* Id (uint): Client Unique Identifier
+* X (float): X position of the player;
+* Y (float): Y position of the player;
+* Z (float): Z position of the player;
+* Rx (float): X component of the quaternion rotation;
+* Ry (float): Y component of the quaternion rotation;
+* Rz (float): Z component of the quaternion rotation;
+* Rw (float): W component of the quaternion rotation;
+
+### PING (command 121) Client > Server
+Binary Payload:
+* Empty
+
+### PING (command 121) Server > Client
+Binary Payload:
+* uint Id: Client (PINGED) Unique Identifier
+
+### CLIENT PINGED aka PONG (command 122) Client > Server
+Binary Payload:
+* uint Id: Client (PINGED) Unique Identifier
+
+### CLIENT PINGED aka PONG (command 122) Server > Client
+Binary Payload:
+* uint Id: Client (PONGED) Unique Identifier
+
+### CHAT (command 123) Client > Server
 Json Payload:
 * string Text: Chat text (max 128 characters)
+
+### CLIENT CHATTED (command 124) Server > Client
+Json Payload:
+* string Text: Chat text (max 128 characters)
+* string Name: Client name that sent text
 
 ### AUTH (command 125) Client > Server
 Json Payload:

@@ -61,11 +61,15 @@
     <Compile Include="Server\AuthHandler.cs" />
     <Compile Include="Server\ChatHandler.cs" />
     <Compile Include="Server\Client.cs" />
+    <Compile Include="Server\PongHandler.cs" />
+    <Compile Include="Server\TauntHandler.cs" />
+    <Compile Include="Server\DodgeHandler.cs" />
     <Compile Include="Server\ICommandHandler.cs" />
     <Compile Include="Server\JoinHandler.cs" />
     <Compile Include="Server\MoveHandler.cs" />
     <Compile Include="Server\LeaveHandler.cs" />
     <Compile Include="Server\Packet.cs" />
+    <Compile Include="Server\PingHandler.cs" />
     <Compile Include="Server\Server.cs" />
     <Compile Include="Utilities\Json.cs" />
     <Compile Include="Utilities\Logs.cs" />

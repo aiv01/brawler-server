@@ -27,6 +27,28 @@ namespace BrawlerServer.Utilities
             public float Rw;
         }
 
+        public class DodgeHandler
+        {
+            public float X;
+            public float Y;
+            public float Z;
+            public float Rx;
+            public float Ry;
+            public float Rz;
+            public float Rw;
+        }
+
+        public class TauntHandler
+        {
+            public float X;
+            public float Y;
+            public float Z;
+            public float Rx;
+            public float Ry;
+            public float Rz;
+            public float Rw;
+        }
+
         public class AuthHandler
         {
             public string AuthToken;
@@ -61,6 +83,12 @@ namespace BrawlerServer.Utilities
         public class ChatHandler
         {
             public string Text;
+        }
+
+        public class ClientChatted
+        {
+            public string Text;
+            public string Name;
         }
 
         public static dynamic Deserialize(string data, Type type)

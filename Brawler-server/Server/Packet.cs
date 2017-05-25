@@ -17,7 +17,7 @@ namespace BrawlerServer.Server
         public bool Broadcast { get; set; }
         // header
         public uint Id { get; private set; }
-        public float Time { get; private set; }
+        public uint Time { get; private set; }
         public bool IsReliable { get; private set; }
         public Commands Command { get; private set; }
         public int PayloadOffset { get; private set; }
@@ -63,7 +63,7 @@ namespace BrawlerServer.Server
             Id = id;
             IsReliable = reliable;
             Command = command;
-            Time = Server.Time / 1000f;
+            Time = Server.Time;
 
             Writer.Write(id);
             Writer.Write(Time);
@@ -79,7 +79,7 @@ namespace BrawlerServer.Server
             Stream.Seek(0, SeekOrigin.Begin);
 
             Id = Reader.ReadUInt32();
-            Time = Reader.ReadSingle();
+            Time = Reader.ReadUInt32();
 
             // if 6th bit is set then this is a reliable packet, else it's not
             IsReliable = Utilities.Utilities.IsBitSet(Reader.ReadByte(), 7);
@@ -106,6 +106,11 @@ namespace BrawlerServer.Server
             {
                 PacketHandler.Init(this);
             }
+        }
+
+        public override string ToString()
+        {
+            return $"packet:[Time:'{Time}', Id:'{Id}', Bc:'{Broadcast}', ack:'{IsReliable}', command:'{Command}']";
         }
     }
 }
