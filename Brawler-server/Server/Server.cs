@@ -401,7 +401,6 @@ namespace BrawlerServer.Server
                 Packet welcomePacket = new Packet(this, welcomeData.Length, welcomeData, client.EndPoint);
                 welcomePacket.AddHeaderToData(true, Commands.ClientJoined);
                 welcomePacket.Writer.Write(welcomeJsonData);
-                Logs.Log($"Welcome {welcomePacket}");
                 SendPacket(welcomePacket);
             }
 
