@@ -359,6 +359,16 @@ namespace BrawlerServer.Server
             return this.authedEndPoints[endPoint];
         }
 
+        public Client GetClientFromName(string Name)
+        {
+            foreach (Client client in clients.Values)
+            {
+                if (client.Name == Name)
+                    return client;
+            }
+            return null;
+        }
+
         #endregion
 
         #region ClientsManagement
