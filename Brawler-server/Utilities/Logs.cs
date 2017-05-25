@@ -16,7 +16,6 @@ namespace BrawlerServer.Utilities
         public void Write(string message, string category)
         {
             Console.WriteLine($"[{category}]{message}");
-            //Console.WriteLine(message);
         }
     }
     

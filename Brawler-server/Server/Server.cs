@@ -15,18 +15,12 @@ namespace BrawlerServer.Server
     public struct ReliablePacket
     {
         public Packet Packet { get; private set; }
-        public long Time { get; private set; }
+        public uint Time { get; private set; }
 
         public ReliablePacket(Packet packet)
         {
             this.Packet = packet;
             this.Time = packet.Server.Time;
-        }
-
-        public void UpdateTime()
-        {
-            this.Time = Packet.Server.Time;
-            Logs.Log($"[{Time}] Updated Reliable Packet '{Packet.Id}' time.");
         }
     }
 
@@ -110,18 +104,19 @@ namespace BrawlerServer.Server
         private readonly int packetsPerLoop;
 
         private Dictionary<uint, ReliablePacket> ReliablePackets;
-        public int MaxAckResponseTime { get; private set; }
+        public uint MaxAckResponseTime { get; private set; }
+        public uint MaxAckSendTime { get; private set; }
 
         private readonly Dictionary<IPEndPoint, Client> authedEndPoints;
 
         private readonly Dictionary<IPEndPoint, Client> clients;
 
         public bool IsRunning { get; set; }
-        public long Time { get; private set; }
+        public uint Time { get; private set; }
         // does NOT count looptime
-        public long DeltaTime { get; private set; }
+        public uint DeltaTime { get; private set; }
 
-        public long MaxIdleTimeout { get; private set; }
+        public uint MaxIdleTimeout { get; private set; }
 
         public Server(IPEndPoint bindEp, int bufferSize = 512, int packetsPerLoop = 256)
         {
@@ -142,6 +137,7 @@ namespace BrawlerServer.Server
 
             this.ReliablePackets = new Dictionary<uint, ReliablePacket>();
             this.MaxAckResponseTime = 5000;
+            this.MaxAckSendTime = 30000;
 
             this.MaxIdleTimeout = 10000;
         }
@@ -166,7 +162,9 @@ namespace BrawlerServer.Server
             var watch = Stopwatch.StartNew();
             while (IsRunning)
             {
-                Time = watch.ElapsedMilliseconds;
+                if (watch.ElapsedMilliseconds > UInt32.MaxValue)
+                    watch.Restart();
+                Time = (uint)watch.ElapsedMilliseconds;
 
                 // first receive packets
                 var packetIndex = 0;
@@ -189,7 +187,8 @@ namespace BrawlerServer.Server
                     catch (Exception e)
                     {
                         Logs.LogError($"[{Time}] Error while parsing packet from '{remoteEp}', with size of {size}:");
-                        Logs.LogError($"[{Time}] {e}");
+                        foreach(string line in e.Message.Split('\n'))
+                            Logs.LogError($"[{Time}] {line}");
                         continue;
                     }
                     finally
@@ -214,18 +213,23 @@ namespace BrawlerServer.Server
                     this.QueueRemoveClient(client, "Kicked for Idle Timeout");
                 }
                 //Check if reliable packet has passed the time check limit
-                Dictionary<uint, ReliablePacket> reliablePacketsToRemove = new Dictionary<uint, ReliablePacket>();
+                List<uint> reliablePacketsToRemove = new List<uint>();
                 foreach (KeyValuePair<uint, ReliablePacket> reliablePacket in ReliablePackets)
                 {
+                    if (this.Time > reliablePacket.Value.Packet.Time + this.MaxAckSendTime)
+                    {
+                        reliablePacketsToRemove.Add(reliablePacket.Key);
+                    }
+
                     if (this.Time > reliablePacket.Value.Time + this.MaxAckResponseTime)
                     {
                         this.SendPacket(reliablePacket.Value.Packet);
-                        reliablePacketsToRemove.Add(reliablePacket.Key, reliablePacket.Value);
+                        reliablePacketsToRemove.Add(reliablePacket.Key);
                     }
                 }
-                foreach (KeyValuePair<uint, ReliablePacket> reliablePacket in reliablePacketsToRemove)
+                foreach (uint reliablePacketId in reliablePacketsToRemove)
                 {
-                    ReliablePackets.Remove(reliablePacket.Key);
+                    ReliablePackets.Remove(reliablePacketId);
                 }
                 // then send packets (do we need to send only a fixed number?)
                 foreach (var packet in packetsToSend)
@@ -234,21 +238,21 @@ namespace BrawlerServer.Server
                     {
                         foreach (var pair in clients)
                         {
+                            //TODO Fails tests for Move, Taunt and Dodge ... Loses the last float value
+                            //if (packet.RemoteEp == pair.Key)
+                            //    continue;
                             socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, pair.Key);
                             Logs.Log($"[{Time}] Sent broadcast {packet} to {pair.Value}.");
-                            if (packet.IsReliable)
-                            {
-                                if (HasReliablePacket(packet.Id))
-                                    ReliablePackets[packet.Id].UpdateTime();
-                                else
-                                    AddReliablePacket(packet);
-                            }
                         }
                     }
                     else
                     {
                         socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, packet.RemoteEp);
                         Logs.Log($"[{Time}] Sent {packet} to {packet.RemoteEp}");
+                    }
+                    if (packet.IsReliable)
+                    {
+                        AddReliablePacket(packet);
                     }
 
                     //remove Queued Clients
@@ -262,7 +266,7 @@ namespace BrawlerServer.Server
 
                 ServerTick?.Invoke(this);
 
-                DeltaTime = watch.ElapsedMilliseconds - Time;
+                DeltaTime = (uint)watch.ElapsedMilliseconds - Time;
                 Thread.Sleep(Math.Max((int)(msLoopTime - DeltaTime), 0));
             }
             socket.Close();
@@ -355,6 +359,16 @@ namespace BrawlerServer.Server
             return this.authedEndPoints[endPoint];
         }
 
+        public Client GetClientFromName(string Name)
+        {
+            foreach (Client client in clients.Values)
+            {
+                if (client.Name == Name)
+                    return client;
+            }
+            return null;
+        }
+
         #endregion
 
         #region ClientsManagement
@@ -381,7 +395,7 @@ namespace BrawlerServer.Server
                 if (Equals(cl, client)) continue;
 
                 byte[] welcomeData = new byte[512];
-                Json.ClientJoined welcomeJsonDataObject = new Json.ClientJoined() { Name = client.Name, Id = cl.Id };
+                Json.ClientJoined welcomeJsonDataObject = new Json.ClientJoined() { Name = cl.Name, Id = cl.Id };
                 string welcomeJsonData = JsonConvert.SerializeObject(welcomeJsonDataObject);
 
                 Packet welcomePacket = new Packet(this, welcomeData.Length, welcomeData, client.EndPoint);
@@ -431,6 +445,18 @@ namespace BrawlerServer.Server
         public Client GetClientFromEndPoint(IPEndPoint endPoint)
         {
             return clients[endPoint];
+        }
+
+        public Client GetClientFromId(uint id)
+        {
+            foreach(Client client in clients.Values)
+            {
+                if (client.Id == id)
+                {
+                    return client;
+                }
+            }
+            return null;
         }
 
         public bool HasClient(IPEndPoint endPoint)

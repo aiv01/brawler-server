@@ -104,7 +104,7 @@ namespace BrawlerServer.Server.Tests
 
 
         [Test]
-        public void DodgePacketTest()
+        public void TauntPacketTest()
         {
             var ep = new IPEndPoint(0, 0);
             var server = new Server(ep);
@@ -113,7 +113,7 @@ namespace BrawlerServer.Server.Tests
         }
 
         [Test]
-        public void DodgePacketBySocketTest()
+        public void TauntPacketBySocketTest()
         {
             var ep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 0);
             var server = new Server(ep);

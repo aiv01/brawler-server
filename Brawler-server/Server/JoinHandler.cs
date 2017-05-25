@@ -30,8 +30,16 @@ namespace BrawlerServer.Server
             // create client and add it to the server's clients
             Client = packet.Server.GetClientFromAuthedEndPoint(packet.RemoteEp);
             Logs.Log($"[{packet.Server.Time}] Received join message from {Client}.");
+
+            Client alreadyIn = packet.Server.GetClientFromName(Client.Name);
+            if (alreadyIn != null)
+            {
+                packet.Server.QueueRemoveClient(alreadyIn.EndPoint, "joined from another location");
+            }
             packet.Server.AddClient(Client);
-            Logs.Log($"[{packet.Server.Time}] {Client} joined the server");
+
+            //Set last packet sent as this one
+            Client.TimeLastPacketSent = packet.Server.Time;
 
             JsonSerialized = JsonConvert.SerializeObject(JsonData);
         }

@@ -4,8 +4,8 @@
 4 byte (UInt32): Id  
 * Packet Id
 
-4 byte (Single): Timestamp  
-* Time elapsed from the start of the server (in seconds)
+4 byte (uint): Timestamp  
+* Time elapsed from the start of the server (in milliseconds)
 
 1 byte: Packet Infos  
 * Most Significant Bit: 1 if reliable, otherwise 0;
@@ -102,15 +102,15 @@ Binary Payload:
 
 ### PING (command 121) Server > Client
 Binary Payload:
-* Empty
+* uint Id: Client (PINGED) Unique Identifier
 
 ### CLIENT PINGED aka PONG (command 122) Client > Server
 Binary Payload:
-* uint Id: Client (ponged) Unique Identifier
+* uint Id: Client (PINGED) Unique Identifier
 
 ### CLIENT PINGED aka PONG (command 122) Server > Client
 Binary Payload:
-* uint Id: Client (ponged) Unique Identifier
+* uint Id: Client (PONGED) Unique Identifier
 
 ### CHAT (command 123) Client > Server
 Json Payload:
