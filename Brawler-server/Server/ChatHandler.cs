@@ -21,7 +21,7 @@ namespace BrawlerServer.Server
                 throw new Exception($"RemoteEp '{packet.RemoteEp}' tried to chat but has never joined.");
             }
             Client client = packet.Server.GetClientFromEndPoint(packet.RemoteEp);
-            Logs.Log($"[{packet.Server.Time}] Received chat message from {client} with text '{JsonData.Text}'.");
+            Logs.LogWarning($"[{packet.Server.Time}] Received chat message from {client} with text '{JsonData.Text}'.");
             
             byte[] data = new byte[512];
             Json.ClientChatted JsonChatData = new Json.ClientChatted() { Text = JsonData.Text, Name = packet.Server.GetClientFromEndPoint(packet.RemoteEp).Name };
