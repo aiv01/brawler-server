@@ -85,7 +85,7 @@ namespace BrawlerServer.Server.Tests
         [Test]
         public void PongPacketTest()
         {
-            var ep = new IPEndPoint(0, 0);
+            var ep = new IPEndPoint(IPAddress.Parse("127.0.0.2"), 0);
             var server = new Server(ep);
 
             CreateAndTestPongPacket(server);

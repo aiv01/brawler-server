@@ -47,6 +47,7 @@ namespace BrawlerServer.Utilities
             public float Ry;
             public float Rz;
             public float Rw;
+            public byte TauntId;
         }
 
         public class AuthHandler
