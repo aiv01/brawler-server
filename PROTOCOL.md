@@ -104,11 +104,11 @@ Binary Payload:
 Binary Payload:
 * uint Id: Client (PINGED) Unique Identifier
 
-### CLIENT PINGED aka PONG (command 122) Client > Server
+### PONG (command 122) Client > Server
 Binary Payload:
 * uint Id: Client (PINGED) Unique Identifier
 
-### CLIENT PINGED aka PONG (command 122) Server > Client
+### PONG (command 122) Server > Client
 Binary Payload:
 * uint Id: Client (PONGED) Unique Identifier
 
