@@ -84,6 +84,7 @@ Binary Payload:
 * Ry (float): Y component of the quaternion rotation;
 * Rz (float): Z component of the quaternion rotation;
 * Rw (float): W component of the quaternion rotation;
+* TauntId (byte): Taunt type identifier
 
 ### CLIENT TAUNTED (command 9) Server > Client - Reliable
 Binary Payload:
@@ -95,6 +96,7 @@ Binary Payload:
 * Ry (float): Y component of the quaternion rotation;
 * Rz (float): Z component of the quaternion rotation;
 * Rw (float): W component of the quaternion rotation;
+* TauntId (byte): Taunt type identifier
 
 ### PING (command 121) Client > Server
 Binary Payload:
