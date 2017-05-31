@@ -257,7 +257,7 @@ namespace BrawlerServer.Server
                                 //    continue;
                                 socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, pair.Key);
                                 if (packet.Command == Commands.ClientChatted)
-                                    Logs.LogWarning($"[{Time}] Sent broadcast {packet} to {pair.Value}.");
+                                    Logs.LogWarning($"[{Time}] Sent broadcast {packet} to {pair.Value}, clients for this broadcast: {clients.Count}.");
                             }
                         }
                         else
