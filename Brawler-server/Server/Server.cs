@@ -94,7 +94,9 @@ namespace BrawlerServer.Server
         public event ServerPacketReceiveHandler ServerPacketReceive;
 
         public IPEndPoint BindEp { get; private set; }
-        private readonly Socket socket;
+        private readonly Socket Socket;
+        private List<Socket> socketsToRead;
+        private List<Socket> socketsToWrite;
         private readonly List<Packet> packetsToSend;
         private readonly byte[] recvBuffer;
         private readonly MemoryStream recvStream;
@@ -118,7 +120,7 @@ namespace BrawlerServer.Server
 
         public uint MaxIdleTimeout { get; private set; }
 
-        public Server(IPEndPoint bindEp, int bufferSize = 512, int packetsPerLoop = 256)
+        public Server(IPEndPoint bindEp, int bufferSize = 1024, int packetsPerLoop = 256)
         {
             packetsToSend = new List<Packet>();
             clients = new Dictionary<IPEndPoint, Client>();
@@ -133,7 +135,10 @@ namespace BrawlerServer.Server
             recvReader = new BinaryReader(recvStream);
             recvWriter = new BinaryWriter(recvStream);
 
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp) { Blocking = false };
+            Socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp) { Blocking = false };
+
+            socketsToRead = new List<Socket>();
+            socketsToRead.Add(Socket);
 
             this.ReliablePackets = new Dictionary<uint, ReliablePacket>();
             this.MaxAckResponseTime = 5000;
@@ -144,14 +149,14 @@ namespace BrawlerServer.Server
 
         public void Bind()
         {
-            if (!socket.IsBound)
+            if (!Socket.IsBound)
             {
-                socket.Bind(BindEp);
-                BindEp = (IPEndPoint)socket.LocalEndPoint;
+                Socket.Bind(BindEp);
+                BindEp = (IPEndPoint)Socket.LocalEndPoint;
             }
         }
 
-        public void MainLoop(float loopTime = 1f / 10)
+        public void MainLoop(int loopTime = 120)
         {
             IsRunning = true;
 
@@ -166,115 +171,153 @@ namespace BrawlerServer.Server
                     watch.Restart();
                 Time = (uint)watch.ElapsedMilliseconds;
 
+                socketsToRead = new List<Socket>();
+                socketsToRead.Add(Socket);
+                socketsToWrite = new List<Socket>();
+                socketsToWrite.Add(Socket);
+                Socket.Select(socketsToRead, socketsToWrite, null, 1 / (loopTime * 1000 * 1000));
+
                 // first receive packets
                 var packetIndex = 0;
-                while (packetIndex < packetsPerLoop && socket.Available > 0)
+                socketsToRead.AddRange(socketsToWrite);
+                foreach (Socket socket in socketsToRead)
                 {
-                    var size = socket.ReceiveFrom(recvBuffer, ref remoteEp);
-                    Logs.Log($"[{Time}] Received message from '{remoteEp}', size: {size}.");
-                    Packet packet = null;
-                    try
+                    while (packetIndex < packetsPerLoop && socket.Available > 0)
                     {
-                        packet = new Packet(this, size, recvBuffer, (IPEndPoint)remoteEp, recvStream, recvReader,
-                            recvWriter);
-                        if (clients.ContainsKey((IPEndPoint)remoteEp))
+                        var size = socket.ReceiveFrom(recvBuffer, ref remoteEp);
+                        Logs.Log($"[{Time}] Received message from '{remoteEp}', size: {size}.");
+                        Packet packet = null;
+                        try
                         {
-                            clients[(IPEndPoint)remoteEp].TimeLastPacketSent = this.Time;
+                            packet = new Packet(this, size, recvBuffer, (IPEndPoint)remoteEp, recvStream, recvReader,
+                                recvWriter);
+                            if (clients.ContainsKey((IPEndPoint)remoteEp))
+                            {
+                                clients[(IPEndPoint)remoteEp].TimeLastPacketSent = this.Time;
+                            }
+                            packet.ParseHeaderFromData();
+                            Logs.Log($"[{Time}] Received {packet}.");
                         }
-                        packet.ParseHeaderFromData();
-                        Logs.Log($"[{Time}] Received {packet}.");
-                    }
-                    catch (Exception e)
-                    {
-                        Logs.LogError($"[{Time}] Error while parsing packet from '{remoteEp}', with size of {size}:");
-                        foreach(string line in e.Message.Split('\n'))
-                            Logs.LogError($"[{Time}] {line}");
-                        continue;
-                    }
-                    finally
-                    {
-                        ServerPacketReceive?.Invoke(this, packet);
-                    }
-
-                    packetIndex++;
-                }
-                //Check if client didn't send any packet in MaxIdleTimeout seconds
-                List<Client> clientsToRemove = new List<Client>();
-                foreach (Client client in clients.Values)
-                {
-                    if (this.Time - client.TimeLastPacketSent > MaxIdleTimeout)
-                    {
-                        clientsToRemove.Add(client);
-                        Logs.Log($"[{Time}] Queueing {client} removal, last packet sent at {client.TimeLastPacketSent}");
-                    }
-                }
-                foreach (Client client in clientsToRemove)
-                {
-                    this.QueueRemoveClient(client, "Kicked for Idle Timeout");
-                }
-                //Check if reliable packet has passed the time check limit
-                List<uint> reliablePacketsToRemove = new List<uint>();
-                foreach (KeyValuePair<uint, ReliablePacket> reliablePacket in ReliablePackets)
-                {
-                    if (this.Time > reliablePacket.Value.Packet.Time + this.MaxAckSendTime)
-                    {
-                        reliablePacketsToRemove.Add(reliablePacket.Key);
-                    }
-
-                    if (this.Time > reliablePacket.Value.Time + this.MaxAckResponseTime)
-                    {
-                        this.SendPacket(reliablePacket.Value.Packet);
-                        reliablePacketsToRemove.Add(reliablePacket.Key);
-                    }
-                }
-                foreach (uint reliablePacketId in reliablePacketsToRemove)
-                {
-                    ReliablePackets.Remove(reliablePacketId);
-                }
-                // then send packets (do we need to send only a fixed number?)
-                foreach (var packet in packetsToSend)
-                {
-                    if (packet.Broadcast)
-                    {
-                        foreach (var pair in clients)
+                        catch (Exception e)
                         {
-                            //TODO Fails tests for Move, Taunt and Dodge ... Loses the last float value
-                            //if (packet.RemoteEp == pair.Key)
-                            //    continue;
-                            socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, pair.Key);
-                            Logs.Log($"[{Time}] Sent broadcast {packet} to {pair.Value}.");
+                            Logs.LogError($"[{Time}] Error while parsing packet from '{remoteEp}', with size of {size}:");
+                            foreach (string line in e.Message.Split('\n'))
+                                Logs.LogError($"[{Time}] {line}");
+                            continue;
+                        }
+                        finally
+                        {
+                            ServerPacketReceive?.Invoke(this, packet);
+                        }
+
+                        packetIndex++;
+                    }
+                    //Check if client didn't send any packet in MaxIdleTimeout seconds
+                    List<Client> clientsToRemove = new List<Client>();
+                    foreach (Client client in clients.Values)
+                    {
+                        if (this.Time - client.TimeLastPacketSent > MaxIdleTimeout)
+                        {
+                            clientsToRemove.Add(client);
+                            Logs.Log($"[{Time}] Queueing {client} removal, last packet sent at {client.TimeLastPacketSent}");
                         }
                     }
-                    else
+                    foreach (Client client in clientsToRemove)
                     {
-                        socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, packet.RemoteEp);
-                        Logs.Log($"[{Time}] Sent {packet} to {packet.RemoteEp}");
+                        this.QueueRemoveClient(client, "Kicked for Idle Timeout");
                     }
-                    if (packet.IsReliable)
+                    //Check if reliable packet has passed the time check limit
+                    List<uint> reliablePacketsToRemove = new List<uint>();
+                    foreach (KeyValuePair<uint, ReliablePacket> reliablePacket in ReliablePackets)
                     {
-                        AddReliablePacket(packet);
-                    }
+                        if (this.Time > reliablePacket.Value.Packet.Time + this.MaxAckSendTime)
+                        {
+                            reliablePacketsToRemove.Add(reliablePacket.Key);
+                        }
 
-                    //remove Queued Clients
-                    RemoveClients();
+                        if (this.Time > reliablePacket.Value.Time + this.MaxAckResponseTime)
+                        {
+                            this.SendPacket(reliablePacket.Value.Packet);
+                            reliablePacketsToRemove.Add(reliablePacket.Key);
+                        }
+                    }
+                    foreach (uint reliablePacketId in reliablePacketsToRemove)
+                    {
+                        ReliablePackets.Remove(reliablePacketId);
+                    }
+                    // then send packets (do we need to send only a fixed number?)
+                    foreach (var packet in packetsToSend)
+                    {
+                        if (packet.Broadcast)
+                        {
+                            foreach (var pair in clients)
+                            {
+                                //TODO Fails tests for Move, Taunt and Dodge ... Loses the last float value
+                                //if (packet.RemoteEp == pair.Key)
+                                //    continue;
+                                socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, pair.Key);
+                                Logs.Log($"[{Time}] Sent broadcast {packet} to {pair.Value}.");
+                            }
+                        }
+                        else
+                        {
+                            socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, packet.RemoteEp);
+                            Logs.Log($"[{Time}] Sent {packet} to {packet.RemoteEp}");
+                        }
+                        if (packet.IsReliable)
+                        {
+                            AddReliablePacket(packet);
+                        }
+
+                        //remove Queued Clients
+                        RemoveClients();
+                    }
                 }
                 packetsToSend.Clear();
 
                 CheckForResponse();
                 CheckForResponseString();
 
-
                 ServerTick?.Invoke(this);
 
                 DeltaTime = (uint)watch.ElapsedMilliseconds - Time;
-                Thread.Sleep(Math.Max((int)(msLoopTime - DeltaTime), 0));
             }
-            socket.Close();
+            foreach (Socket socket in socketsToRead)
+            {
+                socket.Close();
+            }
         }
 
         public void SendPacket(Packet packet)
         {
             packetsToSend.Add(packet);
+        }
+
+        public void SendPacketInstantly(Packet packet)
+        {
+            foreach (Socket socket in socketsToRead)
+            {
+                if (packet.Broadcast)
+                {
+                    foreach (var pair in clients)
+                    {
+                        //TODO Fails tests for Move, Taunt and Dodge ... Loses the last float value
+                        //if (packet.RemoteEp == pair.Key)
+                        //    continue;
+                        socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, pair.Key);
+                        Logs.Log($"[{Time}] Instantly sent broadcast {packet} to {pair.Value}.");
+                    }
+                }
+                else
+                {
+                    socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, packet.RemoteEp);
+                    Logs.Log($"[{Time}] Instantly sent {packet} to {packet.RemoteEp}");
+                }
+                if (packet.IsReliable)
+                {
+                    AddReliablePacket(packet);
+                }
+            }
         }
 
         #region AsyncOperations
@@ -388,7 +431,7 @@ namespace BrawlerServer.Server
             packetClientAdded.Broadcast = true;
             packetClientAdded.Writer.Write(jsonData);
             SendPacket(packetClientAdded);
-            
+
             //Send every client already joined to the new client joined
             foreach (var cl in clients.Values)
             {
@@ -449,7 +492,7 @@ namespace BrawlerServer.Server
 
         public Client GetClientFromId(uint id)
         {
-            foreach(Client client in clients.Values)
+            foreach (Client client in clients.Values)
             {
                 if (client.Id == id)
                 {

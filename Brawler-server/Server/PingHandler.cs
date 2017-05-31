@@ -31,7 +31,7 @@ namespace BrawlerServer.Server
             packetToSend.Broadcast = true;
             packetToSend.AddHeaderToData(false, Commands.Ping);
             packetToSend.Writer.Write(Id);
-            Packet.Server.SendPacket(packetToSend);
+            Packet.Server.SendPacketInstantly(packetToSend);
         }
     }
 }
