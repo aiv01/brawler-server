@@ -256,15 +256,14 @@ namespace BrawlerServer.Server
                                 //if (packet.RemoteEp == pair.Key)
                                 //    continue;
                                 socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, pair.Key);
-                                if (packet.Command == Commands.ClientChatted)
-                                    Logs.LogWarning($"[{Time}] Sent broadcast {packet} to {pair.Value}, clients for this broadcast: {clients.Count}.");
+                                Logs.Log($"[{Time}] Sent broadcast {packet} to {pair.Value}, clients for this broadcast: {clients.Count}.");
                             }
                         }
                         else
                         {
                             socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, packet.RemoteEp);
                             if (packet.Command == Commands.ClientChatted)
-                                Logs.LogWarning($"[{Time}] Sent {packet} to {packet.RemoteEp}");
+                                Logs.Log($"[{Time}] Sent {packet} to {packet.RemoteEp}");
                         }
                         if (packet.IsReliable)
                         {
@@ -307,15 +306,13 @@ namespace BrawlerServer.Server
                         //if (packet.RemoteEp == pair.Key)
                         //    continue;
                         socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, pair.Key);
-                        if (packet.Command == Commands.ClientChatted)
-                            Logs.LogWarning($"[{Time}] Instantly sent broadcast {packet} to {pair.Value}.");
+                        Logs.Log($"[{Time}] Instantly sent broadcast {packet} to {pair.Value}.");
                     }
                 }
                 else
                 {
                     socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, packet.RemoteEp);
-                    if (packet.Command == Commands.ClientChatted)
-                        Logs.LogWarning($"[{Time}] Instantly sent {packet} to {packet.RemoteEp}");
+                    Logs.Log($"[{Time}] Instantly sent {packet} to {packet.RemoteEp}");
                 }
                 if (packet.IsReliable)
                 {
