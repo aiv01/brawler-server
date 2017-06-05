@@ -30,7 +30,7 @@ namespace BrawlerServer.Server
             Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, Packet.Server.GetClientFromId(Id).EndPoint);
             packetToSend.AddHeaderToData(false, Commands.Pong);
             packetToSend.Writer.Write(Client.Id);
-            Packet.Server.SendPacketInstantly(packetToSend);
+            Packet.Server.SendPacket(packetToSend);
         }
     }
 }

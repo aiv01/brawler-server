@@ -86,7 +86,7 @@ Binary Payload:
 * Rw (float): W component of the quaternion rotation;
 * TauntId (byte): Taunt type identifier
 
-### CLIENT TAUNTED (command 9) Server > Client - Reliable
+### CLIENT TAUNTED (command 9) Server > Client 
 Binary Payload:
 * Id (uint): Client Unique Identifier
 * X (float): X position of the player;
@@ -97,6 +97,48 @@ Binary Payload:
 * Rz (float): Z component of the quaternion rotation;
 * Rw (float): W component of the quaternion rotation;
 * TauntId (byte): Taunt type identifier
+
+### LIGHT ATTACK (command 10) Client > Server
+Binary Payload:
+* X (float): X position of the player;
+* Y (float): Y position of the player;
+* Z (float): Z position of the player;
+* Rx (float): X component of the quaternion rotation;
+* Ry (float): Y component of the quaternion rotation;
+* Rz (float): Z component of the quaternion rotation;
+* Rw (float): W component of the quaternion rotation;
+
+### CLIENT LIGHT ATTACKED (command 11) Server > Client
+Binary Payload:
+* Id (uint): Client Unique Identifier
+* X (float): X position of the player;
+* Y (float): Y position of the player;
+* Z (float): Z position of the player;
+* Rx (float): X component of the quaternion rotation;
+* Ry (float): Y component of the quaternion rotation;
+* Rz (float): Z component of the quaternion rotation;
+* Rw (float): W component of the quaternion rotation;
+
+### HEAVY ATTACK (command 10) Client > Server
+Binary Payload:
+* X (float): X position of the player;
+* Y (float): Y position of the player;
+* Z (float): Z position of the player;
+* Rx (float): X component of the quaternion rotation;
+* Ry (float): Y component of the quaternion rotation;
+* Rz (float): Z component of the quaternion rotation;
+* Rw (float): W component of the quaternion rotation;
+
+### CLIENT HEAVY ATTACKED (command 11) Server > Client
+Binary Payload:
+* Id (uint): Client Unique Identifier
+* X (float): X position of the player;
+* Y (float): Y position of the player;
+* Z (float): Z position of the player;
+* Rx (float): X component of the quaternion rotation;
+* Ry (float): Y component of the quaternion rotation;
+* Rz (float): Z component of the quaternion rotation;
+* Rw (float): W component of the quaternion rotation;
 
 ### PING (command 121) Client > Server
 Binary Payload:

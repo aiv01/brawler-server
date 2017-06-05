@@ -14,6 +14,8 @@ namespace BrawlerServer.Utilities
         Move = 4,
         Dodge = 6,
         Taunt = 8,
+        LightAttack = 10,
+        HeavyAttack = 12,
         Chat = 123,
         Auth = 125,
         
@@ -23,6 +25,8 @@ namespace BrawlerServer.Utilities
         ClientMoved = 5,
         ClientDodged = 7,
         ClientTaunted = 9,
+        ClientLightAttacked = 11,
+        ClientHeavyAttacked = 13,
         ClientChatted = 124,
         ClientAuthed = 126,
 
@@ -47,6 +51,8 @@ namespace BrawlerServer.Utilities
             { Commands.Chat, typeof(ChatHandler) },
             { Commands.Dodge, typeof(DodgeHandler) },
             { Commands.Taunt, typeof(TauntHandler) },
+            { Commands.LightAttack, typeof(LightAttackHandler) },
+            { Commands.HeavyAttack, typeof(HeavyAttackHandler) },
             { Commands.Ping, typeof(PingHandler) },
             { Commands.Pong, typeof(PongHandler) }
         };
