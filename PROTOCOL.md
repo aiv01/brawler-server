@@ -15,12 +15,23 @@
 
 ### JOIN (command 0) Client > Server
 Json Payload:  
-* Empty
+* int PrefabId: Client selected character Id
 
 ### CLIENT JOINED (command 1) Server > Client - Reliable
 Json Payload:
-* string Name: Player Name
-* uint Id: Client Unique Identifier
+* string Name: Player Name;
+* uint Id: Client Unique Identifier;
+* object Position: {
+    * float X: X position of the player;
+    * float Y: Y position of the player;
+    * float Z: Z position of the player;
+};
+* object Rotation: {
+	* float Rx: X component of the quaternion rotation;
+	* float Ry: Y component of the quaternion rotation;
+	* float Rz: Z component of the quaternion rotation;
+	* float Rw: W component of the quaternion rotation;
+};
 
 ### LEAVE (command 2) Client > Server
 Json Payload:  
