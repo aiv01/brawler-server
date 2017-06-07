@@ -32,6 +32,7 @@ Json Payload:
 	* float Rz: Z component of the quaternion rotation;
 	* float Rw: W component of the quaternion rotation;
 };
+* int PrefabId: Client selected character Id;
 
 ### LEAVE (command 2) Client > Server
 Json Payload:  
