@@ -302,9 +302,8 @@ namespace BrawlerServer.Server
                 {
                     foreach (var pair in clients)
                     {
-                        //TODO Fails tests for Move, Taunt and Dodge ... Loses the last float value
-                        //if (packet.RemoteEp == pair.Key)
-                        //    continue;
+                        if (packet.RemoteEp == pair.Key)
+                            continue;
                         socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, pair.Key);
                         Logs.Log($"[{Time}] Instantly sent broadcast {packet} to {pair.Value}.");
                     }
@@ -418,20 +417,7 @@ namespace BrawlerServer.Server
         #region ClientsManagement
         public void AddClient(Client client)
         {
-            Json.ClientJoined jsonDataObject = new Json.ClientJoined { Name = client.Name, Id = client.Id };
-            string jsonData = JsonConvert.SerializeObject(jsonDataObject);
-
             clients[client.EndPoint] = client;
-            Logs.Log($"[{Time}] Added new {client}.");
-
-            byte[] data = new byte[512];
-
-            // send a broadcast clientJoined packet
-            Packet packetClientAdded = new Packet(this, data.Length, data, null);
-            packetClientAdded.AddHeaderToData(true, Commands.ClientJoined);
-            packetClientAdded.Broadcast = true;
-            packetClientAdded.Writer.Write(jsonData);
-            SendPacket(packetClientAdded);
 
             //Send every client already joined to the new client joined
             foreach (var cl in clients.Values)
@@ -439,12 +425,19 @@ namespace BrawlerServer.Server
                 if (Equals(cl, client)) continue;
 
                 byte[] welcomeData = new byte[512];
-                Json.ClientJoined welcomeJsonDataObject = new Json.ClientJoined() { Name = cl.Name, Id = cl.Id };
-                string welcomeJsonData = JsonConvert.SerializeObject(welcomeJsonDataObject);
+                Json.ClientJoined jsonDataObject = new Json.ClientJoined
+                {
+                    Name = client.Name,
+                    Id = client.Id,
+                    Position = client.position,
+                    Rotation = client.rotation,
+                    PrefabId = client.characterId
+                };
+                string JsonData = JsonConvert.SerializeObject(jsonDataObject);
 
                 Packet welcomePacket = new Packet(this, welcomeData.Length, welcomeData, client.EndPoint);
                 welcomePacket.AddHeaderToData(true, Commands.ClientJoined);
-                welcomePacket.Writer.Write(welcomeJsonData);
+                welcomePacket.Writer.Write(JsonData);
                 SendPacket(welcomePacket);
             }
 

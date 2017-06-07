@@ -81,8 +81,8 @@ namespace BrawlerServer.Utilities
         {
             public uint Id;
             public string Name;
-            public Position Position;
-            public Rotation Rotation;
+            public Server.Client.Position Position;
+            public Server.Client.Rotation Rotation;
             public int PrefabId;
         }
 
@@ -115,21 +115,6 @@ namespace BrawlerServer.Utilities
         {
             public string Text;
             public string Name;
-        }
-
-        public class Position
-        {
-            public float X;
-            public float Y;
-            public float Z;
-        }
-
-        public class Rotation
-        {
-            public float Rx;
-            public float Ry;
-            public float Rz;
-            public float Rw;
         }
 
         public static dynamic Deserialize(string data, Type type)

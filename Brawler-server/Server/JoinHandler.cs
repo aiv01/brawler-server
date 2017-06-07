@@ -31,12 +31,38 @@ namespace BrawlerServer.Server
             Client = packet.Server.GetClientFromAuthedEndPoint(packet.RemoteEp);
             Logs.Log($"[{packet.Server.Time}] Received join message from {Client}.");
 
+            //Check if client was already in
             Client alreadyIn = packet.Server.GetClientFromName(Client.Name);
             if (alreadyIn != null)
             {
                 packet.Server.QueueRemoveClient(alreadyIn.EndPoint, "joined from another location");
             }
+            Client.Position position = new Client.Position(0, 10, 0);
+            Client.Rotation rotation = new Client.Rotation(0, 0, 0, 0);
+            Client.SetPosition(position);
+            Client.SetRotation(rotation);
+            Client.SetCharacterId(JsonData.PrefabId);
             packet.Server.AddClient(Client);
+
+            Json.ClientJoined jsonDataObject = new Json.ClientJoined {
+                Name = Client.Name,
+                Id = Client.Id,
+                Position = position,
+                Rotation = rotation,
+                PrefabId = Client.characterId
+            };
+            string jsonData = JsonConvert.SerializeObject(jsonDataObject);
+
+            Logs.Log($"[{packet.Server.Time}] Added new {Client}.");
+
+            byte[] data = new byte[512];
+
+            // send a broadcast clientJoined packet
+            Packet packetClientAdded = new Packet(packet.Server, data.Length, data, null);
+            packetClientAdded.AddHeaderToData(true, Commands.ClientJoined);
+            packetClientAdded.Broadcast = true;
+            packetClientAdded.Writer.Write(jsonData);
+            packet.Server.SendPacket(packetClientAdded);
 
             //Set last packet sent as this one
             Client.TimeLastPacketSent = packet.Server.Time;
