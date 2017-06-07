@@ -21,17 +21,15 @@ Json Payload:
 Json Payload:
 * string Name: Player Name;
 * uint Id: Client Unique Identifier;
-* object Position: {
+* object Position:
     * float X: X position of the player;
     * float Y: Y position of the player;
     * float Z: Z position of the player;
-};
-* object Rotation: {
+* object Rotation:
 	* float Rx: X component of the quaternion rotation;
 	* float Ry: Y component of the quaternion rotation;
 	* float Rz: Z component of the quaternion rotation;
 	* float Rw: W component of the quaternion rotation;
-};
 * int PrefabId: Client selected character Id;
 
 ### LEAVE (command 2) Client > Server
