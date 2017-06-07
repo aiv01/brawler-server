@@ -254,30 +254,30 @@ namespace BrawlerServer.Server
                             {
                                 //TODO Fails tests for Move, Taunt and Dodge ... Loses the last float value
                                 //if (packet.RemoteEp == pair.Key)
-                                //    continue;
+                                //  continue;
                                 socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, pair.Key);
-                                Logs.Log($"[{Time}] Sent broadcast {packet} to {pair.Value}, clients for this broadcast: {clients.Count}.");
+                                if (packet.Command == Commands.ClientChatted)
+                                    Logs.LogWarning($"[{Time}] Sent broadcast {packet} to {pair.Value}, clients for this broadcast: {clients.Count}.");
                             }
                         }
                         else
                         {
                             socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, packet.RemoteEp);
-                            if (packet.Command == Commands.ClientChatted)
-                                Logs.Log($"[{Time}] Sent {packet} to {packet.RemoteEp}");
+                            Logs.Log($"[{Time}] Sent {packet} to {packet.RemoteEp}");
                         }
                         if (packet.IsReliable)
                         {
                             AddReliablePacket(packet);
                         }
-
-                        //remove Queued Clients
-                        RemoveClients();
                     }
-                }
-                packetsToSend.Clear();
+                    packetsToSend.Clear();
 
-                CheckForResponse();
-                CheckForResponseString();
+                    //remove Queued Clients
+                    RemoveClients();
+
+                    CheckForResponse();
+                    CheckForResponseString();
+                }
 
                 ServerTick?.Invoke(this);
 

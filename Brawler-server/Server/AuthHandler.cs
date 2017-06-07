@@ -26,7 +26,7 @@ namespace BrawlerServer.Server
             // check if remoteEp is already authed
             if (packet.Server.CheckAuthedEndPoint(packet.RemoteEp))
             {
-                Logs.Log($"[{packet.Server.Time}] {packet.Server.GetClientFromAuthedEndPoint(packet.RemoteEp)} tried to authenticate but has already authenticated.");
+                throw new Exception($"[{packet.Server.Time}] {packet.Server.GetClientFromAuthedEndPoint(packet.RemoteEp)} tried to authenticate but has already authenticated.");
             }
 
             Logs.Log($"[{packet.Server.Time}] Received Auth token '{JsonData.AuthToken}' from '{packet.RemoteEp}'.");

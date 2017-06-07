@@ -61,7 +61,9 @@
     <Compile Include="Server\AuthHandler.cs" />
     <Compile Include="Server\ChatHandler.cs" />
     <Compile Include="Server\Client.cs" />
+    <Compile Include="Server\HeavyAttackHandler.cs" />
     <Compile Include="Server\PongHandler.cs" />
+    <Compile Include="Server\LightAttackHandler.cs" />
     <Compile Include="Server\TauntHandler.cs" />
     <Compile Include="Server\DodgeHandler.cs" />
     <Compile Include="Server\ICommandHandler.cs" />
