@@ -37,9 +37,9 @@ namespace BrawlerServer.Server
             {
                 packet.Server.QueueRemoveClient(alreadyIn.EndPoint, "joined from another location");
             }
-            Client.Position position = new Client.Position(0, 10, 0);
-            Client.Rotation rotation = new Client.Rotation(0, 0, 0, 0);
-            Client.SetPosition(position);
+            Rotation rotation = new Rotation(0, 0, 0, 0);
+            int spawnIndex = new Random().Next(0, packet.Server.arenas[0].spawnPoints.Count);
+            Client.SetPosition(packet.Server.arenas[0].spawnPoints[spawnIndex]);
             Client.SetRotation(rotation);
             Client.SetCharacterId(JsonData.PrefabId);
             packet.Server.AddClient(Client);
@@ -47,9 +47,9 @@ namespace BrawlerServer.Server
             Json.ClientJoined jsonDataObject = new Json.ClientJoined {
                 Name = Client.Name,
                 Id = Client.Id,
-                X = position.X,
-                Y = position.Y,
-                Z = position.Z,
+                X = Client.position.X,
+                Y = Client.position.Y,
+                Z = Client.position.Z,
                 Rx = rotation.Rx,
                 Ry = rotation.Ry,
                 Rz = rotation.Rz,

@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Net.Sockets;
 using System.Threading;
 using BrawlerServer.Utilities;
+using BrawlerServer.Gameplay;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 
@@ -120,6 +121,8 @@ namespace BrawlerServer.Server
 
         public uint MaxIdleTimeout { get; private set; }
 
+        public List<Arena> arenas { get; private set; }
+
         public Server(IPEndPoint bindEp, int bufferSize = 1024, int packetsPerLoop = 256)
         {
             packetsToSend = new List<Packet>();
@@ -145,6 +148,15 @@ namespace BrawlerServer.Server
             this.MaxAckSendTime = 30000;
 
             this.MaxIdleTimeout = 10000;
+
+            arenas = new List<Arena>();
+            Arena arena = new Arena();
+            arena.AddSpawnPoint(0, 0, 0);
+            arena.AddSpawnPoint(10, 0, -10);
+            arena.AddSpawnPoint(10, 0, 10);
+            arena.AddSpawnPoint(-10, 0, -10);
+            arena.AddSpawnPoint(10, 0, 10);
+            arenas.Add(arena);
         }
 
         public void Bind()
@@ -196,13 +208,12 @@ namespace BrawlerServer.Server
                                 clients[(IPEndPoint)remoteEp].TimeLastPacketSent = this.Time;
                             }
                             packet.ParseHeaderFromData();
-                            Logs.Log($"[{Time}] Received {packet}.");
+                            Logs.Log($"[{Time}] Successfully parsed {packet}.");
                         }
                         catch (Exception e)
                         {
-                            Logs.LogError($"[{Time}] Error while parsing packet from '{remoteEp}', with size of {size}:");
-                            foreach (string line in e.Message.Split('\n'))
-                                Logs.LogError($"[{Time}] {line}");
+                            Logs.LogWarning($"[{Time}] Unable to parse packet from '{remoteEp}', with size of {size}:");
+                            Logs.LogWarning($"[{Time}] {e.Message}");
                             continue;
                         }
                         finally
@@ -256,8 +267,7 @@ namespace BrawlerServer.Server
                                 //if (packet.RemoteEp == pair.Key)
                                 //  continue;
                                 socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, pair.Key);
-                                if (packet.Command == Commands.ClientChatted)
-                                    Logs.LogWarning($"[{Time}] Sent broadcast {packet} to {pair.Value}, clients for this broadcast: {clients.Count}.");
+                                Logs.Log($"[{Time}] Sent broadcast {packet} to {pair.Value}, clients for this broadcast: {clients.Count}.");
                             }
                         }
                         else
@@ -289,6 +299,7 @@ namespace BrawlerServer.Server
             }
         }
 
+        #region PacketManagement
         public void SendPacket(Packet packet)
         {
             packetsToSend.Add(packet);
@@ -319,6 +330,7 @@ namespace BrawlerServer.Server
                 }
             }
         }
+        #endregion
 
         #region AsyncOperations
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Text;
+using BrawlerServer.Utilities;
 
 namespace BrawlerServer.Server
 {
@@ -11,35 +11,8 @@ namespace BrawlerServer.Server
         public string Name { get; private set; }
         public uint Id { get; private set; }
         public uint TimeLastPacketSent { get; set; }
-
-        public class Position
-        {
-            public float X;
-            public float Y;
-            public float Z;
-
-            public Position(float X, float Y, float Z)
-            {
-                this.X = X;
-                this.Y = Y;
-                this.Z = Z;
-            }
-        }
+                
         public Position position { get; private set; }
-        public class Rotation
-        {
-            public float Rx;
-            public float Ry;
-            public float Rz;
-            public float Rw;
-            public Rotation(float Rx, float Ry, float Rz, float Rw)
-            {
-                this.Rx = Rx;
-                this.Ry = Ry;
-                this.Rz = Rz;
-                this.Rw = Rw;
-            }
-        }
         public Rotation rotation { get; private set; }
 
         public int characterId { get; private set; }
