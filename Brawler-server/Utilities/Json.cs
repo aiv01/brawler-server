@@ -81,8 +81,13 @@ namespace BrawlerServer.Utilities
         {
             public uint Id;
             public string Name;
-            public Server.Client.Position Position;
-            public Server.Client.Rotation Rotation;
+            public float X;
+            public float Y;
+            public float Z;
+            public float Rx;
+            public float Ry;
+            public float Rz;
+            public float Rw;
             public int PrefabId;
         }
 

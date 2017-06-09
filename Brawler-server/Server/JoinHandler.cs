@@ -47,8 +47,13 @@ namespace BrawlerServer.Server
             Json.ClientJoined jsonDataObject = new Json.ClientJoined {
                 Name = Client.Name,
                 Id = Client.Id,
-                Position = position,
-                Rotation = rotation,
+                X = position.X,
+                Y = position.Y,
+                Z = position.Z,
+                Rx = rotation.Rx,
+                Ry = rotation.Ry,
+                Rz = rotation.Rz,
+                Rw = rotation.Rw,
                 PrefabId = Client.characterId
             };
             string jsonData = JsonConvert.SerializeObject(jsonDataObject);

@@ -429,8 +429,13 @@ namespace BrawlerServer.Server
                 {
                     Name = client.Name,
                     Id = client.Id,
-                    Position = client.position,
-                    Rotation = client.rotation,
+                    X = client.position.X,
+                    Y = client.position.Y,
+                    Z = client.position.Z,
+                    Rx = client.rotation.Rx,
+                    Ry = client.rotation.Ry,
+                    Rz = client.rotation.Rz,
+                    Rw = client.rotation.Rw,
                     PrefabId = client.characterId
                 };
                 string JsonData = JsonConvert.SerializeObject(jsonDataObject);
