@@ -152,10 +152,10 @@ namespace BrawlerServer.Server
             arenas = new List<Arena>();
             Arena arena = new Arena();
             arena.AddSpawnPoint(0, 0, 0);
-            arena.AddSpawnPoint(10, 0, -10);
-            arena.AddSpawnPoint(10, 0, 10);
-            arena.AddSpawnPoint(-10, 0, -10);
-            arena.AddSpawnPoint(10, 0, 10);
+            arena.AddSpawnPoint(5, 0, -5);
+            arena.AddSpawnPoint(5, 0, 5);
+            arena.AddSpawnPoint(-5, 0, -5);
+            arena.AddSpawnPoint(5, 0, 5);
             arenas.Add(arena);
         }
 
@@ -439,16 +439,16 @@ namespace BrawlerServer.Server
                 byte[] welcomeData = new byte[512];
                 Json.ClientJoined jsonDataObject = new Json.ClientJoined
                 {
-                    Name = client.Name,
-                    Id = client.Id,
-                    X = client.position.X,
-                    Y = client.position.Y,
-                    Z = client.position.Z,
-                    Rx = client.rotation.Rx,
-                    Ry = client.rotation.Ry,
-                    Rz = client.rotation.Rz,
-                    Rw = client.rotation.Rw,
-                    PrefabId = client.characterId
+                    Name = cl.Name,
+                    Id = cl.Id,
+                    X = cl.position.X,
+                    Y = cl.position.Y,
+                    Z = cl.position.Z,
+                    Rx = cl.rotation.Rx,
+                    Ry = cl.rotation.Ry,
+                    Rz = cl.rotation.Rz,
+                    Rw = cl.rotation.Rw,
+                    PrefabId = cl.characterId
                 };
                 string JsonData = JsonConvert.SerializeObject(jsonDataObject);
 
