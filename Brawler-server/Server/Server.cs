@@ -152,10 +152,10 @@ namespace BrawlerServer.Server
             arenas = new List<Arena>();
             Arena arena = new Arena();
             arena.AddSpawnPoint(0, 0, 0);
-            arena.AddSpawnPoint(5, 0, -5);
-            arena.AddSpawnPoint(5, 0, 5);
-            arena.AddSpawnPoint(-5, 0, -5);
-            arena.AddSpawnPoint(5, 0, 5);
+            arena.AddSpawnPoint(3, 0, -3);
+            arena.AddSpawnPoint(3, 0, 3);
+            arena.AddSpawnPoint(-3, 0, -3);
+            arena.AddSpawnPoint(3, 0, 3);
             arenas.Add(arena);
         }
 
