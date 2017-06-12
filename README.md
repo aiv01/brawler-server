@@ -56,9 +56,13 @@ Sprint 5 - May 17 - May 31
 Sprint 6 - May 31 - Jun 14 
 -
 
+* state machine lobby-battle and victory management
+
 (sprint meeting)
 
 Sprint 7 - Jun 14 - Jun 28
 -
+
+* multiple rooms
 
 (sprint meeting)
