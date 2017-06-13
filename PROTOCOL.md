@@ -160,6 +160,7 @@ Json Payload:
 ### CLIENT READY (command 120) Server > Client - Reliable
 Json Payload:
 * int PrefabId: Client selected character Id
+* uint Id: Client Unique Identifier
 
 ### PING (command 121) Client > Server
 Binary Payload:
