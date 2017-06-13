@@ -140,6 +140,11 @@ Binary Payload:
 * Rz (float): Z component of the quaternion rotation;
 * Rw (float): W component of the quaternion rotation;
 
+### EMPOWER PLAYER (command 100) Web Service > Server
+Json Payload:
+* string EndPoint: Player endpoint to empower
+* int Empower Type: Type of bonus to give to the player
+
 ### ENTER ARENA (command 117) Server > Client
 Json Payload:
 * uint Id: Client Unique Identifier
