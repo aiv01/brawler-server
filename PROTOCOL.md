@@ -15,22 +15,12 @@
 
 ### JOIN (command 0) Client > Server
 Json Payload:  
-* int PrefabId: Client selected character Id
+* Empty
 
 ### CLIENT JOINED (command 1) Server > Client - Reliable
 Json Payload:
 * string Name: Player Name;
 * uint Id: Client Unique Identifier;
-* object Position:
-    * float X: X position of the player;
-    * float Y: Y position of the player;
-    * float Z: Z position of the player;
-* object Rotation:
-	* float Rx: X component of the quaternion rotation;
-	* float Ry: Y component of the quaternion rotation;
-	* float Rz: Z component of the quaternion rotation;
-	* float Rw: W component of the quaternion rotation;
-* int PrefabId: Client selected character Id;
 
 ### LEAVE (command 2) Client > Server
 Json Payload:  
@@ -129,7 +119,7 @@ Binary Payload:
 * Rz (float): Z component of the quaternion rotation;
 * Rw (float): W component of the quaternion rotation;
 
-### HEAVY ATTACK (command 10) Client > Server
+### HEAVY ATTACK (command 12) Client > Server
 Binary Payload:
 * X (float): X position of the player;
 * Y (float): Y position of the player;
@@ -139,7 +129,7 @@ Binary Payload:
 * Rz (float): Z component of the quaternion rotation;
 * Rw (float): W component of the quaternion rotation;
 
-### CLIENT HEAVY ATTACKED (command 11) Server > Client
+### CLIENT HEAVY ATTACKED (command 13) Server > Client
 Binary Payload:
 * Id (uint): Client Unique Identifier
 * X (float): X position of the player;
@@ -149,6 +139,28 @@ Binary Payload:
 * Ry (float): Y component of the quaternion rotation;
 * Rz (float): Z component of the quaternion rotation;
 * Rw (float): W component of the quaternion rotation;
+
+### ENTER ARENA (command 118) Server > Client
+Json Payload:
+* uint Id: Client Unique Identifier
+* object Position:
+    * float X: X position of the player;
+    * float Y: Y position of the player;
+    * float Z: Z position of the player;
+* object Rotation:
+	* float Rx: X component of the quaternion rotation;
+	* float Ry: Y component of the quaternion rotation;
+	* float Rz: Z component of the quaternion rotation;
+	* float Rw: W component of the quaternion rotation;
+* int PrefabId: Client selected character Id;
+
+### READY (command 119) Client > Server
+Json Payload:
+* int PrefabId: Client selected character Id
+
+### CLIENT READY (command 120) Server > Client
+Json Payload:
+* int PrefabId: Client selected character Id
 
 ### PING (command 121) Client > Server
 Binary Payload:
