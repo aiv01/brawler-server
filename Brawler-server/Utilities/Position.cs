@@ -25,6 +25,11 @@ namespace BrawlerServer.Utilities
             this.X = Y;
             this.X = Z;
         }
+
+        public override string ToString()
+        {
+            return String.Format($"pos[x: {this.X}, y: {this.Y}, z: {this.Z}]");
+        }
     }
 
     public class Rotation

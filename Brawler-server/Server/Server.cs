@@ -123,6 +123,14 @@ namespace BrawlerServer.Server
 
         public List<Arena> arenas { get; private set; }
 
+        public ServerMode mode { get; private set; }
+
+        public enum ServerMode
+        {
+            Lobby,
+            Battle
+        }
+
         public Server(IPEndPoint bindEp, int bufferSize = 1024, int packetsPerLoop = 256)
         {
             packetsToSend = new List<Packet>();
@@ -157,6 +165,8 @@ namespace BrawlerServer.Server
             arena.AddSpawnPoint(-3, 0.45f, -3);
             arena.AddSpawnPoint(3, 0.45f, 3);
             arenas.Add(arena);
+
+            mode = ServerMode.Lobby;
         }
 
         public void Bind()
@@ -440,15 +450,7 @@ namespace BrawlerServer.Server
                 Json.ClientJoined jsonDataObject = new Json.ClientJoined
                 {
                     Name = cl.Name,
-                    Id = cl.Id,
-                    X = cl.position.X,
-                    Y = cl.position.Y,
-                    Z = cl.position.Z,
-                    Rx = cl.rotation.Rx,
-                    Ry = cl.rotation.Ry,
-                    Rz = cl.rotation.Rz,
-                    Rw = cl.rotation.Rw,
-                    PrefabId = cl.characterId
+                    Id = cl.Id
                 };
                 string JsonData = JsonConvert.SerializeObject(jsonDataObject);
 
@@ -521,6 +523,55 @@ namespace BrawlerServer.Server
         public bool HasClient(Client client)
         {
             return HasClient(client.EndPoint);
+        }
+        #endregion
+
+        #region Gameplay
+        public void CheckPlayersReady()
+        {
+            foreach (Client cl in clients.Values)
+            {
+                if (!cl.isReady)
+                    return;
+            }
+            this.mode = ServerMode.Battle;
+            MovePlayersToArena();
+        }
+
+        public void MovePlayersToArena()
+        {
+            foreach (Client cl in clients.Values)
+            {
+                Rotation rotation = new Rotation(0, 0, 0, 0);
+                int spawnIndex = new Random().Next(0, this.arenas[0].spawnPoints.Count);
+                cl.SetPosition(this.arenas[0].spawnPoints[spawnIndex]);
+                cl.SetRotation(rotation);
+
+                Json.EnterArena jsonDataObject = new Json.EnterArena
+                {
+                    Name = cl.Name,
+                    Id = cl.Id,
+                    X = cl.position.X,
+                    Y = cl.position.Y,
+                    Z = cl.position.Z,
+                    Rx = rotation.Rx,
+                    Ry = rotation.Ry,
+                    Rz = rotation.Rz,
+                    Rw = rotation.Rw
+                };
+                string jsonData = JsonConvert.SerializeObject(jsonDataObject);
+
+                Logs.Log($"[{this.Time}] Sent {cl} to arena at {cl.position}.");
+
+                byte[] data = new byte[512];
+
+                // send a broadcast clientJoined packet
+                Packet packetEnterArena = new Packet(this, data.Length, data, null);
+                packetEnterArena.AddHeaderToData(true, Commands.EnterArena);
+                packetEnterArena.Broadcast = true;
+                packetEnterArena.Writer.Write(jsonData);
+                this.SendPacket(packetEnterArena);
+            }
         }
         #endregion
     }

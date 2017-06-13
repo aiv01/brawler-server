@@ -15,6 +15,8 @@ namespace BrawlerServer.Server
         public Position position { get; private set; }
         public Rotation rotation { get; private set; }
 
+        public bool isReady { get; private set; }
+
         public int characterId { get; private set; }
 
         public Client(uint id, IPEndPoint endPoint)
@@ -24,6 +26,8 @@ namespace BrawlerServer.Server
 
             this.position = new Position(0, 0, 0);
             this.rotation = new Rotation(0, 0, 0, 0);
+
+            isReady = false;
         }
 
         public Client(IPEndPoint endPoint) : this(Utilities.Utilities.GetClientId(), endPoint) { }
@@ -85,11 +89,15 @@ namespace BrawlerServer.Server
             this.rotation.Rz = z;
             this.rotation.Rw = w;
         }
-
-
+        
         public void SetCharacterId(int prefabId)
         {
             this.characterId = prefabId;
+        }
+
+        public void IsReady(bool isReady)
+        {
+            this.isReady = isReady;
         }
     }
 }

@@ -23,7 +23,12 @@ namespace BrawlerServer.Server
         public void Init(Packet packet)
         {
             Packet = packet;
-
+            
+            //Check if server is in Battle
+            if (Packet.Server.mode != Server.ServerMode.Battle)
+            {
+                throw new Exception($"RemoteEp '{packet.RemoteEp}' sent a dodge but game hasn't started yet.");
+            }
             if (!packet.Server.HasClient(packet.RemoteEp))
             {
                 throw new Exception($"RemoteEp '{packet.RemoteEp}' sent a dodge but has never joined.");

@@ -17,6 +17,11 @@ namespace BrawlerServer.Server
 
             JsonData = Utilities.Utilities.ParsePacketJson(packet, typeof(Json.JoinHandler));
 
+            //Check if server is in lobby
+            if (Packet.Server.mode != Server.ServerMode.Lobby)
+            {
+                throw new Exception($"RemoteEp '{packet.RemoteEp}' tried to join but game has already started.");
+            }
             //check if client has authed
             if (!packet.Server.CheckAuthedEndPoint(packet.RemoteEp))
             {
@@ -37,24 +42,11 @@ namespace BrawlerServer.Server
             {
                 packet.Server.QueueRemoveClient(alreadyIn.EndPoint, "joined from another location");
             }
-            Rotation rotation = new Rotation(0, 0, 0, 0);
-            int spawnIndex = new Random().Next(0, packet.Server.arenas[0].spawnPoints.Count);
-            Client.SetPosition(packet.Server.arenas[0].spawnPoints[spawnIndex]);
-            Client.SetRotation(rotation);
-            Client.SetCharacterId(JsonData.PrefabId);
             packet.Server.AddClient(Client);
 
             Json.ClientJoined jsonDataObject = new Json.ClientJoined {
                 Name = Client.Name,
-                Id = Client.Id,
-                X = Client.position.X,
-                Y = Client.position.Y,
-                Z = Client.position.Z,
-                Rx = rotation.Rx,
-                Ry = rotation.Ry,
-                Rz = rotation.Rz,
-                Rw = rotation.Rw,
-                PrefabId = Client.characterId
+                Id = Client.Id
             };
             string jsonData = JsonConvert.SerializeObject(jsonDataObject);
 

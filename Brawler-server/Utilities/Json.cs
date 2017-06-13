@@ -7,7 +7,7 @@ namespace BrawlerServer.Utilities
     {
         public class JoinHandler
         {
-            public int PrefabId;
+
         }
 
         public class LeaveHandler
@@ -77,7 +77,12 @@ namespace BrawlerServer.Utilities
             public string AuthToken;
         }
 
-        public class ClientJoined
+        public class ReadyHandler
+        {
+            public int PrefabId;
+        }
+
+        public class EnterArena
         {
             public uint Id;
             public string Name;
@@ -88,7 +93,12 @@ namespace BrawlerServer.Utilities
             public float Ry;
             public float Rz;
             public float Rw;
-            public int PrefabId;
+        }
+
+        public class ClientJoined
+        {
+            public uint Id;
+            public string Name;
         }
 
         public class ClientLeft
@@ -101,6 +111,12 @@ namespace BrawlerServer.Utilities
         {
             public string Ip;
             public string Port;
+        }
+
+        public class ClientReady
+        {
+            public int PrefabId;
+            public uint Id;
         }
 
         public class AuthPlayerPost
