@@ -157,7 +157,7 @@ Json Payload:
 Json Payload:
 * int PrefabId: Client selected character Id
 
-### CLIENT READY (command 120) Server > Client
+### CLIENT READY (command 120) Server > Client - Reliable
 Json Payload:
 * int PrefabId: Client selected character Id
 
