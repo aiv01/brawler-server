@@ -529,6 +529,7 @@ namespace BrawlerServer.Server
         #region Gameplay
         public void CheckPlayersReady()
         {
+            if (clients.Count <= 1) return;
             foreach (Client cl in clients.Values)
             {
                 if (!cl.isReady)
@@ -549,7 +550,6 @@ namespace BrawlerServer.Server
 
                 Json.EnterArena jsonDataObject = new Json.EnterArena
                 {
-                    Name = cl.Name,
                     Id = cl.Id,
                     X = cl.position.X,
                     Y = cl.position.Y,
@@ -573,6 +573,7 @@ namespace BrawlerServer.Server
                 this.SendPacket(packetEnterArena);
             }
         }
+        
         #endregion
     }
 }
