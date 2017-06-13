@@ -22,14 +22,8 @@ namespace BrawlerServer.Server
             }
             Client client = packet.Server.GetClientFromEndPoint(packet.RemoteEp);
             Logs.Log($"[{packet.Server.Time}] Received chat message from {client} with text '{JsonData.Text}'.");
-            
-            byte[] data = new byte[512];
-            Json.ClientChatted JsonChatData = new Json.ClientChatted() { Text = JsonData.Text, Name = packet.Server.GetClientFromEndPoint(packet.RemoteEp).Name };
-            Packet ClientChattedPacket = new Packet(packet.Server, data.Length, data, null);
-            ClientChattedPacket.AddHeaderToData(false, Commands.ClientChatted);
-            ClientChattedPacket.Broadcast = true;
-            ClientChattedPacket.Writer.Write(JsonConvert.SerializeObject(JsonChatData));
-            ClientChattedPacket.Server.SendPacket(ClientChattedPacket);
+
+            packet.Server.SendChatMessage(JsonData.Text, packet.Server.GetClientFromEndPoint(packet.RemoteEp).Name);
         }
     }
 }

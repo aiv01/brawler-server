@@ -17,6 +17,8 @@ namespace BrawlerServer.Server.Tests
         Packet CreateAndTestDodgePacket(Server server)
         {
             server.AddClient(new Client(server.BindEp));
+            server.AddClient(new Client(server.BindEp));
+
 
             var UpdateData = new byte[1024];
 
