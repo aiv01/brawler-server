@@ -140,7 +140,7 @@ Binary Payload:
 * Rz (float): Z component of the quaternion rotation;
 * Rw (float): W component of the quaternion rotation;
 
-### ENTER ARENA (command 118) Server > Client
+### ENTER ARENA (command 117) Server > Client
 Json Payload:
 * uint Id: Client Unique Identifier
 * object Position:
@@ -152,6 +152,10 @@ Json Payload:
 	* float Ry: Y component of the quaternion rotation;
 	* float Rz: Z component of the quaternion rotation;
 	* float Rw: W component of the quaternion rotation;
+	
+### LEAVE ARENA (command 118) Server > Client
+Json Payload:
+* Empty
 
 ### READY (command 119) Client > Server
 Json Payload:
