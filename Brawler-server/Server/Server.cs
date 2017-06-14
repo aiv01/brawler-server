@@ -594,33 +594,14 @@ namespace BrawlerServer.Server
         {
             foreach (Client cl in clients.Values)
             {
-                Rotation rotation = new Rotation(0, 0, 0, 0);
-                int spawnIndex = new Random().Next(0, this.arenas[0].spawnPoints.Count);
-                cl.SetPosition(this.arenas[0].spawnPoints[spawnIndex]);
-                cl.SetRotation(rotation);
-
-                Json.EnterArena jsonDataObject = new Json.EnterArena
-                {
-                    Id = cl.Id,
-                    X = cl.position.X,
-                    Y = cl.position.Y,
-                    Z = cl.position.Z,
-                    Rx = rotation.Rx,
-                    Ry = rotation.Ry,
-                    Rz = rotation.Rz,
-                    Rw = rotation.Rw
-                };
-                string jsonData = JsonConvert.SerializeObject(jsonDataObject);
-
-                Logs.Log($"[{this.Time}] Sent {cl} to arena at {cl.position}.");
+                Logs.Log($"[{this.Time}] Sent {cl} to lobby.");
 
                 byte[] data = new byte[512];
 
                 // send a broadcast clientJoined packet
                 Packet packetEnterArena = new Packet(this, data.Length, data, null);
-                packetEnterArena.AddHeaderToData(true, Commands.EnterArena);
+                packetEnterArena.AddHeaderToData(true, Commands.ExitArena);
                 packetEnterArena.Broadcast = true;
-                packetEnterArena.Writer.Write(jsonData);
                 this.SendPacket(packetEnterArena);
             }
         }
