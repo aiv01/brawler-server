@@ -143,7 +143,8 @@ Binary Payload:
 ### EMPOWER PLAYER (command 100) Web Service > Server
 Json Payload:
 * string EndPoint: Player endpoint to empower
-* int Empower Type: Type of bonus to give to the player
+* int Port: Player port
+* int EmpowerType: Type of bonus to give to the player
 
 ### ENTER ARENA (command 117) Server > Client
 Json Payload:
