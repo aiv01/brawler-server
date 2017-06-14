@@ -234,19 +234,8 @@ namespace BrawlerServer.Server
                         packetIndex++;
                     }
                     //Check if client didn't send any packet in MaxIdleTimeout seconds
-                    List<Client> clientsToRemove = new List<Client>();
-                    foreach (Client client in clients.Values)
-                    {
-                        if (this.Time - client.TimeLastPacketSent > MaxIdleTimeout)
-                        {
-                            clientsToRemove.Add(client);
-                            Logs.Log($"[{Time}] Queueing {client} removal, last packet sent at {client.TimeLastPacketSent}");
-                        }
-                    }
-                    foreach (Client client in clientsToRemove)
-                    {
-                        this.QueueRemoveClient(client, "Kicked for Idle Timeout");
-                    }
+                    if (this.mode == ServerMode.Battle)
+                        CheckClientsTimeout();
                     //Check if reliable packet has passed the time check limit
                     List<uint> reliablePacketsToRemove = new List<uint>();
                     foreach (KeyValuePair<uint, ReliablePacket> reliablePacket in ReliablePackets)
@@ -437,6 +426,23 @@ namespace BrawlerServer.Server
         #endregion
 
         #region ClientsManagement
+        public void CheckClientsTimeout()
+        {
+            List<Client> clientsToRemove = new List<Client>();
+            foreach (Client client in clients.Values)
+            {
+                if (this.Time - client.TimeLastPacketSent > MaxIdleTimeout)
+                {
+                    clientsToRemove.Add(client);
+                    Logs.Log($"[{Time}] Queueing {client} removal, last packet sent at {client.TimeLastPacketSent}");
+                }
+            }
+            foreach (Client client in clientsToRemove)
+            {
+                this.QueueRemoveClient(client, "Kicked for Idle Timeout");
+            }
+        }
+
         public void AddClient(Client client)
         {
             clients[client.EndPoint] = client;
