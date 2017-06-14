@@ -234,8 +234,7 @@ namespace BrawlerServer.Server
                         packetIndex++;
                     }
                     //Check if client didn't send any packet in MaxIdleTimeout seconds
-                    if (this.mode == ServerMode.Battle)
-                        CheckClientsTimeout();
+                    CheckClientsTimeout();
                     //Check if reliable packet has passed the time check limit
                     List<uint> reliablePacketsToRemove = new List<uint>();
                     foreach (KeyValuePair<uint, ReliablePacket> reliablePacket in ReliablePackets)
