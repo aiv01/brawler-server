@@ -500,11 +500,11 @@ namespace BrawlerServer.Server
         {
             foreach (Client client in QueuedClientsToRemove)
             {
-                if (this.mode == ServerMode.Battle)
-                    CheckForWinner();
-                Logs.Log($"[{this.Time}] Removed {client}. Clients left in the server: {this.clients.Count}");
                 this.SendChatMessage($"Removed {client}. Clients left in the server: {this.clients.Count}");
                 clients.Remove(client.EndPoint);
+                Logs.Log($"[{this.Time}] Removed {client}. Clients left in the server: {this.clients.Count}");
+                if (this.mode == ServerMode.Battle)
+                    CheckForWinner();
             }
             QueuedClientsToRemove.Clear();
         }
