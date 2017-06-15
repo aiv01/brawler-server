@@ -177,8 +177,7 @@ Json Payload:
 * uint Id: Client Unique Identifier
 
 ### PING (command 121) Client > Server
-Binary Payload:
-* Empty
+Empty Payload
 
 ### PING (command 121) Server > Client
 Binary Payload:
