@@ -502,7 +502,7 @@ namespace BrawlerServer.Server
             {
                 if (this.mode == ServerMode.Battle)
                     CheckForWinner();
-                Logs.Log($"Removed {client}. Clients left in the server: {this.clients.Count}");
+                Logs.Log($"[{this.Time}] Removed {client}. Clients left in the server: {this.clients.Count}");
                 clients.Remove(client.EndPoint);
             }
             QueuedClientsToRemove.Clear();
