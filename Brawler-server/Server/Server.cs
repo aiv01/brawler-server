@@ -499,6 +499,8 @@ namespace BrawlerServer.Server
         {
             foreach (Client client in QueuedClientsToRemove)
             {
+                Logs.Log($"Removed {client}. Clients left in the server: {this.clients.Count}");
+                CheckForWinner();
                 clients.Remove(client.EndPoint);
             }
         }
