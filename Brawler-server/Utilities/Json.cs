@@ -15,6 +15,11 @@ namespace BrawlerServer.Utilities
             
         }
 
+        public class CommandHandler
+        {
+            public string command;
+        }
+
         public class MoveHandler
         {
             public byte MoveType;

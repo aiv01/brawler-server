@@ -16,6 +16,7 @@ namespace BrawlerServer.Utilities
         Taunt = 8,
         LightAttack = 10,
         HeavyAttack = 12,
+        Command = 98,
         Ready = 117,
         NotReady = 119,
         Chat = 123,
@@ -29,6 +30,7 @@ namespace BrawlerServer.Utilities
         ClientTaunted = 9,
         ClientLightAttacked = 11,
         ClientHeavyAttacked = 13,
+        ClientCommanded = 99,
         EnterArena = 115,
         ExitArena = 116,
         ClientReady = 118,
@@ -37,6 +39,7 @@ namespace BrawlerServer.Utilities
         ClientAuthed = 126,
 
         //Both Ways
+        Empower = 100,
         Ping = 121,
         Pong = 122,
         Ack = 127
@@ -62,7 +65,8 @@ namespace BrawlerServer.Utilities
             { Commands.Ping, typeof(PingHandler) },
             { Commands.Pong, typeof(PongHandler) },
             { Commands.Ready, typeof(ReadyHandler) },
-            { Commands.NotReady, typeof(NotReadyHandler) }
+            { Commands.NotReady, typeof(NotReadyHandler) },
+            { Commands.Command, typeof(CommandHandler) }
         };
 
         public static ICommandHandler GetHandler(Packet packet)
