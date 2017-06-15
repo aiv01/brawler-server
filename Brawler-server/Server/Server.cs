@@ -504,6 +504,7 @@ namespace BrawlerServer.Server
                 CheckForWinner();
                 clients.Remove(client.EndPoint);
             }
+            QueuedClientsToRemove.Clear();
         }
 
         public Client GetClientFromEndPoint(IPEndPoint endPoint)
