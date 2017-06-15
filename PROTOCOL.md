@@ -14,8 +14,7 @@
 ## Payload
 
 ### JOIN (command 0) Client > Server
-Json Payload:  
-* Empty
+Empty Payload
 
 ### CLIENT JOINED (command 1) Server > Client - Reliable
 Json Payload:
@@ -23,8 +22,7 @@ Json Payload:
 * uint Id: Client Unique Identifier;
 
 ### LEAVE (command 2) Client > Server
-Json Payload:  
-* Empty
+Empty Payload
 
 ### CLIENT LEFT (command 3) Server > Client - Reliable
 Json Payload:  
@@ -146,7 +144,7 @@ Json Payload:
 * int Port: Player port
 * int EmpowerType: Type of bonus to give to the player
 
-### ENTER ARENA (command 117) Server > Client
+### ENTER ARENA (command 115) Server > Client
 Json Payload:
 * uint Id: Client Unique Identifier
 * object Position:
@@ -159,17 +157,23 @@ Json Payload:
 	* float Rz: Z component of the quaternion rotation;
 	* float Rw: W component of the quaternion rotation;
 	
-### LEAVE ARENA (command 118) Server > Client
-Json Payload:
-* Empty
+### LEAVE ARENA (command 116) Server > Client
+Empty Payload
 
-### READY (command 119) Client > Server
+### READY (command 117) Client > Server
 Json Payload:
 * int PrefabId: Client selected character Id
 
-### CLIENT READY (command 120) Server > Client - Reliable
+### CLIENT READY (command 118) Server > Client - Reliable
 Json Payload:
 * int PrefabId: Client selected character Id
+* uint Id: Client Unique Identifier
+
+### NOTREADY (command 119) Client > Server
+Empty Payload
+
+### CLIENT NOTREADY (command 120) Server > Client - Reliable
+Json Payload:
 * uint Id: Client Unique Identifier
 
 ### PING (command 121) Client > Server
