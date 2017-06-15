@@ -118,6 +118,12 @@ namespace BrawlerServer.Utilities
             public uint Id;
         }
 
+        public class ClientNotReady
+        {
+            public int PrefabId;
+            public uint Id;
+        }
+
         public class AuthPlayerPost
         {
             public bool auth_ok;
