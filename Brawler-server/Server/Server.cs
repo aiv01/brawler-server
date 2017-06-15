@@ -281,7 +281,8 @@ namespace BrawlerServer.Server
                     packetsToSend.Clear();
 
                     //remove Queued Clients
-                    RemoveClients();
+                    if (QueuedClientsToRemove.Count > 0)
+                        RemoveClients();
 
                     CheckForResponse();
                     CheckForResponseString();
