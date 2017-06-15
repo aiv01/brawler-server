@@ -155,7 +155,7 @@ namespace BrawlerServer.Server
             this.MaxAckResponseTime = 5000;
             this.MaxAckSendTime = 30000;
 
-            this.MaxIdleTimeout = 10000;
+            this.MaxIdleTimeout = 30000;
 
             arenas = new List<Arena>();
             Arena arena = new Arena();
@@ -503,6 +503,7 @@ namespace BrawlerServer.Server
                 if (this.mode == ServerMode.Battle)
                     CheckForWinner();
                 Logs.Log($"[{this.Time}] Removed {client}. Clients left in the server: {this.clients.Count}");
+                this.SendChatMessage($"Removed {client}. Clients left in the server: {this.clients.Count}");
                 clients.Remove(client.EndPoint);
             }
             QueuedClientsToRemove.Clear();

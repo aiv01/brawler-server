@@ -8,7 +8,6 @@ namespace BrawlerServer.Server
     {
         public Packet Packet { get; private set; }
         public Json.CommandHandler JsonData { get; private set; }
-        public string JsonSerialized { get; private set; }
 
         public void Init(Packet packet)
         {
