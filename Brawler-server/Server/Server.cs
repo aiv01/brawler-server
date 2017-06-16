@@ -318,6 +318,10 @@ namespace BrawlerServer.Server
         {
             if (!JsonData.server_register)
                 Logs.LogWarning($"[{Time}] Server info to Service failed: {JsonData.info}");
+            else
+            {
+                Logs.Log($"[{Time}] Server infos successfully sent");
+            }
         }
 
         #region PacketManagement

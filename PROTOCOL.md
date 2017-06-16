@@ -20,6 +20,7 @@ Empty Payload
 Json Payload:
 * string Name: Player Name;
 * uint Id: Client Unique Identifier;
+* bool IsReady: Is Client Ready to join battle
 
 ### LEAVE (command 2) Client > Server
 Empty Payload
