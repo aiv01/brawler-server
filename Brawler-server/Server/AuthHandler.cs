@@ -24,11 +24,15 @@ namespace BrawlerServer.Server
             JsonData = Utilities.Utilities.ParsePacketJson(packet, typeof(Json.AuthHandler));
 
             // check if remoteEp is already authed
-            if (packet.Server.CheckAuthedEndPoint(packet.RemoteEp))
+            if (packet.Server.HasClient(packet.RemoteEp))
             {
-                throw new Exception($"[{packet.Server.Time}] {packet.Server.GetClientFromAuthedEndPoint(packet.RemoteEp)} tried to authenticate but has already authenticated.");
+                Client = packet.Server.GetClientFromEndPoint(packet.RemoteEp);
+                if (Client.authed)
+                {
+                    throw new Exception($"[{packet.Server.Time}] {Client} tried to authenticate but has already authenticated.");
+                }
             }
-
+            
             Logs.Log($"[{packet.Server.Time}] Received Auth token '{JsonData.AuthToken}' from '{packet.RemoteEp}'.");
 
             Dictionary<string, string> requestValues = new Dictionary<string, string>
@@ -39,7 +43,7 @@ namespace BrawlerServer.Server
 
             FormUrlEncodedContent content = new FormUrlEncodedContent(requestValues);
             packet.Server.AddAsyncRequest(AsyncRequest.RequestMethod.POST, "http://taiga.aiv01.it/players/server-auth/", packet.RemoteEp, AsyncRequest.RequestType.Authentication, content);
-            
+
         }
 
         public static void HandleResponse(Json.AuthPlayerPost JsonAuthPlayer, IPEndPoint remoteEp, Server server)
@@ -48,8 +52,8 @@ namespace BrawlerServer.Server
             {
                 Client Client = new Client(remoteEp);
                 Client.SetName(JsonAuthPlayer.nickname);
+                Client.HasAuthed(true);
                 Logs.Log($"[{server.Time}] {Client} successfully authed");
-                server.AddAuthedEndPoint(remoteEp, Client);
 
                 Json.ClientAuthed JsonClientAuthed = new Json.ClientAuthed()
                 {
