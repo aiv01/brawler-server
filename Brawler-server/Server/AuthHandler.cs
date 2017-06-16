@@ -54,6 +54,7 @@ namespace BrawlerServer.Server
                 Client.SetName(JsonAuthPlayer.nickname);
                 Client.HasAuthed(true);
                 Logs.Log($"[{server.Time}] {Client} successfully authed");
+                server.AddClient(Client);
 
                 Json.ClientAuthed JsonClientAuthed = new Json.ClientAuthed()
                 {
