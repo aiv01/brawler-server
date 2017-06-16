@@ -40,7 +40,8 @@ namespace BrawlerServer.Server
         }
 
         private static readonly Dictionary<RequestType, Type> Jsons = new Dictionary<RequestType, Type> {
-            { RequestType.Authentication, typeof(Json.AuthPlayerPost) }
+            { RequestType.Authentication, typeof(Json.AuthPlayerPost) },
+            { RequestType.ServerInfoToServices, typeof(Json.InfoToServicesPost) }
         };
 
         public Task<HttpResponseMessage> Response { get; private set; }
