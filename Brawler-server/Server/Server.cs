@@ -313,7 +313,7 @@ namespace BrawlerServer.Server
             };
 
             FormUrlEncodedContent content = new FormUrlEncodedContent(requestValues);
-            AddAsyncRequest(AsyncRequest.RequestMethod.POST, "http://taiga.aiv01.it/players/server-auth/", this.BindEp, AsyncRequest.RequestType.ServerInfoToServices, content);
+            AddAsyncRequest(AsyncRequest.RequestMethod.POST, "http://taiga.aiv01.it/servers/register/", this.BindEp, AsyncRequest.RequestType.ServerInfoToServices, content);
         }
 
         public void HandleInfoToServicesResponse(Json.InfoToServicesPost JsonData)
