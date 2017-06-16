@@ -129,14 +129,6 @@ namespace BrawlerServer.Utilities
             public uint Id;
         }
 
-        public class AuthPlayerPost
-        {
-            public bool auth_ok;
-            public string nickname;
-            public string fields;
-            public string info;
-        }
-
         public class ChatHandler
         {
             public string Text;
@@ -147,7 +139,21 @@ namespace BrawlerServer.Utilities
             public string Text;
             public string Name;
         }
+        
+        public class AuthPlayerPost
+        {
+            public bool auth_ok;
+            public string nickname;
+            public string fields;
+            public string info;
+        }
 
+        public class InfoToServicesPost
+        {
+            public bool server_register;
+            public string fields;
+            public string info;
+        }
         public static dynamic Deserialize(string data, Type type)
         {
             return JsonConvert.DeserializeObject(data, type);

@@ -35,7 +35,8 @@ namespace BrawlerServer.Server
 
         public enum RequestType
         {
-            Authentication
+            Authentication,
+            ServerInfoToServices
         }
 
         private static readonly Dictionary<RequestType, Type> Jsons = new Dictionary<RequestType, Type> {
@@ -74,10 +75,13 @@ namespace BrawlerServer.Server
 
         public void CallHandler(object JsonData, Server server)
         {
-
             if (requestType == RequestType.Authentication)
             {
                 AuthHandler.HandleResponse(JsonData as Json.AuthPlayerPost, RemoteEp, server);
+            }
+            if (requestType == RequestType.ServerInfoToServices)
+            {
+                HandleInfoToServicesResponse(JsonData as Json.InfoToServicesPost);
             }
         }
 
@@ -175,6 +179,7 @@ namespace BrawlerServer.Server
             {
                 Socket.Bind(BindEp);
                 BindEp = (IPEndPoint)Socket.LocalEndPoint;
+                SendServerInfo();
             }
         }
 
@@ -296,6 +301,23 @@ namespace BrawlerServer.Server
             {
                 socket.Close();
             }
+        }
+
+        public void SendServerInfo()
+        {
+            Dictionary<string, string> requestValues = new Dictionary<string, string>
+            {
+                { "port", this.BindEp.Port.ToString() }
+            };
+
+            FormUrlEncodedContent content = new FormUrlEncodedContent(requestValues);
+            AddAsyncRequest(AsyncRequest.RequestMethod.POST, "http://taiga.aiv01.it/players/server-auth/", this.BindEp, AsyncRequest.RequestType.ServerInfoToServices, content);
+        }
+
+        public void HandleInfoToServicesResponse(Json.InfoToServicesPost JsonData)
+        {
+            if (!JsonData.server_register)
+                Logs.LogWarning($"[{Time}] Server info to Service failed: {JsonData.info}");
         }
 
         #region PacketManagement
