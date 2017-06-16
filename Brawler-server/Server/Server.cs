@@ -168,10 +168,10 @@ namespace BrawlerServer.Server
             socketsToRead.Add(Socket);
 
             this.ReliablePackets = new Dictionary<uint, ReliablePacket>();
-            this.MaxAckResponseTime = 5000;
-            this.MaxAckSendTime = 30000;
+            this.MaxAckResponseTime = 2500;
+            this.MaxAckSendTime = 7500;
 
-            this.MaxIdleTimeout = 30000;
+            this.MaxIdleTimeout = 7500;
 
             arenas = new List<Arena>();
             Arena arena = new Arena();
