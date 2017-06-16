@@ -68,6 +68,7 @@
     <Compile Include="Server\ReadyHandler.cs" />
     <Compile Include="Server\PongHandler.cs" />
     <Compile Include="Server\LightAttackHandler.cs" />
+    <Compile Include="Server\Room.cs" />
     <Compile Include="Server\TauntHandler.cs" />
     <Compile Include="Server\DodgeHandler.cs" />
     <Compile Include="Server\ICommandHandler.cs" />

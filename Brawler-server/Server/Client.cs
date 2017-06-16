@@ -15,6 +15,8 @@ namespace BrawlerServer.Server
         public Position position { get; private set; }
         public Rotation rotation { get; private set; }
 
+        public int room { get; set; }
+
         public bool isReady { get; private set; }
 
         public int characterId { get; private set; }

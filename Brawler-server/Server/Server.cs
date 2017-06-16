@@ -36,12 +36,18 @@ namespace BrawlerServer.Server
         public enum RequestType
         {
             Authentication,
-            ServerInfoToServices
+            ServerInfoToServices,
+            AddMatch,
+            AddPlayerToMatch,
+            EndMatch
         }
 
         private static readonly Dictionary<RequestType, Type> Jsons = new Dictionary<RequestType, Type> {
             { RequestType.Authentication, typeof(Json.AuthPlayerPost) },
             { RequestType.ServerInfoToServices, typeof(Json.InfoToServicesPost) }
+            //{ RequestType.AddMatch, typeof(Json.AddMatchPost) },
+            //{ RequestType.AddMatch, typeof(Json.AddPlayerToMatchPost) },
+            //{ RequestType.AddMatch, typeof(Json.EndMatchPost) },
         };
 
         public Task<HttpResponseMessage> Response { get; private set; }
@@ -94,6 +100,8 @@ namespace BrawlerServer.Server
 
     public class Server
     {
+
+        #region AttributesAndProperties
         public delegate void ServerTickHandler(Server server);
         public delegate void ServerPacketReceiveHandler(Server server, Packet packet);
         public event ServerTickHandler ServerTick;
@@ -128,7 +136,10 @@ namespace BrawlerServer.Server
 
         public List<Arena> arenas { get; private set; }
 
+        public List<Room> rooms { get; private set; }
+
         public ServerMode mode { get; private set; }
+        #endregion
 
         public enum ServerMode
         {
@@ -170,6 +181,10 @@ namespace BrawlerServer.Server
             arena.AddSpawnPoint(-3, 0.45f, -3);
             arena.AddSpawnPoint(3, 0.45f, 3);
             arenas.Add(arena);
+
+            rooms = new List<Room>();
+            Room room = new Room(8);
+            rooms.Add(room);
 
             mode = ServerMode.Lobby;
         }
@@ -477,7 +492,7 @@ namespace BrawlerServer.Server
             clients[client.EndPoint] = client;
 
             //Send every client already joined to the new client joined
-            foreach (var cl in clients.Values)
+            foreach (var cl in rooms[client.room].Clients)
             {
                 if (Equals(cl, client)) continue;
 
@@ -485,7 +500,8 @@ namespace BrawlerServer.Server
                 Json.ClientJoined jsonDataObject = new Json.ClientJoined
                 {
                     Name = cl.Name,
-                    Id = cl.Id
+                    Id = cl.Id,
+                    IsReady = cl.isReady,
                 };
                 string JsonData = JsonConvert.SerializeObject(jsonDataObject);
 
@@ -588,6 +604,7 @@ namespace BrawlerServer.Server
             }
             this.mode = ServerMode.Battle;
             MovePlayersToArena();
+            SendChatMessage($"Match Started, Players count: {clients.Count}");
         }
 
         public void MovePlayersToArena()

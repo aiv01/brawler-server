@@ -49,6 +49,7 @@ namespace BrawlerServer.Utilities
     {
         private static uint PacketId = 0;
         private static uint ClientId = 0;
+        private static int RoomId = 0;
 
         // handlers per command (the array index is the command)
         private static readonly Dictionary<Commands, Type> Handlers = new Dictionary<Commands, Type> {
@@ -109,6 +110,11 @@ namespace BrawlerServer.Utilities
         public static uint GetClientId()
         {
             return ClientId++;
+        }
+
+        public static int GetRoomId()
+        {
+            return RoomId++;
         }
     }
 }

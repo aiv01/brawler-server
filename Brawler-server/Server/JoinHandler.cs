@@ -44,9 +44,27 @@ namespace BrawlerServer.Server
             }
             packet.Server.AddClient(Client);
 
+            Room room = packet.Server.rooms[JsonData.MatchId];
+            if (room == null)
+            {
+                throw new Exception($"room {JsonData.MatchId} does not exist");
+            }
+
+            string reason = "";
+            bool canJoin = true;
+            int playersInRoom = room.Clients.Count;
+            if (playersInRoom == room.MaxPlayers)
+            {
+                canJoin = false;
+                reason = "Room is full";
+            }
+
             Json.ClientJoined jsonDataObject = new Json.ClientJoined {
+                CanJoin = canJoin,
+                Reason = reason,
                 Name = Client.Name,
-                Id = Client.Id
+                Id = Client.Id,
+                IsReady = Client.isReady,
             };
             string jsonData = JsonConvert.SerializeObject(jsonDataObject);
 
@@ -63,6 +81,8 @@ namespace BrawlerServer.Server
 
             //Set last packet sent as this one
             Client.TimeLastPacketSent = packet.Server.Time;
+
+            Client.room = JsonData.MatchId;
 
             JsonSerialized = JsonConvert.SerializeObject(JsonData);
         }

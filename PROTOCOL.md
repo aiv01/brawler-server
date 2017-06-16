@@ -14,10 +14,13 @@
 ## Payload
 
 ### JOIN (command 0) Client > Server
-Empty Payload
+Json Payload:
+* int MatchId: Match Indentifier;
 
 ### CLIENT JOINED (command 1) Server > Client - Reliable
 Json Payload:
+* bool CanJoin: Has player joined;
+* string Reason: Reason why player can't join (May be empty)
 * string Name: Player Name;
 * uint Id: Client Unique Identifier;
 * bool IsReady: Is Client Ready to join battle

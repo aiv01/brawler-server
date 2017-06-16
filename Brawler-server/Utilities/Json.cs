@@ -7,7 +7,7 @@ namespace BrawlerServer.Utilities
     {
         public class JoinHandler
         {
-
+            public int MatchId;
         }
 
         public class LeaveHandler
@@ -101,8 +101,11 @@ namespace BrawlerServer.Utilities
 
         public class ClientJoined
         {
+            public bool CanJoin;
+            public string Reason;
             public uint Id;
             public string Name;
+            public bool IsReady;
         }
 
         public class ClientLeft
@@ -154,6 +157,7 @@ namespace BrawlerServer.Utilities
             public string fields;
             public string info;
         }
+
         public static dynamic Deserialize(string data, Type type)
         {
             return JsonConvert.DeserializeObject(data, type);
