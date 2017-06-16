@@ -11,9 +11,7 @@ namespace BrawlerServer.Server
         public string Name { get; private set; }
         public uint Id { get; private set; }
         public uint TimeLastPacketSent { get; set; }
-
-        public bool authed;
-        
+                
         public Position position { get; private set; }
         public Rotation rotation { get; private set; }
 
@@ -27,8 +25,6 @@ namespace BrawlerServer.Server
         {
             Id = id;
             EndPoint = endPoint;
-
-            authed = false;
 
             this.position = new Position(0, 0, 0);
             this.rotation = new Rotation(0, 0, 0, 0);
@@ -69,10 +65,6 @@ namespace BrawlerServer.Server
             }
         }
 
-        public void HasAuthed(bool hasAuthed)
-        {
-            this.authed = hasAuthed;
-        }
 
         public void SetPosition(Position position)
         {

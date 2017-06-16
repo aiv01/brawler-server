@@ -123,6 +123,8 @@ namespace BrawlerServer.Server
         public uint MaxAckResponseTime { get; private set; }
         public uint MaxAckSendTime { get; private set; }
 
+        private readonly Dictionary<IPEndPoint, Client> authedEndPoints;
+
         private readonly Dictionary<IPEndPoint, Client> clients;
 
         public bool IsRunning { get; set; }
@@ -149,6 +151,7 @@ namespace BrawlerServer.Server
         {
             packetsToSend = new List<Packet>();
             clients = new Dictionary<IPEndPoint, Client>();
+            authedEndPoints = new Dictionary<IPEndPoint, Client>();
             HttpClient = new HttpClient();
 
             this.packetsPerLoop = packetsPerLoop;
@@ -437,7 +440,22 @@ namespace BrawlerServer.Server
         }
         #endregion
 
-        #region ClientsManagement
+        #region AuthEndPoint
+
+        public void AddAuthedEndPoint(IPEndPoint endPoint, Client client)
+        {
+            this.authedEndPoints.Add(endPoint, client);
+        }
+
+        public bool CheckAuthedEndPoint(IPEndPoint endPoint)
+        {
+            return this.authedEndPoints.ContainsKey(endPoint);
+        }
+
+        public Client GetClientFromAuthedEndPoint(IPEndPoint endPoint)
+        {
+            return this.authedEndPoints[endPoint];
+        }
 
         public Client GetClientFromName(string Name)
         {
@@ -449,6 +467,9 @@ namespace BrawlerServer.Server
             return null;
         }
 
+        #endregion
+
+        #region ClientsManagement
         public void CheckClientsTimeout()
         {
             List<Client> clientsToRemove = new List<Client>();
