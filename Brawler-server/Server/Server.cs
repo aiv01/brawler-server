@@ -547,6 +547,7 @@ namespace BrawlerServer.Server
             foreach (Client client in QueuedClientsToRemove)
             {
                 this.SendChatMessage($"Removed {client}. Clients left in the server: {this.clients.Count}");
+                this.rooms[client.room].RemoveClient(client);
                 clients.Remove(client.EndPoint);
                 Logs.Log($"[{this.Time}] Removed {client}. Clients left in the server: {this.clients.Count}");
                 if (this.mode == ServerMode.Battle)
