@@ -80,6 +80,7 @@ namespace BrawlerServer.Server
             packet.Server.SendPacket(packetClientAdded);
 
             Client.room = JsonData.MatchId;
+            room.AddClient(Client);
 
             JsonSerialized = JsonConvert.SerializeObject(JsonData);
         }

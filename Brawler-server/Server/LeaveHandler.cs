@@ -27,6 +27,9 @@ namespace BrawlerServer.Server
             Logs.Log($"[{packet.Server.Time}] Received leave message from {Client}.");
             packet.Server.QueueRemoveClient(packet.RemoteEp, "left the game");
 
+            Room room = packet.Server.rooms[Client.room];
+            room.RemoveClient(Client);
+
             JsonSerialized = JsonConvert.SerializeObject(JsonData);
         }
     }
