@@ -26,7 +26,7 @@ namespace BrawlerServer.Server.Tests
             Assert.That(packet.RemoteEp, Is.EqualTo(server.BindEp));
             var payloadOffset = packet.PayloadOffset;
 
-            packet.Server.AddAuthedEndPoint(packet.RemoteEp, new Client(packet.RemoteEp));
+            //packet.Server.AddAuthedEndPoint(packet.RemoteEp, new Client(packet.RemoteEp));
 
             packet.ParseHeaderFromData();
 
