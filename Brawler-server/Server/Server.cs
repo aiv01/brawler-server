@@ -81,7 +81,7 @@ namespace BrawlerServer.Server
             }
             if (requestType == RequestType.ServerInfoToServices)
             {
-                HandleInfoToServicesResponse(JsonData as Json.InfoToServicesPost);
+                server.HandleInfoToServicesResponse(JsonData as Json.InfoToServicesPost);
             }
         }
 
@@ -303,6 +303,7 @@ namespace BrawlerServer.Server
             }
         }
 
+        #region ServerInfoToServices
         public void SendServerInfo()
         {
             Dictionary<string, string> requestValues = new Dictionary<string, string>
@@ -323,6 +324,7 @@ namespace BrawlerServer.Server
                 Logs.Log($"[{Time}] Server infos successfully sent");
             }
         }
+        #endregion
 
         #region PacketManagement
         public void SendPacket(Packet packet)
@@ -621,7 +623,7 @@ namespace BrawlerServer.Server
                 this.SendPacket(packetEnterArena);
             }
         }
-        
+
         public void MovePlayersToLobby()
         {
             foreach (Client cl in clients.Values)
