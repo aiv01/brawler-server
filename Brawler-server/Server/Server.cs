@@ -487,7 +487,7 @@ namespace BrawlerServer.Server
                 Packet welcomePacket = new Packet(this, welcomeData.Length, welcomeData, client.EndPoint);
                 welcomePacket.AddHeaderToData(true, Commands.ClientJoined);
                 welcomePacket.Writer.Write(JsonData);
-                Logs.Log($"[{Time}] Sent {cl} clientjoined to {client}");
+                Logs.Log($"[{Time}] Sent {cl} client joined to {client}");
                 SendPacket(welcomePacket);
             }
 

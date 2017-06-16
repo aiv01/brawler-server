@@ -80,9 +80,6 @@ namespace BrawlerServer.Server
             packetClientAdded.Writer.Write(jsonData);
             packet.Server.SendPacket(packetClientAdded);
 
-            //Set last packet sent as this one
-            Client.TimeLastPacketSent = packet.Server.Time;
-
             Client.room = JsonData.MatchId;
 
             JsonSerialized = JsonConvert.SerializeObject(JsonData);
