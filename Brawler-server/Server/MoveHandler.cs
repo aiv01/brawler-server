@@ -20,6 +20,7 @@ namespace BrawlerServer.Server
         public float Ry { get; private set; }
         public float Rz { get; private set; }
         public float Rw { get; private set; }
+        public float Health { get; private set; }
 
         public void Init(Packet packet)
         {
@@ -48,6 +49,7 @@ namespace BrawlerServer.Server
             Ry = packet.Reader.ReadSingle();
             Rz = packet.Reader.ReadSingle();
             Rw = packet.Reader.ReadSingle();
+            Health = packet.Reader.ReadSingle();
 
             Logs.Log($"[{packet.Server.Time}] Received move packet ({MoveType},{X},{Y},{Z},{Rx},{Ry},{Rz},{Rw}) from {Client}.");
 
@@ -63,6 +65,7 @@ namespace BrawlerServer.Server
             packetToSend.Writer.Write(Ry);
             packetToSend.Writer.Write(Rz);
             packetToSend.Writer.Write(Rw);
+            packetToSend.Writer.Write(Health);
             Packet.Server.SendPacket(packetToSend);
 
             JsonData = new Json.MoveHandler()
@@ -75,6 +78,7 @@ namespace BrawlerServer.Server
                 Ry = this.Ry,
                 Rz = this.Rz,
                 Rw = this.Rw,
+                Health = this.Health,
             };
             JsonSerialized = JsonConvert.SerializeObject(JsonData);
         }

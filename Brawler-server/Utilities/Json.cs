@@ -30,6 +30,7 @@ namespace BrawlerServer.Utilities
             public float Ry;
             public float Rz;
             public float Rw;
+            public float Health;
         }
 
         public class DodgeHandler
