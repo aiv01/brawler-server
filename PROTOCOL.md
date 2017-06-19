@@ -15,7 +15,7 @@
 
 ### JOIN (command 0) Client > Server
 Json Payload:
-* int MatchId: Match Indentifier;
+* int MatchId: Match Identifier;
 
 ### CLIENT JOINED (command 1) Server > Client - Reliable
 Json Payload:
@@ -143,6 +143,15 @@ Binary Payload:
 * Ry (float): Y component of the quaternion rotation;
 * Rz (float): Z component of the quaternion rotation;
 * Rw (float): W component of the quaternion rotation;
+
+### SWAP WEAPON (command 14) Client > Server
+Binary Payload:
+* WeaponId (byte): Weapon Identifier;
+
+### CLIENT SWAPPED WEAPON (command 15) Server > Client
+Binary Payload:
+* WeaponId (byte): Weapon Identifier;
+* Id (uint): Client Id;
 
 ### EMPOWER PLAYER (command 100) Web Service > Server
 Json Payload:
