@@ -326,7 +326,7 @@ namespace BrawlerServer.Server
             {
                 { "port", this.BindEp.Port.ToString() }
             };
-
+            Logs.Log($"Sending Server Info with Port Ip: {this.BindEp.Port.ToString()}");
             FormUrlEncodedContent content = new FormUrlEncodedContent(requestValues);
             AddAsyncRequest(AsyncRequest.RequestMethod.POST, "http://taiga.aiv01.it/servers/register/", this.BindEp, AsyncRequest.RequestType.ServerInfoToServices, content);
         }
