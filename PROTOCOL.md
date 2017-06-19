@@ -144,11 +144,15 @@ Binary Payload:
 * Rz (float): Z component of the quaternion rotation;
 * Rw (float): W component of the quaternion rotation;
 
-### SWAP WEAPON (command 14) Client > Server
+### HIT (command 14) Client > Server
+
+### CLIENT HITTED (command 15) Server > Client
+
+### SWAP WEAPON (command 16) Client > Server
 Binary Payload:
 * WeaponId (byte): Weapon Identifier;
 
-### CLIENT SWAPPED WEAPON (command 15) Server > Client
+### CLIENT SWAPPED WEAPON (command 17) Server > Client
 Binary Payload:
 * WeaponId (byte): Weapon Identifier;
 * Id (uint): Client Id;

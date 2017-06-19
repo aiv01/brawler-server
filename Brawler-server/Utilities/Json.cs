@@ -78,6 +78,11 @@ namespace BrawlerServer.Utilities
             public float Rw;
         }
 
+        public class SwapWeaponHandler
+        {
+            public byte WeaponId;
+        }
+
         public class AuthHandler
         {
             public string AuthToken;

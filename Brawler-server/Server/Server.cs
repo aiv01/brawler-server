@@ -662,7 +662,13 @@ namespace BrawlerServer.Server
 
         public void CheckForWinner()
         {
-            if (clients.Count == 1)
+            int clientsAlive = 0;
+            foreach(Client client in clients.Values)
+            {
+                if (!client.isDead)
+                    clientsAlive++;
+            }
+            if (clientsAlive == 1)
             {
                 this.mode = ServerMode.Lobby;
                 foreach (Client cl in clients.Values)

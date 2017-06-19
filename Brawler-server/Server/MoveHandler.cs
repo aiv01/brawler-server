@@ -32,12 +32,18 @@ namespace BrawlerServer.Server
                 throw new Exception($"RemoteEp '{packet.RemoteEp}' sent a move but game hasn't started yet.");
             }
 
+            //Check if client has joined
             if (!packet.Server.HasClient(packet.RemoteEp))
             {
                 throw new Exception($"RemoteEp '{packet.RemoteEp}' sent a move but has never joined.");
             }
             Client = packet.Server.GetClientFromEndPoint(packet.RemoteEp);
 
+            //Check if client is not dead
+            if (Client.isDead)
+            {
+                throw new Exception($"RemoteEp '{packet.RemoteEp}' sent a move but is dead.");
+            }
 
             packet.Stream.Seek(packet.PayloadOffset, System.IO.SeekOrigin.Begin);
             Id = packet.Server.GetClientFromEndPoint(packet.RemoteEp).Id;
@@ -51,7 +57,7 @@ namespace BrawlerServer.Server
             Rw = packet.Reader.ReadSingle();
             Health = packet.Reader.ReadSingle();
 
-            Logs.Log($"[{packet.Server.Time}] Received move packet ({MoveType},{X},{Y},{Z},{Rx},{Ry},{Rz},{Rw}) from {Client}.");
+            Logs.Log($"[{packet.Server.Time}] Received move packet ({MoveType},({X},{Y},{Z}),({Rx},{Ry},{Rz},{Rw}),HP:{Health}) from {Client}.");
 
             Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, packet.RemoteEp);
             packetToSend.Broadcast = true;
@@ -67,6 +73,12 @@ namespace BrawlerServer.Server
             packetToSend.Writer.Write(Rw);
             packetToSend.Writer.Write(Health);
             Packet.Server.SendPacket(packetToSend);
+
+            Client.SetHealth(Health);
+            if (Client.isDead)
+            {
+                packet.Server.SendChatMessage($"{Client.Name} died");
+            }
 
             JsonData = new Json.MoveHandler()
             {

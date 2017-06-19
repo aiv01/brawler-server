@@ -18,6 +18,9 @@ namespace BrawlerServer.Server
         public int room { get; set; }
 
         public bool isReady { get; private set; }
+        public bool isDead { get; private set; }
+
+        public float health { get; private set; }
 
         public int characterId { get; private set; }
 
@@ -100,6 +103,18 @@ namespace BrawlerServer.Server
         public void IsReady(bool isReady)
         {
             this.isReady = isReady;
+        }
+
+        public void IsDead(bool isDead)
+        {
+            this.isDead = isDead;
+        }
+
+        public void SetHealth(float health)
+        {
+            this.health = health;
+            if (health <= 0)
+                this.IsDead(true);
         }
     }
 }
