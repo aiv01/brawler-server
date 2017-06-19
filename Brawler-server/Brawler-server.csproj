@@ -64,6 +64,7 @@
     <Compile Include="Server\Client.cs" />
     <Compile Include="Server\HeavyAttackHandler.cs" />
     <Compile Include="Server\CommandHandler.cs" />
+    <Compile Include="Server\SwapWeaponHandler.cs" />
     <Compile Include="Server\NotReadyHandler.cs" />
     <Compile Include="Server\ReadyHandler.cs" />
     <Compile Include="Server\PongHandler.cs" />
