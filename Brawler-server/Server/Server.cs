@@ -660,6 +660,8 @@ namespace BrawlerServer.Server
                 packetEnterArena.AddHeaderToData(true, Commands.ExitArena);
                 packetEnterArena.Broadcast = true;
                 this.SendPacket(packetEnterArena);
+
+                this.mode = ServerMode.Lobby;
             }
         }
 
@@ -673,7 +675,6 @@ namespace BrawlerServer.Server
             }
             if (clientsAlive == 1)
             {
-                this.mode = ServerMode.Lobby;
                 foreach (Client cl in clients.Values)
                 {
                     this.SendChatMessage($"{cl.Name} won the game");
