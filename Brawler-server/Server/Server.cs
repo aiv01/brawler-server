@@ -660,9 +660,9 @@ namespace BrawlerServer.Server
                 packetEnterArena.AddHeaderToData(true, Commands.ExitArena);
                 packetEnterArena.Broadcast = true;
                 this.SendPacket(packetEnterArena);
-
-                this.mode = ServerMode.Lobby;
             }
+
+            this.mode = ServerMode.Lobby;
         }
 
         public void CheckForWinner()
