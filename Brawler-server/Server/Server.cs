@@ -195,7 +195,7 @@ namespace BrawlerServer.Server
             {
                 Socket.Bind(BindEp);
                 BindEp = (IPEndPoint)Socket.LocalEndPoint;
-                SendServerInfo();
+                //SendServerInfo();
             }
         }
 
