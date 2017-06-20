@@ -25,6 +25,17 @@ namespace BrawlerServer.Server
                     packet.Server.CheckPlayersReady(1, true);
                 }
             }
+            else if (Command == CommanderCmds.ForceLobby)
+            {
+                if (packet.Server.mode == Server.ServerMode.Battle)
+                {
+                    packet.Server.MovePlayersToLobby();
+                }
+            }
+            else if (Command == CommanderCmds.Kick)
+            {
+                //TODO
+            }
         }
     }
 }
