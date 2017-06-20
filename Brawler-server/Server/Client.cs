@@ -33,6 +33,8 @@ namespace BrawlerServer.Server
             this.rotation = new Rotation(0, 0, 0, 0);
 
             isReady = false;
+
+            health = 100f;
         }
 
         public Client(IPEndPoint endPoint) : this(Utilities.Utilities.GetClientId(), endPoint) { }
