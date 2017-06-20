@@ -23,7 +23,7 @@ namespace BrawlerServer.Utilities
         NotReady = 119,
         Chat = 123,
         Auth = 125,
-        
+
         // server -> client
         ClientJoined = 1,
         ClientLeft = 3,
@@ -47,6 +47,14 @@ namespace BrawlerServer.Utilities
         Ping = 121,
         Pong = 122,
         Ack = 127
+    }
+
+    public enum CommanderCmds : byte
+    {
+        Ping = 0,
+        ForceArena = 1,
+        ForceLobby = 2,
+        Kick = 3,
     }
 
     public static class Utilities
@@ -81,7 +89,7 @@ namespace BrawlerServer.Utilities
             Type commandHandlerType;
             if (Handlers.TryGetValue(packet.Command, out commandHandlerType))
             {
-                result = (ICommandHandler) Activator.CreateInstance(commandHandlerType);
+                result = (ICommandHandler)Activator.CreateInstance(commandHandlerType);
             }
             return result;
         }
