@@ -166,7 +166,7 @@ Json Payload:
 ### EMPOWER PLAYER (command 100) Server > Client
 Binary Payload:
 * id (uint): Client unique identifier;
-* fury (float): Fury amount;
+* fury (int): Fury amount;
 
 ### ENTER ARENA (command 115) Server > Client
 Json Payload:

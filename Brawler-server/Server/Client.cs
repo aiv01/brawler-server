@@ -20,7 +20,8 @@ namespace BrawlerServer.Server
         public bool isReady { get; private set; }
         public bool isDead { get; private set; }
 
-        public float health { get; private set; }
+        public int health { get; private set; }
+        public int fury { get; private set; }
 
         public int characterId { get; private set; }
 
@@ -34,7 +35,8 @@ namespace BrawlerServer.Server
 
             isReady = false;
 
-            health = 100f;
+            health = 100;
+            fury = 0;
         }
 
         public Client(IPEndPoint endPoint) : this(Utilities.Utilities.GetClientId(), endPoint) { }
@@ -112,11 +114,21 @@ namespace BrawlerServer.Server
             this.isDead = isDead;
         }
 
-        public void SetHealth(float health)
+        public void SetHealth(int health)
         {
             this.health = health;
             if (health <= 0)
                 this.IsDead(true);
+        }
+
+        public void SetFury(int fury)
+        {
+            this.fury = fury;
+        }
+
+        public void AddFury(int amount)
+        {
+            this.fury += amount;
         }
     }
 }

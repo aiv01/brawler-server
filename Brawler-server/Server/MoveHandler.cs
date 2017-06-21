@@ -20,7 +20,8 @@ namespace BrawlerServer.Server
         public float Ry { get; private set; }
         public float Rz { get; private set; }
         public float Rw { get; private set; }
-        public float Health { get; private set; }
+        public int Health { get; private set; }
+        public int Fury { get; private set; }
 
         public void Init(Packet packet)
         {
@@ -37,6 +38,7 @@ namespace BrawlerServer.Server
             {
                 throw new Exception($"RemoteEp '{packet.RemoteEp}' sent a move but has never joined.");
             }
+
             Client = packet.Server.GetClientFromEndPoint(packet.RemoteEp);
 
             //Check if client is not dead
@@ -46,7 +48,7 @@ namespace BrawlerServer.Server
             }
 
             packet.Stream.Seek(packet.PayloadOffset, System.IO.SeekOrigin.Begin);
-            Id = packet.Server.GetClientFromEndPoint(packet.RemoteEp).Id;
+            Id = Client.Id;
             MoveType = packet.Reader.ReadByte();
             X = packet.Reader.ReadSingle();
             Y = packet.Reader.ReadSingle();
@@ -55,11 +57,12 @@ namespace BrawlerServer.Server
             Ry = packet.Reader.ReadSingle();
             Rz = packet.Reader.ReadSingle();
             Rw = packet.Reader.ReadSingle();
-            Health = packet.Reader.ReadSingle();
+            Health = packet.Reader.ReadInt32();
+            Fury = Client.fury;
 
             Logs.Log($"[{packet.Server.Time}] Received move packet ({MoveType},({X},{Y},{Z}),({Rx},{Ry},{Rz},{Rw}),HP:{Health}) from {Client}.");
 
-            Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, packet.RemoteEp);
+            Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, null);
             packetToSend.Broadcast = true;
             packetToSend.AddHeaderToData(false, Commands.ClientMoved);
             packetToSend.Writer.Write(Id);
@@ -72,12 +75,13 @@ namespace BrawlerServer.Server
             packetToSend.Writer.Write(Rz);
             packetToSend.Writer.Write(Rw);
             packetToSend.Writer.Write(Health);
+            packetToSend.Writer.Write(Fury);
             Packet.Server.SendPacket(packetToSend);
 
             Client.SetHealth(Health);
             if (Client.isDead)
             {
-                packet.Server.SendChatMessage($"{Client.Name} died");
+                packet.Server.SendChatMessage($"{Client.Name} HP:{Client.health} died");
             }
 
             JsonData = new Json.MoveHandler()

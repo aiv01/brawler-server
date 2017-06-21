@@ -93,6 +93,13 @@ namespace BrawlerServer.Utilities
             public int PrefabId;
         }
 
+        public class EmpowerHandler
+        {
+            public string Ip;
+            public int Port;
+            public int EmpowerType;
+        }
+
         public class EnterArena
         {
             public uint Id;
