@@ -54,13 +54,13 @@ namespace BrawlerServer.Server
             Rw = packet.Reader.ReadSingle();
             Damage = packet.Reader.ReadSingle();
 
-            Client.AddHealth(Damage);
+            Client.AddHealth(-Damage);
             if (Client.isDead)
             {
                 packet.Server.SendChatMessage($"{Client.Name} HP:{Client.health} died");
             }
 
-            Logs.Log($"[{packet.Server.Time}] Received hit ({Damage}) from {Client}.");
+            Logs.LogWarning($"[{packet.Server.Time}] Received hit ({Damage}) from {Client}.");
 
             Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, packet.RemoteEp);
             packetToSend.Broadcast = true;
