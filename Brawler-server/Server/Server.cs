@@ -613,7 +613,7 @@ namespace BrawlerServer.Server
         }
 
         #region Gameplay
-        public void CheckPlayersReady(int playersRequired = 2, bool force = false)
+        public void CheckPlayersReady(int playersRequired = 1, bool force = false)
         {
             if (clients.Count < playersRequired) return;
 
