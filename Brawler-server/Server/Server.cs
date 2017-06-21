@@ -315,8 +315,6 @@ namespace BrawlerServer.Server
 
                 DeltaTime = (watch.ElapsedMilliseconds - Time) / 1000f;
                 Time = (uint)watch.ElapsedMilliseconds;
-                if (Time < 100)
-                Logs.Log($"{DeltaTime}, {watch.ElapsedMilliseconds}, {Time}");
 
                 
             }
