@@ -20,7 +20,7 @@ namespace BrawlerServer.Server
         public float Ry { get; private set; }
         public float Rz { get; private set; }
         public float Rw { get; private set; }
-        public int Health { get; private set; }
+        public float Health { get; private set; }
         public int Fury { get; private set; }
 
         public void Init(Packet packet)
@@ -57,10 +57,10 @@ namespace BrawlerServer.Server
             Ry = packet.Reader.ReadSingle();
             Rz = packet.Reader.ReadSingle();
             Rw = packet.Reader.ReadSingle();
-            Health = packet.Reader.ReadInt32();
-            Fury = Client.fury;
+            Health = Client.health;
+            Fury = (int)Client.fury;
 
-            Logs.Log($"[{packet.Server.Time}] Received move packet ({MoveType},({X},{Y},{Z}),({Rx},{Ry},{Rz},{Rw}),HP:{Health}) from {Client}.");
+            Logs.Log($"[{packet.Server.Time}] Received move packet ({MoveType},({X},{Y},{Z}),({Rx},{Ry},{Rz},{Rw}),HP:{Health}, Fury:{Fury}) from {Client}.");
 
             Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, null);
             packetToSend.Broadcast = true;
@@ -77,26 +77,6 @@ namespace BrawlerServer.Server
             packetToSend.Writer.Write(Health);
             packetToSend.Writer.Write(Fury);
             Packet.Server.SendPacket(packetToSend);
-
-            Client.SetHealth(Health);
-            if (Client.isDead)
-            {
-                packet.Server.SendChatMessage($"{Client.Name} HP:{Client.health} died");
-            }
-
-            JsonData = new Json.MoveHandler()
-            {
-                MoveType = this.MoveType,
-                X = this.X,
-                Y = this.Y,
-                Z = this.Z,
-                Rx = this.Rx,
-                Ry = this.Ry,
-                Rz = this.Rz,
-                Rw = this.Rw,
-                Health = this.Health,
-            };
-            JsonSerialized = JsonConvert.SerializeObject(JsonData);
         }
     }
 }

@@ -33,6 +33,11 @@ namespace BrawlerServer.Utilities
             public float Health;
         }
 
+        public class HitHandler
+        {
+            public float DamageDealt;
+        }
+
         public class DodgeHandler
         {
             public float X;

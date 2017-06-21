@@ -309,6 +309,9 @@ namespace BrawlerServer.Server
                     CheckForResponseString();
                 }
 
+                if (this.mode == ServerMode.Battle)
+                    UpdateClients();
+
                 ServerTick?.Invoke(this);
 
                 DeltaTime = (uint)watch.ElapsedMilliseconds - Time;
@@ -510,7 +513,6 @@ namespace BrawlerServer.Server
                 Logs.Log($"[{Time}] Sent {cl} client joined to {client}");
                 SendPacket(welcomePacket);
             }
-
         }
 
         public List<Client> QueuedClientsToRemove = new List<Client>();
@@ -580,6 +582,15 @@ namespace BrawlerServer.Server
         public bool HasClient(Client client)
         {
             return HasClient(client.EndPoint);
+        }
+
+
+        public void UpdateClients()
+        {
+            foreach (Client client in clients.Values)
+            {
+                client.AddFury(-this.DeltaTime);
+            }
         }
         #endregion
 

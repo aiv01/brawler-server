@@ -43,10 +43,12 @@ namespace BrawlerServer.Utilities
         ClientAuthed = 126,
 
         //Both Ways
-        Empower = 100,
         Ping = 121,
         Pong = 122,
-        Ack = 127
+        Ack = 127,
+
+        //Others
+        Empower = 100,
     }
 
     public enum CommanderCmds : byte
@@ -57,6 +59,7 @@ namespace BrawlerServer.Utilities
         Kick = 3,
         SetHealth,
         SetFury,
+        SendMessage
     }
 
     public static class Utilities

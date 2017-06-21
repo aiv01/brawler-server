@@ -66,6 +66,15 @@ namespace BrawlerServer.Server
                 int.TryParse(Arguments[1], out fury);
                 client.SetFury(fury);
             }
+            else if (Command == CommanderCmds.SendMessage)
+            {
+                string message = "";
+                for (int i = 0; i < Arguments.Length; i++)
+                {
+                    message += Arguments[i] + " ";
+                }
+                packet.Server.SendChatMessage(message);
+            }
         }
     }
 }
