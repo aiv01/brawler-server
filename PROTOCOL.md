@@ -43,7 +43,7 @@ Binary Payload:
 * Ry (float): Y component of the quaternion rotation;
 * Rz (float): Z component of the quaternion rotation;
 * Rw (float): W component of the quaternion rotation;
-* Health (float): Player health
+* Health (int): Player health
 
 ### CLIENT MOVED (command 5) Server > Client
 Binary Payload:  
@@ -56,7 +56,7 @@ Binary Payload:
 * Ry (float): Y component of the quaternion rotation;
 * Rz (float): Z component of the quaternion rotation;
 * Rw (float): W component of the quaternion rotation;
-* Health (float): Player health
+* Health (int): Player health
 
 ### DODGE (command 6) Client > Server
 Binary Payload:
@@ -162,6 +162,11 @@ Json Payload:
 * string EndPoint: Player endpoint to empower
 * int Port: Player port
 * int EmpowerType: Type of bonus to give to the player
+
+### EMPOWER PLAYER (command 100) Server > Client
+Binary Payload:
+* id (uint): Client unique identifier;
+* fury (float): Fury amount;
 
 ### ENTER ARENA (command 115) Server > Client
 Json Payload:
