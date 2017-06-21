@@ -55,6 +55,8 @@ namespace BrawlerServer.Utilities
         ForceArena = 1,
         ForceLobby = 2,
         Kick = 3,
+        SetHealth,
+        SetFury,
     }
 
     public static class Utilities
