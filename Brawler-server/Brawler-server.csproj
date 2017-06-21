@@ -65,6 +65,7 @@
     <Compile Include="Server\EmpowerHandler.cs" />
     <Compile Include="Server\HeavyAttackHandler.cs" />
     <Compile Include="Server\CommandHandler.cs" />
+    <Compile Include="Server\HitHandler.cs" />
     <Compile Include="Server\SwapWeaponHandler.cs" />
     <Compile Include="Server\NotReadyHandler.cs" />
     <Compile Include="Server\ReadyHandler.cs" />
