@@ -212,7 +212,6 @@ namespace BrawlerServer.Server
             {
                 if (watch.ElapsedMilliseconds > UInt32.MaxValue)
                     watch.Restart();
-                Time = (uint)watch.ElapsedMilliseconds;
 
                 socketsToRead = new List<Socket>();
                 socketsToRead.Add(Socket);
@@ -314,7 +313,12 @@ namespace BrawlerServer.Server
 
                 ServerTick?.Invoke(this);
 
-                DeltaTime = ((uint)watch.ElapsedMilliseconds - Time) / 1000;
+                DeltaTime = (watch.ElapsedMilliseconds - Time) / 1000f;
+                Time = (uint)watch.ElapsedMilliseconds;
+                if (Time < 100)
+                Logs.Log($"{DeltaTime}, {watch.ElapsedMilliseconds}, {Time}");
+
+                
             }
             foreach (Socket socket in socketsToRead)
             {
@@ -590,7 +594,6 @@ namespace BrawlerServer.Server
             foreach (Client client in clients.Values)
             {
                 float amount = -(this.DeltaTime * client.furyDecay);
-                Logs.Log($"{amount} {this.DeltaTime}");
                 client.AddFury(amount);
             }
         }
