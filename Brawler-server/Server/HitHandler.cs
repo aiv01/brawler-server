@@ -3,7 +3,7 @@ using BrawlerServer.Utilities;
 
 namespace BrawlerServer.Server
 {
-    class HitHandler
+    class HitHandler : ICommandHandler
     {
         public Packet Packet { get; private set; }
         public Client Client { get; private set; }

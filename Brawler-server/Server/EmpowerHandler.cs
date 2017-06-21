@@ -12,7 +12,7 @@ namespace BrawlerServer.Server
         Criticism
     }
 
-    public class EmpowerHandler
+    public class EmpowerHandler : ICommandHandler
     {
         public Packet Packet { get; private set; }
         public Client ClientToEmpower { get; private set; }
