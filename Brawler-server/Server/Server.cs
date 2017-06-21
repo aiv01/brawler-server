@@ -589,7 +589,7 @@ namespace BrawlerServer.Server
         {
             foreach (Client client in clients.Values)
             {
-                client.AddFury(-this.DeltaTime);
+                client.AddFury(-this.DeltaTime * client.furyDecay);
             }
         }
         #endregion
