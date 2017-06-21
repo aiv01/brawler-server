@@ -11,7 +11,7 @@ namespace BrawlerServer
     {
         static void Main(string[] args)
         {
-            Logs.Level = Logs.DebugLevel.Full;
+            Logs.Level = Logs.DebugLevel.WarningsOnly;
 
             Logs.Log($"Brawler Server started!\nHostname: {args[0]}\nPort: {args[1]}");
 

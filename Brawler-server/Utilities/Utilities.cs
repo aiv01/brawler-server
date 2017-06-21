@@ -87,7 +87,7 @@ namespace BrawlerServer.Utilities
             { Commands.Command, typeof(CommandHandler) },
             { Commands.SwapWeapon, typeof(SwapWeaponHandler) },
             { Commands.Empower, typeof(EmpowerHandler) },
-
+            { Commands.Hit, typeof(HitHandler) }
         };
 
         public static ICommandHandler GetHandler(Packet packet)
