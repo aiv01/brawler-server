@@ -589,7 +589,9 @@ namespace BrawlerServer.Server
         {
             foreach (Client client in clients.Values)
             {
-                client.AddFury(-this.DeltaTime * client.furyDecay);
+                float amount = -(this.DeltaTime * client.furyDecay);
+                Logs.Log($"[{this.Time}] Added {amount} fury to {client}");
+                client.AddFury(amount);
             }
         }
         #endregion
