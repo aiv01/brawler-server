@@ -314,7 +314,7 @@ namespace BrawlerServer.Server
 
                 ServerTick?.Invoke(this);
 
-                DeltaTime = (uint)watch.ElapsedMilliseconds - Time;
+                DeltaTime = ((uint)watch.ElapsedMilliseconds - Time) / 1000;
             }
             foreach (Socket socket in socketsToRead)
             {
