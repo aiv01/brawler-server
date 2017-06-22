@@ -691,7 +691,7 @@ namespace BrawlerServer.Server
                 if (!client.isDead)
                     clientsAlive++;
             }
-            if (clientsAlive == 1)
+            if (clientsAlive <= 1)
             {
                 foreach (Client cl in clients.Values)
                 {
