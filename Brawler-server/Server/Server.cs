@@ -285,8 +285,7 @@ namespace BrawlerServer.Server
                                 //if (packet.RemoteEp == pair.Key)
                                 //  continue;
                                 socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, pair.Key);
-                                if (packet.Command == Commands.ClientHitted)
-                                Logs.LogWarning($"[{Time}] Sent broadcast {packet} to {pair.Value}, clients for this broadcast: {clients.Count}.");
+                                Logs.Log($"[{Time}] Sent broadcast {packet} to {pair.Value}, clients for this broadcast: {clients.Count}.");
                             }
                         }
                         else

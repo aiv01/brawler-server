@@ -60,7 +60,7 @@ namespace BrawlerServer.Server
                 packet.Server.SendChatMessage($"{Client.Name} HP:{Client.health} died");
             }
 
-            Logs.LogWarning($"[{packet.Server.Time}] Received hit ({Damage},({X},{Y},{Z}),({Rx},{Ry},{Rz},{Rw})) from {Client}.");
+            Logs.Log($"[{packet.Server.Time}] Received hit ({Damage},({X},{Y},{Z}),({Rx},{Ry},{Rz},{Rw})) from {Client}.");
 
             Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, packet.RemoteEp);
             packetToSend.Broadcast = true;
