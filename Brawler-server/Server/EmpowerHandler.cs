@@ -22,7 +22,9 @@ namespace BrawlerServer.Server
         public void Init(Packet packet)
         {
             Packet = packet;
-
+            var jsonData = packet.Reader.ReadString();
+            Logs.LogWarning($"{jsonData}");
+            packet.Stream.Seek(packet.PayloadOffset, System.IO.SeekOrigin.Begin);
             JsonData = Utilities.Utilities.ParsePacketJson(packet, typeof(Json.EmpowerHandler));
 
             //Check if client is connected
