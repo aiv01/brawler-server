@@ -21,7 +21,7 @@ namespace BrawlerServer.Server
         public float Rz { get; private set; }
         public float Rw { get; private set; }
         public float Health { get; private set; }
-        public int Fury { get; private set; }
+        public float Fury { get; private set; }
 
         public void Init(Packet packet)
         {
@@ -58,7 +58,7 @@ namespace BrawlerServer.Server
             Rz = packet.Reader.ReadSingle();
             Rw = packet.Reader.ReadSingle();
             Health = Client.health;
-            Fury = (int)Client.fury;
+            Fury = Client.fury;
 
             Logs.Log($"[{packet.Server.Time}] Received move packet ({MoveType},({X},{Y},{Z}),({Rx},{Ry},{Rz},{Rw}),HP:{Health}, Fury:{Fury}) from {Client}.");
 
