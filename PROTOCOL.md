@@ -145,6 +145,8 @@ Binary Payload:
 * Rw (float): W component of the quaternion rotation;
 
 ### HIT (command 14) Client > Server
+Binary Payload:
+* 
 
 ### CLIENT HITTED (command 15) Server > Client
 

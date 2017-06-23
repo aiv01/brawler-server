@@ -23,7 +23,7 @@ namespace BrawlerServer.Server
         {
             Packet = packet;
             var jsonData = packet.Reader.ReadString();
-            Logs.LogWarning($"{jsonData}");
+            Logs.LogWarning($"{jsonData}, {packet}");
             packet.Stream.Seek(packet.PayloadOffset, System.IO.SeekOrigin.Begin);
             JsonData = Utilities.Utilities.ParsePacketJson(packet, typeof(Json.EmpowerHandler));
 
@@ -35,7 +35,6 @@ namespace BrawlerServer.Server
             IPEndPoint ClientEP = new IPEndPoint(IPAddress.Parse(JsonData.Ip), JsonData.Port);
             ClientToEmpower = packet.Server.GetClientFromEndPoint(ClientEP);
             EmpowerType Empower = (EmpowerType)JsonData.EmpowerType;
-            // Error converting value "EmpowerType" to type 'BrawlerServer.Utilities.Json+EmpowerHandler'. Path '', line 1, position 13.
 
             if (Empower == EmpowerType.ThumbUp)
                 ClientToEmpower.AddFury(20);
