@@ -157,6 +157,10 @@ Binary Payload:
 * WeaponId (byte): Weapon Identifier;
 * Id (uint): Client Id;
 
+### CLIENT WON (command 18) Server > Client
+Binary Payload:
+* Id (uint): Client unique identifier;
+
 ### EMPOWER PLAYER (command 100) Web Service > Server
 Json Payload:
 * string Ip: Player Ip to empower

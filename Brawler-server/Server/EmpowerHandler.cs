@@ -22,6 +22,7 @@ namespace BrawlerServer.Server
         public void Init(Packet packet)
         {
             Packet = packet;
+            Logs.Log("0");
 
             JsonData = Utilities.Utilities.ParsePacketJson(packet, typeof(Json.EmpowerHandler));
 
@@ -30,9 +31,14 @@ namespace BrawlerServer.Server
             {
                 throw new Exception($"'{packet.RemoteEp}' sent an empower but player doesn't exist.");
             }
+            Logs.Log("1");
             IPEndPoint ClientEP = new IPEndPoint(IPAddress.Parse(JsonData.Ip), JsonData.Port);
+            Logs.Log("2");
             ClientToEmpower = packet.Server.GetClientFromEndPoint(ClientEP);
+            Logs.Log("3");
             EmpowerType Empower = (EmpowerType)JsonData.EmpowerType;
+            Logs.Log("4");
+            // Error converting value "EmpowerType" to type 'BrawlerServer.Utilities.Json+EmpowerHandler'. Path '', line 1, position 13.
 
             if (Empower == EmpowerType.ThumbUp)
                 ClientToEmpower.AddFury(20);
