@@ -58,6 +58,7 @@ namespace BrawlerServer.Server
             if (Client.isDead)
             {
                 packet.Server.SendChatMessage($"{Client.Name} HP:{Client.health} died");
+                packet.Server.QueueRemoveClient(Client, "died");
             }
 
             Logs.Log($"[{packet.Server.Time}] Received hit ({Damage},({X},{Y},{Z}),({Rx},{Ry},{Rz},{Rw})) from {Client}.");

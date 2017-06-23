@@ -146,9 +146,26 @@ Binary Payload:
 
 ### HIT (command 14) Client > Server
 Binary Payload:
-* 
+* X (float): X position of the player;
+* Y (float): Y position of the player;
+* Z (float): Z position of the player;
+* Rx (float): X component of the quaternion rotation;
+* Ry (float): Y component of the quaternion rotation;
+* Rz (float): Z component of the quaternion rotation;
+* Rw (float): W component of the quaternion rotation;
+* Damage (float): Damage got
 
 ### CLIENT HITTED (command 15) Server > Client
+Binary Payload:
+* Id (uint)
+* X (float): X position of the player;
+* Y (float): Y position of the player;
+* Z (float): Z position of the player;
+* Rx (float): X component of the quaternion rotation;
+* Ry (float): Y component of the quaternion rotation;
+* Rz (float): Z component of the quaternion rotation;
+* Rw (float): W component of the quaternion rotation;
+* Damage (float): Damage got
 
 ### SWAP WEAPON (command 16) Client > Server
 Binary Payload:
