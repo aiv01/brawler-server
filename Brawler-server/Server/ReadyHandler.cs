@@ -16,6 +16,15 @@ namespace BrawlerServer.Server
         {
             Packet = packet;
 
+            var jsonData = packet.Reader.ReadString();
+            Logs.LogWarning($"{jsonData}, {packet}, {packet.PayloadOffset}");
+            packet.Stream.Seek(packet.PayloadOffset, System.IO.SeekOrigin.Begin);
+            var stringa = "";
+            for (int i = 0; i < packet.PacketSize; i++)
+            {
+                stringa += packet.Data[i] + " ";
+            }
+            Logs.LogWarning($"{stringa}");
             JsonData = Utilities.Utilities.ParsePacketJson(packet, typeof(Json.ReadyHandler));
 
             //Check if client is connected
