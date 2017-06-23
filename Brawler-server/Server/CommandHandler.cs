@@ -75,6 +75,17 @@ namespace BrawlerServer.Server
                 }
                 packet.Server.SendChatMessage(message);
             }
+            else if (Command == CommanderCmds.LogLevel)
+            {
+                if (Arguments[0] == "full")
+                    Logs.Level = Logs.DebugLevel.Full;
+                if (Arguments[0] == "warning")
+                    Logs.Level = Logs.DebugLevel.WarningsOnly;
+                if (Arguments[0] == "error")
+                    Logs.Level = Logs.DebugLevel.ErrorsOnly;
+                if (Arguments[0] == "none")
+                    Logs.Level = Logs.DebugLevel.None;
+            }
         }
     }
 }

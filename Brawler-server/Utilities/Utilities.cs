@@ -59,7 +59,8 @@ namespace BrawlerServer.Utilities
         Kick = 3,
         SetHealth,
         SetFury,
-        SendMessage
+        SendMessage,
+        LogLevel,
     }
 
     public static class Utilities
