@@ -22,8 +22,9 @@ namespace BrawlerServer.Server
         public void Init(Packet packet)
         {
             Packet = packet;
+            packet.Stream.Seek(packet.PayloadOffset, System.IO.SeekOrigin.Begin);
             var jsonData = packet.Reader.ReadString();
-            Logs.LogWarning($"{jsonData}, {packet}");
+            Logs.LogWarning($"{jsonData}, {packet}, {packet.PayloadOffset}");
             packet.Stream.Seek(packet.PayloadOffset, System.IO.SeekOrigin.Begin);
             var stringa = "";
             for (int i = 0; i < packet.PacketSize; i++)
