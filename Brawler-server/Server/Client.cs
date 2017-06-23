@@ -38,7 +38,7 @@ namespace BrawlerServer.Server
 
             health = 100;
             fury = 0f;
-            furyDecay = 1.0f;
+            furyDecay = 5.0f;
         }
 
         public Client(IPEndPoint endPoint) : this(Utilities.Utilities.GetClientId(), endPoint) { }

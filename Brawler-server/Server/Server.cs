@@ -635,6 +635,7 @@ namespace BrawlerServer.Server
             {
                 Rotation rotation = new Rotation(0, 0, 0, 0);
                 int spawnIndex = new Random().Next(0, this.arenas[0].spawnPoints.Count);
+                Logs.Log($"[{this.Time}] {this.arenas[0].spawnPoints.Count}");
                 cl.SetPosition(this.arenas[0].spawnPoints[spawnIndex]);
                 cl.SetRotation(rotation);
 
