@@ -60,7 +60,7 @@ namespace BrawlerServer.Server
             Health = Client.health;
             Fury = Client.fury;
 
-            Logs.Log($"[{packet.Server.Time}] Received move packet ({MoveType},({X},{Y},{Z}),({Rx},{Ry},{Rz},{Rw}),HP:{Health}, Fury:{Fury}) from {Client}.");
+            Logs.Log($"[{packet.Server.Time}] Received move packet ({MoveType},({X},{Y},{Z}),({Rx},{Ry},{Rz},{Rw}),HP:{Health},Fury:{Fury}) from {Client}.");
 
             Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, null);
             packetToSend.Broadcast = true;

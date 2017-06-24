@@ -153,6 +153,7 @@ namespace BrawlerServer.Utilities
         public class ChatHandler
         {
             public string Text;
+            public string Name;
         }
 
         public class ClientChatted
