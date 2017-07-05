@@ -16,9 +16,14 @@ namespace BrawlerServer.Utilities
         Taunt = 8,
         LightAttack = 10,
         HeavyAttack = 12,
+        Hit = 14,
+        SwapWeapon = 16,
+        Command = 98,
+        Ready = 117,
+        NotReady = 119,
         Chat = 123,
         Auth = 125,
-        
+
         // server -> client
         ClientJoined = 1,
         ClientLeft = 3,
@@ -27,19 +32,42 @@ namespace BrawlerServer.Utilities
         ClientTaunted = 9,
         ClientLightAttacked = 11,
         ClientHeavyAttacked = 13,
+        ClientHitted = 15,
+        ClientSwappedWeapon = 17,
+        ClientCommanded = 99,
+        EnterArena = 115,
+        ExitArena = 116,
+        ClientReady = 118,
+        ClientNotReady = 120,
         ClientChatted = 124,
         ClientAuthed = 126,
 
         //Both Ways
         Ping = 121,
         Pong = 122,
-        Ack = 127
+        Ack = 127,
+
+        //Others
+        Empower = 100,
+    }
+
+    public enum CommanderCmds : byte
+    {
+        Ping = 0,
+        ForceArena = 1,
+        ForceLobby = 2,
+        Kick = 3,
+        SetHealth,
+        SetFury,
+        SendMessage,
+        LogLevel,
     }
 
     public static class Utilities
     {
         private static uint PacketId = 0;
         private static uint ClientId = 0;
+        private static int RoomId = 0;
 
         // handlers per command (the array index is the command)
         private static readonly Dictionary<Commands, Type> Handlers = new Dictionary<Commands, Type> {
@@ -54,7 +82,13 @@ namespace BrawlerServer.Utilities
             { Commands.LightAttack, typeof(LightAttackHandler) },
             { Commands.HeavyAttack, typeof(HeavyAttackHandler) },
             { Commands.Ping, typeof(PingHandler) },
-            { Commands.Pong, typeof(PongHandler) }
+            { Commands.Pong, typeof(PongHandler) },
+            { Commands.Ready, typeof(ReadyHandler) },
+            { Commands.NotReady, typeof(NotReadyHandler) },
+            { Commands.Command, typeof(CommandHandler) },
+            { Commands.SwapWeapon, typeof(SwapWeaponHandler) },
+            { Commands.Empower, typeof(EmpowerHandler) },
+            { Commands.Hit, typeof(HitHandler) }
         };
 
         public static ICommandHandler GetHandler(Packet packet)
@@ -63,7 +97,7 @@ namespace BrawlerServer.Utilities
             Type commandHandlerType;
             if (Handlers.TryGetValue(packet.Command, out commandHandlerType))
             {
-                result = (ICommandHandler) Activator.CreateInstance(commandHandlerType);
+                result = (ICommandHandler)Activator.CreateInstance(commandHandlerType);
             }
             return result;
         }
@@ -97,6 +131,11 @@ namespace BrawlerServer.Utilities
         public static uint GetClientId()
         {
             return ClientId++;
+        }
+
+        public static int GetRoomId()
+        {
+            return RoomId++;
         }
     }
 }

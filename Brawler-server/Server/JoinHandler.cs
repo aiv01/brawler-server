@@ -17,6 +17,11 @@ namespace BrawlerServer.Server
 
             JsonData = Utilities.Utilities.ParsePacketJson(packet, typeof(Json.JoinHandler));
 
+            //Check if server is in lobby
+            if (Packet.Server.mode != Server.ServerMode.Lobby)
+            {
+                throw new Exception($"RemoteEp '{packet.RemoteEp}' tried to join but game has already started.");
+            }
             //check if client has authed
             if (!packet.Server.CheckAuthedEndPoint(packet.RemoteEp))
             {
@@ -37,24 +42,29 @@ namespace BrawlerServer.Server
             {
                 packet.Server.QueueRemoveClient(alreadyIn.EndPoint, "joined from another location");
             }
-            Client.Position position = new Client.Position(0, 10, 0);
-            Client.Rotation rotation = new Client.Rotation(0, 0, 0, 0);
-            Client.SetPosition(position);
-            Client.SetRotation(rotation);
-            Client.SetCharacterId(JsonData.PrefabId);
             packet.Server.AddClient(Client);
 
+            Room room = packet.Server.rooms[JsonData.MatchId];
+            if (room == null)
+            {
+                throw new Exception($"room {JsonData.MatchId} does not exist");
+            }
+
+            string reason = "";
+            bool canJoin = true;
+            int playersInRoom = room.Clients.Count;
+            if (playersInRoom == room.MaxPlayers)
+            {
+                canJoin = false;
+                reason = "Room is full";
+            }
+
             Json.ClientJoined jsonDataObject = new Json.ClientJoined {
+                CanJoin = canJoin,
+                Reason = reason,
                 Name = Client.Name,
                 Id = Client.Id,
-                X = position.X,
-                Y = position.Y,
-                Z = position.Z,
-                Rx = rotation.Rx,
-                Ry = rotation.Ry,
-                Rz = rotation.Rz,
-                Rw = rotation.Rw,
-                PrefabId = Client.characterId
+                IsReady = Client.isReady,
             };
             string jsonData = JsonConvert.SerializeObject(jsonDataObject);
 
@@ -69,8 +79,8 @@ namespace BrawlerServer.Server
             packetClientAdded.Writer.Write(jsonData);
             packet.Server.SendPacket(packetClientAdded);
 
-            //Set last packet sent as this one
-            Client.TimeLastPacketSent = packet.Server.Time;
+            Client.room = JsonData.MatchId;
+            room.AddClient(Client);
 
             JsonSerialized = JsonConvert.SerializeObject(JsonData);
         }

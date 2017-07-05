@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Text;
+using BrawlerServer.Utilities;
 
 namespace BrawlerServer.Server
 {
@@ -11,36 +11,18 @@ namespace BrawlerServer.Server
         public string Name { get; private set; }
         public uint Id { get; private set; }
         public uint TimeLastPacketSent { get; set; }
-
-        public class Position
-        {
-            public float X;
-            public float Y;
-            public float Z;
-
-            public Position(float X, float Y, float Z)
-            {
-                this.X = X;
-                this.Y = Y;
-                this.Z = Z;
-            }
-        }
+                
         public Position position { get; private set; }
-        public class Rotation
-        {
-            public float Rx;
-            public float Ry;
-            public float Rz;
-            public float Rw;
-            public Rotation(float Rx, float Ry, float Rz, float Rw)
-            {
-                this.Rx = Rx;
-                this.Ry = Ry;
-                this.Rz = Rz;
-                this.Rw = Rw;
-            }
-        }
         public Rotation rotation { get; private set; }
+
+        public int room { get; set; }
+
+        public bool isReady { get; private set; }
+        public bool isDead { get; private set; }
+
+        public float health { get; private set; }
+        public float fury { get; private set; }
+        public float furyDecay { get; private set; }
 
         public int characterId { get; private set; }
 
@@ -51,6 +33,12 @@ namespace BrawlerServer.Server
 
             this.position = new Position(0, 0, 0);
             this.rotation = new Rotation(0, 0, 0, 0);
+
+            isReady = false;
+
+            health = 100;
+            fury = 0f;
+            furyDecay = 5.0f;
         }
 
         public Client(IPEndPoint endPoint) : this(Utilities.Utilities.GetClientId(), endPoint) { }
@@ -62,7 +50,7 @@ namespace BrawlerServer.Server
 
         public override string ToString()
         {
-            return $"client:[name:'{Name}', endPoint:'{EndPoint}', id:'{Id}']";
+            return $"client:[name:'{Name}', endPoint:'{EndPoint}', id:'{Id}', room:'{room}']";
         }
 
         protected bool Equals(Client other)
@@ -112,11 +100,44 @@ namespace BrawlerServer.Server
             this.rotation.Rz = z;
             this.rotation.Rw = w;
         }
-
-
+        
         public void SetCharacterId(int prefabId)
         {
             this.characterId = prefabId;
+        }
+
+        public void IsReady(bool isReady)
+        {
+            this.isReady = isReady;
+        }
+
+        public void IsDead(bool isDead)
+        {
+            this.isDead = isDead;
+        }
+
+        public void SetHealth(float health)
+        {
+            this.health = health;
+            if (health <= 0)
+                this.IsDead(true);
+        }
+
+        public void AddHealth(float amount)
+        {
+            this.health += amount;
+            if (health <= 0)
+                this.IsDead(true);
+        }
+
+        public void SetFury(float fury)
+        {
+            this.fury = fury;
+        }
+
+        public void AddFury(float amount)
+        {
+            this.fury += amount;
         }
     }
 }

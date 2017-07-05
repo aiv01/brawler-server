@@ -20,20 +20,35 @@ namespace BrawlerServer.Server
         public float Ry { get; private set; }
         public float Rz { get; private set; }
         public float Rw { get; private set; }
+        public float Health { get; private set; }
+        public float Fury { get; private set; }
 
         public void Init(Packet packet)
         {
             Packet = packet;
 
+            //Check if server is in Battle
+            if (Packet.Server.mode != Server.ServerMode.Battle)
+            {
+                throw new Exception($"RemoteEp '{packet.RemoteEp}' sent a move but game hasn't started yet.");
+            }
+
+            //Check if client has joined
             if (!packet.Server.HasClient(packet.RemoteEp))
             {
                 throw new Exception($"RemoteEp '{packet.RemoteEp}' sent a move but has never joined.");
             }
+
             Client = packet.Server.GetClientFromEndPoint(packet.RemoteEp);
 
+            //Check if client is not dead
+            if (Client.isDead)
+            {
+                throw new Exception($"RemoteEp '{packet.RemoteEp}' sent a move but is dead.");
+            }
 
             packet.Stream.Seek(packet.PayloadOffset, System.IO.SeekOrigin.Begin);
-            Id = packet.Server.GetClientFromEndPoint(packet.RemoteEp).Id;
+            Id = Client.Id;
             MoveType = packet.Reader.ReadByte();
             X = packet.Reader.ReadSingle();
             Y = packet.Reader.ReadSingle();
@@ -42,10 +57,12 @@ namespace BrawlerServer.Server
             Ry = packet.Reader.ReadSingle();
             Rz = packet.Reader.ReadSingle();
             Rw = packet.Reader.ReadSingle();
+            Health = Client.health;
+            Fury = Client.fury;
 
-            Logs.Log($"[{packet.Server.Time}] Received move packet ({MoveType},{X},{Y},{Z},{Rx},{Ry},{Rz},{Rw}) from {Client}.");
+            Logs.Log($"[{packet.Server.Time}] Received move packet ({MoveType},({X},{Y},{Z}),({Rx},{Ry},{Rz},{Rw}),HP:{Health},Fury:{Fury}) from {Client}.");
 
-            Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, packet.RemoteEp);
+            Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, null);
             packetToSend.Broadcast = true;
             packetToSend.AddHeaderToData(false, Commands.ClientMoved);
             packetToSend.Writer.Write(Id);
@@ -57,20 +74,9 @@ namespace BrawlerServer.Server
             packetToSend.Writer.Write(Ry);
             packetToSend.Writer.Write(Rz);
             packetToSend.Writer.Write(Rw);
+            packetToSend.Writer.Write(Health);
+            packetToSend.Writer.Write(Fury);
             Packet.Server.SendPacket(packetToSend);
-
-            JsonData = new Json.MoveHandler()
-            {
-                MoveType = this.MoveType,
-                X = this.X,
-                Y = this.Y,
-                Z = this.Z,
-                Rx = this.Rx,
-                Ry = this.Ry,
-                Rz = this.Rz,
-                Rw = this.Rw,
-            };
-            JsonSerialized = JsonConvert.SerializeObject(JsonData);
         }
     }
 }

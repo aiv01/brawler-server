@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Net.Sockets;
 using System.Threading;
 using BrawlerServer.Utilities;
+using BrawlerServer.Gameplay;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 
@@ -34,11 +35,19 @@ namespace BrawlerServer.Server
 
         public enum RequestType
         {
-            Authentication
+            Authentication,
+            ServerInfoToServices,
+            AddMatch,
+            AddPlayerToMatch,
+            EndMatch
         }
 
         private static readonly Dictionary<RequestType, Type> Jsons = new Dictionary<RequestType, Type> {
-            { RequestType.Authentication, typeof(Json.AuthPlayerPost) }
+            { RequestType.Authentication, typeof(Json.AuthPlayerPost) },
+            { RequestType.ServerInfoToServices, typeof(Json.InfoToServicesPost) }
+            //{ RequestType.AddMatch, typeof(Json.AddMatchPost) },
+            //{ RequestType.AddMatch, typeof(Json.AddPlayerToMatchPost) },
+            //{ RequestType.AddMatch, typeof(Json.EndMatchPost) },
         };
 
         public Task<HttpResponseMessage> Response { get; private set; }
@@ -73,10 +82,13 @@ namespace BrawlerServer.Server
 
         public void CallHandler(object JsonData, Server server)
         {
-
             if (requestType == RequestType.Authentication)
             {
                 AuthHandler.HandleResponse(JsonData as Json.AuthPlayerPost, RemoteEp, server);
+            }
+            if (requestType == RequestType.ServerInfoToServices)
+            {
+                server.HandleInfoToServicesResponse(JsonData as Json.InfoToServicesPost);
             }
         }
 
@@ -88,6 +100,8 @@ namespace BrawlerServer.Server
 
     public class Server
     {
+
+        #region AttributesAndProperties
         public delegate void ServerTickHandler(Server server);
         public delegate void ServerPacketReceiveHandler(Server server, Packet packet);
         public event ServerTickHandler ServerTick;
@@ -116,9 +130,22 @@ namespace BrawlerServer.Server
         public bool IsRunning { get; set; }
         public uint Time { get; private set; }
         // does NOT count looptime
-        public uint DeltaTime { get; private set; }
+        public float DeltaTime { get; private set; }
 
         public uint MaxIdleTimeout { get; private set; }
+
+        public List<Arena> arenas { get; private set; }
+
+        public List<Room> rooms { get; private set; }
+
+        public ServerMode mode { get; private set; }
+        #endregion
+
+        public enum ServerMode
+        {
+            Lobby,
+            Battle
+        }
 
         public Server(IPEndPoint bindEp, int bufferSize = 1024, int packetsPerLoop = 256)
         {
@@ -141,10 +168,25 @@ namespace BrawlerServer.Server
             socketsToRead.Add(Socket);
 
             this.ReliablePackets = new Dictionary<uint, ReliablePacket>();
-            this.MaxAckResponseTime = 5000;
-            this.MaxAckSendTime = 30000;
+            this.MaxAckResponseTime = 2500;
+            this.MaxAckSendTime = 7500;
 
-            this.MaxIdleTimeout = 10000;
+            this.MaxIdleTimeout = 7500;
+
+            arenas = new List<Arena>();
+            Arena arena = new Arena();
+            arena.AddSpawnPoint(0, 0.45f, 0);
+            arena.AddSpawnPoint(3, 0.45f, -3);
+            arena.AddSpawnPoint(3, 0.45f, 3);
+            arena.AddSpawnPoint(-3, 0.45f, -3);
+            arena.AddSpawnPoint(3, 0.45f, 3);
+            arenas.Add(arena);
+
+            rooms = new List<Room>();
+            Room room = new Room(8);
+            rooms.Add(room);
+
+            mode = ServerMode.Lobby;
         }
 
         public void Bind()
@@ -153,6 +195,7 @@ namespace BrawlerServer.Server
             {
                 Socket.Bind(BindEp);
                 BindEp = (IPEndPoint)Socket.LocalEndPoint;
+                //SendServerInfo();
             }
         }
 
@@ -169,7 +212,6 @@ namespace BrawlerServer.Server
             {
                 if (watch.ElapsedMilliseconds > UInt32.MaxValue)
                     watch.Restart();
-                Time = (uint)watch.ElapsedMilliseconds;
 
                 socketsToRead = new List<Socket>();
                 socketsToRead.Add(Socket);
@@ -196,13 +238,12 @@ namespace BrawlerServer.Server
                                 clients[(IPEndPoint)remoteEp].TimeLastPacketSent = this.Time;
                             }
                             packet.ParseHeaderFromData();
-                            Logs.Log($"[{Time}] Received {packet}.");
+                            Logs.Log($"[{Time}] Successfully parsed {packet}.");
                         }
                         catch (Exception e)
                         {
-                            Logs.LogError($"[{Time}] Error while parsing packet from '{remoteEp}', with size of {size}:");
-                            foreach (string line in e.Message.Split('\n'))
-                                Logs.LogError($"[{Time}] {line}");
+                            Logs.LogWarning($"[{Time}] Unable to parse packet from '{remoteEp}', with size of {size}:");
+                            Logs.LogWarning($"[{Time}] {e.Message}");
                             continue;
                         }
                         finally
@@ -213,19 +254,7 @@ namespace BrawlerServer.Server
                         packetIndex++;
                     }
                     //Check if client didn't send any packet in MaxIdleTimeout seconds
-                    List<Client> clientsToRemove = new List<Client>();
-                    foreach (Client client in clients.Values)
-                    {
-                        if (this.Time - client.TimeLastPacketSent > MaxIdleTimeout)
-                        {
-                            clientsToRemove.Add(client);
-                            Logs.Log($"[{Time}] Queueing {client} removal, last packet sent at {client.TimeLastPacketSent}");
-                        }
-                    }
-                    foreach (Client client in clientsToRemove)
-                    {
-                        this.QueueRemoveClient(client, "Kicked for Idle Timeout");
-                    }
+                    CheckClientsTimeout();
                     //Check if reliable packet has passed the time check limit
                     List<uint> reliablePacketsToRemove = new List<uint>();
                     foreach (KeyValuePair<uint, ReliablePacket> reliablePacket in ReliablePackets)
@@ -255,9 +284,8 @@ namespace BrawlerServer.Server
                                 //TODO Fails tests for Move, Taunt and Dodge ... Loses the last float value
                                 //if (packet.RemoteEp == pair.Key)
                                 //  continue;
-                                socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, pair.Key);
-                                if (packet.Command == Commands.ClientChatted)
-                                    Logs.LogWarning($"[{Time}] Sent broadcast {packet} to {pair.Value}, clients for this broadcast: {clients.Count}.");
+                                socket.SendTo(packet.Data, 0, (int)packet.Stream.Position, SocketFlags.None, pair.Key);
+                                Logs.Log($"[{Time}] Sent broadcast {packet} to {pair.Value}, clients for this broadcast: {clients.Count}.");
                             }
                         }
                         else
@@ -273,15 +301,22 @@ namespace BrawlerServer.Server
                     packetsToSend.Clear();
 
                     //remove Queued Clients
-                    RemoveClients();
+                    if (QueuedClientsToRemove.Count > 0)
+                        RemoveClients();
 
                     CheckForResponse();
                     CheckForResponseString();
                 }
 
+                if (this.mode == ServerMode.Battle)
+                    UpdateClients();
+
                 ServerTick?.Invoke(this);
 
-                DeltaTime = (uint)watch.ElapsedMilliseconds - Time;
+                DeltaTime = (watch.ElapsedMilliseconds - Time) / 1000f;
+                Time = (uint)watch.ElapsedMilliseconds;
+
+                
             }
             foreach (Socket socket in socketsToRead)
             {
@@ -289,6 +324,29 @@ namespace BrawlerServer.Server
             }
         }
 
+        #region ServerInfoToServices
+        public void SendServerInfo()
+        {
+            Dictionary<string, string> requestValues = new Dictionary<string, string>
+            {
+                { "port", this.BindEp.Port.ToString() }
+            };
+            FormUrlEncodedContent content = new FormUrlEncodedContent(requestValues);
+            AddAsyncRequest(AsyncRequest.RequestMethod.POST, "http://taiga.aiv01.it/servers/register/", this.BindEp, AsyncRequest.RequestType.ServerInfoToServices, content);
+        }
+
+        public void HandleInfoToServicesResponse(Json.InfoToServicesPost JsonData)
+        {
+            if (!JsonData.server_register)
+                Logs.LogWarning($"[{Time}] Server info to Service failed: {JsonData.info}");
+            else
+            {
+                Logs.Log($"[{Time}] Server infos successfully sent");
+            }
+        }
+        #endregion
+
+        #region PacketManagement
         public void SendPacket(Packet packet)
         {
             packetsToSend.Add(packet);
@@ -319,6 +377,7 @@ namespace BrawlerServer.Server
                 }
             }
         }
+        #endregion
 
         #region AsyncOperations
 
@@ -415,37 +474,47 @@ namespace BrawlerServer.Server
         #endregion
 
         #region ClientsManagement
+        public void CheckClientsTimeout()
+        {
+            List<Client> clientsToRemove = new List<Client>();
+            foreach (Client client in clients.Values)
+            {
+                if (this.Time - client.TimeLastPacketSent > MaxIdleTimeout)
+                {
+                    clientsToRemove.Add(client);
+                    Logs.Log($"[{Time}] Queueing {client} removal, last packet sent at {client.TimeLastPacketSent}");
+                }
+            }
+            foreach (Client client in clientsToRemove)
+            {
+                this.QueueRemoveClient(client, "Kicked for Idle Timeout");
+            }
+        }
+
         public void AddClient(Client client)
         {
             clients[client.EndPoint] = client;
 
             //Send every client already joined to the new client joined
-            foreach (var cl in clients.Values)
+            foreach (var cl in rooms[client.room].Clients)
             {
                 if (Equals(cl, client)) continue;
 
                 byte[] welcomeData = new byte[512];
                 Json.ClientJoined jsonDataObject = new Json.ClientJoined
                 {
-                    Name = client.Name,
-                    Id = client.Id,
-                    X = client.position.X,
-                    Y = client.position.Y,
-                    Z = client.position.Z,
-                    Rx = client.rotation.Rx,
-                    Ry = client.rotation.Ry,
-                    Rz = client.rotation.Rz,
-                    Rw = client.rotation.Rw,
-                    PrefabId = client.characterId
+                    Name = cl.Name,
+                    Id = cl.Id,
+                    IsReady = cl.isReady,
                 };
                 string JsonData = JsonConvert.SerializeObject(jsonDataObject);
 
                 Packet welcomePacket = new Packet(this, welcomeData.Length, welcomeData, client.EndPoint);
                 welcomePacket.AddHeaderToData(true, Commands.ClientJoined);
                 welcomePacket.Writer.Write(JsonData);
+                Logs.Log($"[{Time}] Sent {cl} client joined to {client}");
                 SendPacket(welcomePacket);
             }
-
         }
 
         public List<Client> QueuedClientsToRemove = new List<Client>();
@@ -480,8 +549,14 @@ namespace BrawlerServer.Server
         {
             foreach (Client client in QueuedClientsToRemove)
             {
+                this.SendChatMessage($"Removed {client}. Clients left in the server: {this.clients.Count}");
+                this.rooms[client.room].RemoveClient(client);
                 clients.Remove(client.EndPoint);
+                Logs.Log($"[{this.Time}] Removed {client}. Clients left in the server: {this.clients.Count}");
+                if (this.mode == ServerMode.Battle)
+                    CheckForWinner();
             }
+            QueuedClientsToRemove.Clear();
         }
 
         public Client GetClientFromEndPoint(IPEndPoint endPoint)
@@ -509,6 +584,121 @@ namespace BrawlerServer.Server
         public bool HasClient(Client client)
         {
             return HasClient(client.EndPoint);
+        }
+
+
+        public void UpdateClients()
+        {
+            foreach (Client client in clients.Values)
+            {
+                if (client.fury > 0)
+                {
+                    float amount = -(this.DeltaTime * client.furyDecay);
+                    client.AddFury(amount);
+                }
+            }
+        }
+        #endregion
+
+        public void SendChatMessage(string text, string sender = "Er Server")
+        {
+            byte[] data = new byte[512];
+            Json.ClientChatted JsonChatData = new Json.ClientChatted() { Text = text, Name = sender };
+            Packet ClientChattedPacket = new Packet(this, data.Length, data, null);
+            ClientChattedPacket.AddHeaderToData(false, Commands.ClientChatted);
+            ClientChattedPacket.Broadcast = true;
+            ClientChattedPacket.Writer.Write(JsonConvert.SerializeObject(JsonChatData));
+            ClientChattedPacket.Server.SendPacket(ClientChattedPacket);
+        }
+
+        #region Gameplay
+        public void CheckPlayersReady(int playersRequired = 1, bool force = false)
+        {
+            if (clients.Count < playersRequired) return;
+
+            if (!force)
+            {
+                foreach (Client cl in clients.Values)
+                {
+                    if (!cl.isReady)
+                        return;
+                }
+            }
+            this.mode = ServerMode.Battle;
+            MovePlayersToArena();
+            SendChatMessage($"Match Started, Players count: {clients.Count}");
+        }
+
+        public void MovePlayersToArena()
+        {
+            foreach (Client cl in clients.Values)
+            {
+                Rotation rotation = new Rotation(0, 0, 0, 0);
+                int spawnIndex = new Random().Next(0, this.arenas[0].spawnPoints.Count);
+                Logs.Log($"[{this.Time}] {this.arenas[0].spawnPoints.Count}");
+                cl.SetPosition(this.arenas[0].spawnPoints[spawnIndex]);
+                cl.SetRotation(rotation);
+
+                Json.EnterArena jsonDataObject = new Json.EnterArena
+                {
+                    Id = cl.Id,
+                    X = cl.position.X,
+                    Y = cl.position.Y,
+                    Z = cl.position.Z,
+                    Rx = rotation.Rx,
+                    Ry = rotation.Ry,
+                    Rz = rotation.Rz,
+                    Rw = rotation.Rw
+                };
+                string jsonData = JsonConvert.SerializeObject(jsonDataObject);
+
+                Logs.Log($"[{this.Time}] Sent {cl} to arena at {cl.position}.");
+
+                byte[] data = new byte[512];
+
+                // send a broadcast clientJoined packet
+                Packet packetEnterArena = new Packet(this, data.Length, data, null);
+                packetEnterArena.AddHeaderToData(true, Commands.EnterArena);
+                packetEnterArena.Broadcast = true;
+                packetEnterArena.Writer.Write(jsonData);
+                this.SendPacket(packetEnterArena);
+            }
+        }
+
+        public void MovePlayersToLobby()
+        {
+            foreach (Client cl in clients.Values)
+            {
+                Logs.Log($"[{this.Time}] Sent {cl} to lobby.");
+
+                byte[] data = new byte[512];
+
+                // send a broadcast clientJoined packet
+                Packet packetEnterArena = new Packet(this, data.Length, data, null);
+                packetEnterArena.AddHeaderToData(true, Commands.ExitArena);
+                packetEnterArena.Broadcast = true;
+                this.SendPacket(packetEnterArena);
+            }
+
+            this.mode = ServerMode.Lobby;
+        }
+
+        public void CheckForWinner()
+        {
+            int clientsAlive = 0;
+            foreach(Client client in clients.Values)
+            {
+                if (!client.isDead)
+                    clientsAlive++;
+            }
+            if (clientsAlive <= 1)
+            {
+                foreach (Client cl in clients.Values)
+                {
+                    this.SendChatMessage($"{cl.Name} won the game");
+                }
+                MovePlayersToLobby();
+            }
         }
         #endregion
     }
