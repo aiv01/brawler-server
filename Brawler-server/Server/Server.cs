@@ -284,7 +284,7 @@ namespace BrawlerServer.Server
                                 //TODO Fails tests for Move, Taunt and Dodge ... Loses the last float value
                                 //if (packet.RemoteEp == pair.Key)
                                 //  continue;
-                                socket.SendTo(packet.Data, 0, packet.PacketSize, SocketFlags.None, pair.Key);
+                                socket.SendTo(packet.Data, 0, (int)packet.Stream.Position, SocketFlags.None, pair.Key);
                                 Logs.Log($"[{Time}] Sent broadcast {packet} to {pair.Value}, clients for this broadcast: {clients.Count}.");
                             }
                         }
