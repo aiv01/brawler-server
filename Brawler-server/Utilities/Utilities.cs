@@ -33,7 +33,7 @@ namespace BrawlerServer.Utilities
         ClientLightAttacked = 11,
         ClientHeavyAttacked = 13,
         ClientHitted = 15,
-        ClientSwappedWeapon = 16,
+        ClientSwappedWeapon = 17,
         ClientCommanded = 99,
         EnterArena = 115,
         ExitArena = 116,
