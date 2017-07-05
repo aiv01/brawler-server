@@ -12,19 +12,17 @@ using NUnit.Framework;
 namespace BrawlerServer.Server.Tests
 {
     [TestFixture]
-    public class DodgeHandlerTests
+    public class HeavyAttackHandlerTests
     {
-        Packet CreateAndTestDodgePacket(Server server)
+        Packet CreateAndTestHeavyAttackPacket(Server server)
         {
             server.AddClient(new Client(server.BindEp));
-            server.AddClient(new Client(server.BindEp));
-
 
             var UpdateData = new byte[1024];
 
             var packetId = Utilities.Utilities.GetPacketId();
             var packet = new Packet(server, 1024, UpdateData, server.BindEp);
-            packet.AddHeaderToData(packetId, false, Commands.Dodge);
+            packet.AddHeaderToData(packetId, false, Commands.HeavyAttack);
             packet.Writer.Write(102.5f);
             packet.Writer.Write(0f);
             packet.Writer.Write(25.25f);
@@ -36,7 +34,7 @@ namespace BrawlerServer.Server.Tests
 
             Assert.That(packet.Id, Is.EqualTo(packetId));
             Assert.That(packet.IsReliable, Is.EqualTo(false));
-            Assert.That(packet.Command, Is.EqualTo(Commands.Dodge));
+            Assert.That(packet.Command, Is.EqualTo(Commands.HeavyAttack));
             Assert.That(packet.RemoteEp, Is.EqualTo(server.BindEp));
             var payloadOffset = packet.PayloadOffset;
 
@@ -44,11 +42,11 @@ namespace BrawlerServer.Server.Tests
 
             Assert.That(packet.Id, Is.EqualTo(packetId));
             Assert.That(packet.IsReliable, Is.EqualTo(false));
-            Assert.That(packet.Command, Is.EqualTo(Commands.Dodge));
+            Assert.That(packet.Command, Is.EqualTo(Commands.HeavyAttack));
             Assert.That(packet.RemoteEp, Is.EqualTo(server.BindEp));
             Assert.That(packet.PayloadOffset, Is.EqualTo(payloadOffset));
 
-            var packetHandler = packet.PacketHandler as DodgeHandler;
+            var packetHandler = packet.PacketHandler as HeavyAttackHandler;
 
             Assert.That(packetHandler, Is.Not.EqualTo(null));
             
@@ -63,16 +61,16 @@ namespace BrawlerServer.Server.Tests
             return packet;
         }
 
-        void TestDodgePacketBySocketSendPacket(Server server)
+        void TestHeavyAttackPacketBySocketSendPacket(Server server)
         {
-            server.ServerTick -= TestDodgePacketBySocketSendPacket;
+            server.ServerTick -= TestHeavyAttackPacketBySocketSendPacket;
 
-            var packet = CreateAndTestDodgePacket(server);
-            var client = ((DodgeHandler)packet.PacketHandler).Client;
+            var packet = CreateAndTestHeavyAttackPacket(server);
+            var client = ((HeavyAttackHandler)packet.PacketHandler).Client;
 
             server.ServerPacketReceive += (s, p) =>
             {
-                if (p.Command == Commands.ClientDodged)
+                if (p.Command == Commands.ClientHeavyAttacked)
                 {
                     s.IsRunning = false;
 
@@ -80,11 +78,11 @@ namespace BrawlerServer.Server.Tests
 
                     Assert.That(p.Id, Is.GreaterThan(packet.Id));
                     Assert.That(p.IsReliable, Is.EqualTo(false));
-                    Assert.That(p.Command, Is.EqualTo(Commands.ClientDodged));
+                    Assert.That(p.Command, Is.EqualTo(Commands.ClientHeavyAttacked));
                     Assert.That(p.RemoteEp, Is.EqualTo(server.BindEp));
                     Assert.That(p.PayloadOffset, Is.EqualTo(packet.PayloadOffset));
 
-                    var packetHandler = p.PacketHandler as DodgeHandler;
+                    var packetHandler = p.PacketHandler as HeavyAttackHandler;
 
                     Assert.That(packetHandler, Is.EqualTo(null));
                     Assert.That(s.HasClient(client), Is.EqualTo(true));
@@ -106,20 +104,20 @@ namespace BrawlerServer.Server.Tests
 
 
         [Test]
-        public void DodgePacketTest()
+        public void HeavyAttackPacketTest()
         {
             var ep = new IPEndPoint(0, 0);
             var server = new Server(ep);
 
-            CreateAndTestDodgePacket(server);
+            CreateAndTestHeavyAttackPacket(server);
         }
 
         [Test]
-        public void DodgePacketBySocketTest()
+        public void HeavyAttackPacketBySocketTest()
         {
             var ep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 0);
             var server = new Server(ep);
-            server.ServerTick += TestDodgePacketBySocketSendPacket;
+            server.ServerTick += TestHeavyAttackPacketBySocketSendPacket;
             server.Bind();
             server.MainLoop();
         }

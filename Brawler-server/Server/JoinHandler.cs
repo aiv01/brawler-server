@@ -17,6 +17,11 @@ namespace BrawlerServer.Server
 
             JsonData = Utilities.Utilities.ParsePacketJson(packet, typeof(Json.JoinHandler));
 
+            //Check if server is in lobby
+            if (Packet.Server.mode != Server.ServerMode.Lobby)
+            {
+                throw new Exception($"RemoteEp '{packet.RemoteEp}' tried to join but game has already started.");
+            }
             //check if client has authed
             if (!packet.Server.CheckAuthedEndPoint(packet.RemoteEp))
             {
@@ -31,6 +36,7 @@ namespace BrawlerServer.Server
             Client = packet.Server.GetClientFromAuthedEndPoint(packet.RemoteEp);
             Logs.Log($"[{packet.Server.Time}] Received join message from {Client}.");
 
+            //Check if client was already in
             Client alreadyIn = packet.Server.GetClientFromName(Client.Name);
             if (alreadyIn != null)
             {
@@ -38,8 +44,43 @@ namespace BrawlerServer.Server
             }
             packet.Server.AddClient(Client);
 
-            //Set last packet sent as this one
-            Client.TimeLastPacketSent = packet.Server.Time;
+            Room room = packet.Server.rooms[JsonData.MatchId];
+            if (room == null)
+            {
+                throw new Exception($"room {JsonData.MatchId} does not exist");
+            }
+
+            string reason = "";
+            bool canJoin = true;
+            int playersInRoom = room.Clients.Count;
+            if (playersInRoom == room.MaxPlayers)
+            {
+                canJoin = false;
+                reason = "Room is full";
+            }
+
+            Json.ClientJoined jsonDataObject = new Json.ClientJoined {
+                CanJoin = canJoin,
+                Reason = reason,
+                Name = Client.Name,
+                Id = Client.Id,
+                IsReady = Client.isReady,
+            };
+            string jsonData = JsonConvert.SerializeObject(jsonDataObject);
+
+            Logs.Log($"[{packet.Server.Time}] Added new {Client}.");
+
+            byte[] data = new byte[512];
+
+            // send a broadcast clientJoined packet
+            Packet packetClientAdded = new Packet(packet.Server, data.Length, data, null);
+            packetClientAdded.AddHeaderToData(true, Commands.ClientJoined);
+            packetClientAdded.Broadcast = true;
+            packetClientAdded.Writer.Write(jsonData);
+            packet.Server.SendPacket(packetClientAdded);
+
+            Client.room = JsonData.MatchId;
+            room.AddClient(Client);
 
             JsonSerialized = JsonConvert.SerializeObject(JsonData);
         }

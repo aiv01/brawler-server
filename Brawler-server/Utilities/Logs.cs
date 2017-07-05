@@ -13,7 +13,7 @@ namespace BrawlerServer.Utilities
             Write(message, "");
         }
 
-        public void Write(string message, string category)
+        public void Write(string message, string category = "None")
         {
             Console.WriteLine($"[{category}]{message}");
         }

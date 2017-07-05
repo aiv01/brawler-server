@@ -7,12 +7,17 @@ namespace BrawlerServer.Utilities
     {
         public class JoinHandler
         {
-            
+            public int MatchId;
         }
 
         public class LeaveHandler
         {
             
+        }
+
+        public class CommandHandler
+        {
+            public string command;
         }
 
         public class MoveHandler
@@ -25,6 +30,12 @@ namespace BrawlerServer.Utilities
             public float Ry;
             public float Rz;
             public float Rw;
+            public float Health;
+        }
+
+        public class HitHandler
+        {
+            public float DamageDealt;
         }
 
         public class DodgeHandler
@@ -47,6 +58,34 @@ namespace BrawlerServer.Utilities
             public float Ry;
             public float Rz;
             public float Rw;
+            public byte TauntId;
+        }
+
+        public class LightAttackHandler
+        {
+            public float X;
+            public float Y;
+            public float Z;
+            public float Rx;
+            public float Ry;
+            public float Rz;
+            public float Rw;
+        }
+
+        public class HeavyAttackHandler
+        {
+            public float X;
+            public float Y;
+            public float Z;
+            public float Rx;
+            public float Ry;
+            public float Rz;
+            public float Rw;
+        }
+
+        public class SwapWeaponHandler
+        {
+            public byte WeaponId;
         }
 
         public class AuthHandler
@@ -54,10 +93,37 @@ namespace BrawlerServer.Utilities
             public string AuthToken;
         }
 
-        public class ClientJoined
+        public class ReadyHandler
+        {
+            public int PrefabId;
+        }
+
+        public class EmpowerHandler
+        {
+            public string Ip;
+            public int Port;
+            public int EmpowerType;
+        }
+
+        public class EnterArena
         {
             public uint Id;
+            public float X;
+            public float Y;
+            public float Z;
+            public float Rx;
+            public float Ry;
+            public float Rz;
+            public float Rw;
+        }
+
+        public class ClientJoined
+        {
+            public bool CanJoin;
+            public string Reason;
+            public uint Id;
             public string Name;
+            public bool IsReady;
         }
 
         public class ClientLeft
@@ -72,6 +138,30 @@ namespace BrawlerServer.Utilities
             public string Port;
         }
 
+        public class ClientReady
+        {
+            public int PrefabId;
+            public uint Id;
+        }
+
+        public class ClientNotReady
+        {
+            public int PrefabId;
+            public uint Id;
+        }
+
+        public class ChatHandler
+        {
+            public string Text;
+            public string Name;
+        }
+
+        public class ClientChatted
+        {
+            public string Text;
+            public string Name;
+        }
+        
         public class AuthPlayerPost
         {
             public bool auth_ok;
@@ -80,15 +170,11 @@ namespace BrawlerServer.Utilities
             public string info;
         }
 
-        public class ChatHandler
+        public class InfoToServicesPost
         {
-            public string Text;
-        }
-
-        public class ClientChatted
-        {
-            public string Text;
-            public string Name;
+            public bool server_register;
+            public string fields;
+            public string info;
         }
 
         public static dynamic Deserialize(string data, Type type)

@@ -2,57 +2,56 @@
 using BrawlerServer.Utilities;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using System.Diagnostics;
 
 namespace BrawlerServer.Server.Tests
 {
     [TestFixture]
-    public class AuthHandlerTests
+    public class CommandHandlerTests
     {
-        Packet CreateAndTestAuthPacket(Server server)
+        Packet CreateAndTestCommandPacket(Server server)
         {
-            var authData = new byte[1024];
+            var CommandData = new byte[1024];
 
-            var jsonDataObject = new Json.AuthHandler() { AuthToken = "e1cdcd42-0b98-4d12-82fd-53d0fb241ec6" };
+            var jsonDataObject = new Json.CommandHandler();
             var jsonData = JsonConvert.SerializeObject(jsonDataObject);
 
-            var packet = new Packet(server, 1024, authData, server.BindEp);
-            packet.AddHeaderToData(17, true, Commands.Auth);
+            var packet = new Packet(server, 1024, CommandData, server.BindEp);
+            packet.AddHeaderToData(17, true, Commands.Command);
             packet.Writer.Write(jsonData);
             packet.PacketSize = (int)packet.Stream.Position;
 
             Assert.That(packet.Id, Is.EqualTo(17));
             Assert.That(packet.IsReliable, Is.EqualTo(true));
-            Assert.That(packet.Command, Is.EqualTo(Commands.Auth));
+            Assert.That(packet.Command, Is.EqualTo(Commands.Command));
             Assert.That(packet.RemoteEp, Is.EqualTo(server.BindEp));
             var payloadOffset = packet.PayloadOffset;
 
+            //packet.Server.AddAuthedEndPoint(packet.RemoteEp, new Client(packet.RemoteEp));
+
             packet.ParseHeaderFromData();
-            
+
             Assert.That(packet.Id, Is.EqualTo(17));
             Assert.That(packet.IsReliable, Is.EqualTo(true));
-            Assert.That(packet.Command, Is.EqualTo(Commands.Auth));
+            Assert.That(packet.Command, Is.EqualTo(Commands.Command));
             Assert.That(packet.RemoteEp, Is.EqualTo(server.BindEp));
             Assert.That(packet.PayloadOffset, Is.EqualTo(payloadOffset));
 
-            var packetHandler = packet.PacketHandler as AuthHandler;
+            var packetHandler = packet.PacketHandler as CommandHandler;
 
-            //packet.Server.AddAuthedEndPoint(packet.RemoteEp, new Client(packet.RemoteEp));
-
-            //Assert.That(packet.Server.CheckAuthedEndPoint(packet.RemoteEp), Is.EqualTo(true));
+            Assert.That(packetHandler, Is.Not.EqualTo(null));
 
             return packet;
         }
 
-        void TestAuthPacketBySocketSendPacket(Server server)
+        void TestCommandPacketBySocketSendPacket(Server server)
         {
-            server.ServerTick -= TestAuthPacketBySocketSendPacket;
+            server.ServerTick -= TestCommandPacketBySocketSendPacket;
 
-            var packet = CreateAndTestAuthPacket(server);
+            var packet = CreateAndTestCommandPacket(server);
 
             server.ServerPacketReceive += (s, p) =>
             {
-                if (p.Command != Commands.Auth)
+                if (p.Command != Commands.Command)
                     return;
 
                 s.IsRunning = false;
@@ -61,13 +60,11 @@ namespace BrawlerServer.Server.Tests
 
                 Assert.That(p.Id, Is.EqualTo(17));
                 Assert.That(p.IsReliable, Is.EqualTo(true));
-                Assert.That(p.Command, Is.EqualTo(Commands.Auth));
+                Assert.That(p.Command, Is.EqualTo(Commands.Command));
                 Assert.That(p.RemoteEp, Is.EqualTo(server.BindEp));
                 Assert.That(p.PayloadOffset, Is.EqualTo(packet.PayloadOffset));
 
-                var packetHandler = p.PacketHandler as AuthHandler;
-
-                //Assert.That(packet.Server.CheckAuthedEndPoint(packet.RemoteEp), Is.EqualTo(true));
+                var packetHandler = p.PacketHandler as CommandHandler;
 
                 Assert.That(packetHandler, Is.Not.EqualTo(null));
             };
@@ -77,20 +74,20 @@ namespace BrawlerServer.Server.Tests
 
 
         [Test]
-        public void AuthPacketTest()
+        public void CommandPacketTest()
         {
             var ep = new IPEndPoint(0, 0);
             var server = new Server(ep);
 
-            CreateAndTestAuthPacket(server);
+            CreateAndTestCommandPacket(server);
         }
 
         [Test]
-        public void AuthPacketBySocketTest()
+        public void CommandPacketBySocketTest()
         {
             var ep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 0);
             var server = new Server(ep);
-            server.ServerTick += TestAuthPacketBySocketSendPacket;
+            server.ServerTick += TestCommandPacketBySocketSendPacket;
             server.Bind();
             server.MainLoop();
         }

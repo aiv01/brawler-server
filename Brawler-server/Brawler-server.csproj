@@ -55,13 +55,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Gameplay\Arena.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\ACKHandler.cs" />
     <Compile Include="Server\AuthHandler.cs" />
     <Compile Include="Server\ChatHandler.cs" />
     <Compile Include="Server\Client.cs" />
+    <Compile Include="Server\EmpowerHandler.cs" />
+    <Compile Include="Server\HeavyAttackHandler.cs" />
+    <Compile Include="Server\CommandHandler.cs" />
+    <Compile Include="Server\HitHandler.cs" />
+    <Compile Include="Server\SwapWeaponHandler.cs" />
+    <Compile Include="Server\NotReadyHandler.cs" />
+    <Compile Include="Server\ReadyHandler.cs" />
     <Compile Include="Server\PongHandler.cs" />
+    <Compile Include="Server\LightAttackHandler.cs" />
+    <Compile Include="Server\Room.cs" />
     <Compile Include="Server\TauntHandler.cs" />
     <Compile Include="Server\DodgeHandler.cs" />
     <Compile Include="Server\ICommandHandler.cs" />
@@ -73,6 +83,7 @@
     <Compile Include="Server\Server.cs" />
     <Compile Include="Utilities\Json.cs" />
     <Compile Include="Utilities\Logs.cs" />
+    <Compile Include="Utilities\Position.cs" />
     <Compile Include="Utilities\Utilities.cs" />
   </ItemGroup>
   <ItemGroup>

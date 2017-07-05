@@ -5,11 +5,11 @@ using System.Text;
 
 namespace BrawlerServer.Server
 {
-    public class TauntHandler : ICommandHandler
+    public class HeavyAttackHandler : ICommandHandler
     {
         public Packet Packet { get; private set; }
         public Client Client { get; private set; }
-        public Json.TauntHandler JsonData { get; private set; }
+        public Json.HeavyAttackHandler JsonData { get; private set; }
         public string JsonSerialized { get; private set; }
         public uint Id { get; private set; }
         public float X { get; private set; }
@@ -19,7 +19,6 @@ namespace BrawlerServer.Server
         public float Ry { get; private set; }
         public float Rz { get; private set; }
         public float Rw { get; private set; }
-        public byte TauntId { get; private set; }
 
         public void Init(Packet packet)
         {
@@ -28,12 +27,12 @@ namespace BrawlerServer.Server
             //Check if server is in Battle
             if (Packet.Server.mode != Server.ServerMode.Battle)
             {
-                throw new Exception($"RemoteEp '{packet.RemoteEp}' sent a taunt but game hasn't started yet.");
+                throw new Exception($"RemoteEp '{packet.RemoteEp}' sent an heavy attack but game hasn't started yet.");
             }
 
             if (!packet.Server.HasClient(packet.RemoteEp))
             {
-                throw new Exception($"RemoteEp '{packet.RemoteEp}' sent a taunt but has never joined.");
+                throw new Exception($"RemoteEp '{packet.RemoteEp}' sent an heavy attack but has never joined.");
             }
             Client = packet.Server.GetClientFromEndPoint(packet.RemoteEp);
             
@@ -46,13 +45,12 @@ namespace BrawlerServer.Server
             Ry = packet.Reader.ReadSingle();
             Rz = packet.Reader.ReadSingle();
             Rw = packet.Reader.ReadSingle();
-            TauntId = packet.Reader.ReadByte();
 
-            Logs.Log($"[{packet.Server.Time}] Received taunt packet ({X},{Y},{Z},{Rx},{Ry},{Rz},{Rw},{TauntId}) from '{Client}'.");
+            Logs.Log($"[{packet.Server.Time}] Received heavy attack packet ({X},{Y},{Z},{Rx},{Ry},{Rz},{Rw}) from '{Client}'.");
 
             Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, packet.RemoteEp);
             packetToSend.Broadcast = true;
-            packetToSend.AddHeaderToData(false, Commands.ClientTaunted);
+            packetToSend.AddHeaderToData(false, Commands.ClientHeavyAttacked);
             packetToSend.Writer.Write(Id);
             packetToSend.Writer.Write(X);
             packetToSend.Writer.Write(Y);
@@ -61,10 +59,9 @@ namespace BrawlerServer.Server
             packetToSend.Writer.Write(Ry);
             packetToSend.Writer.Write(Rz);
             packetToSend.Writer.Write(Rw);
-            packetToSend.Writer.Write(TauntId);
             Packet.Server.SendPacket(packetToSend);
 
-            JsonData = new Json.TauntHandler()
+            JsonData = new Json.HeavyAttackHandler()
             {
                 X = this.X,
                 Y = this.Y,
@@ -73,7 +70,6 @@ namespace BrawlerServer.Server
                 Ry = this.Ry,
                 Rz = this.Rz,
                 Rw = this.Rw,
-                TauntId = this.TauntId,
             };
             JsonSerialized = JsonConvert.SerializeObject(JsonData);
         }
