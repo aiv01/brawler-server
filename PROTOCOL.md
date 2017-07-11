@@ -169,12 +169,24 @@ Binary Payload:
 
 ### SWAP WEAPON (command 16) Client > Server
 Binary Payload:
-* WeaponId (byte): Weapon Identifier;
+* Id (uint): Weapon Object Id;
 
 ### CLIENT SWAPPED WEAPON (command 17) Server > Client
 Binary Payload:
-* WeaponId (byte): Weapon Identifier;
+* Id (uint): Weapon Object Id;
 * Id (uint): Client Id;
+
+### SPAWN OBJECT (command 98) Server > Client
+Binary Payload:
+* ObjectId (byte): The object type to spawn;
+* X (float): X position of the player;
+* Y (float): Y position of the player;
+* Z (float): Z position of the player;
+* Rx (float): X component of the quaternion rotation;
+* Ry (float): Y component of the quaternion rotation;
+* Rz (float): Z component of the quaternion rotation;
+* Rw (float): W component of the quaternion rotation;
+* Id (uint): Object Unique Identifier
 
 ### CLIENT WON (command 99) Server > Client
 Binary Payload:
