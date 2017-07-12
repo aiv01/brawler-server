@@ -18,6 +18,7 @@ namespace BrawlerServer.Utilities
         HeavyAttack = 12,
         Hit = 14,
         SwapWeapon = 16,
+        BreakWeapon = 18,
         Command = 98,
         Ready = 117,
         NotReady = 119,
@@ -34,6 +35,7 @@ namespace BrawlerServer.Utilities
         ClientHeavyAttacked = 13,
         ClientHitted = 15,
         ClientSwappedWeapon = 17,
+        ClientBrokeWeapon = 19,
         ClientCommanded = 99,
         EnterArena = 115,
         ExitArena = 116,
@@ -88,7 +90,8 @@ namespace BrawlerServer.Utilities
             { Commands.Command, typeof(CommandHandler) },
             { Commands.SwapWeapon, typeof(SwapWeaponHandler) },
             { Commands.Empower, typeof(EmpowerHandler) },
-            { Commands.Hit, typeof(HitHandler) }
+            { Commands.Hit, typeof(HitHandler) },
+            { Commands.BreakWeapon, typeof(BreakWeaponHandler) }
         };
 
         public static ICommandHandler GetHandler(Packet packet)
