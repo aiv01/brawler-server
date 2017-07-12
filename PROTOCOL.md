@@ -169,12 +169,21 @@ Binary Payload:
 
 ### SWAP WEAPON (command 16) Client > Server
 Binary Payload:
+* Weapon Type (byte): Weapon Type Id
 * Id (uint): Weapon Object Id;
 
 ### CLIENT SWAPPED WEAPON (command 17) Server > Client
 Binary Payload:
-* Id (uint): Weapon Object Id;
-* Id (uint): Client Id;
+* Weapon Id (uint): Weapon Object Id;
+* Client Id (uint): Client Id;
+
+### BREAK WEAPON (command 18) Client > Server
+Binary Payload:
+* Weapon Id (uint): Weapon Object Id;
+
+### CLIENT BROKE WEAPON (command 19) Server > Client
+Binary Payload:
+* Weapon Id (uint): Weapon Object Id;
 
 ### SPAWN OBJECT (command 98) Server > Client
 Binary Payload:
