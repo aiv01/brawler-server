@@ -187,7 +187,7 @@ Binary Payload:
 
 ### SPAWN OBJECT (command 98) Server > Client
 Binary Payload:
-* ObjectId (byte): The object type to spawn;
+* ObjectId (uint): The object type to spawn;
 * X (float): X position of the player;
 * Y (float): Y position of the player;
 * Z (float): Z position of the player;
