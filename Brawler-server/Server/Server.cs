@@ -180,6 +180,7 @@ namespace BrawlerServer.Server
             arena.AddSpawnPoint(3, 0.45f, 3);
             arena.AddSpawnPoint(-3, 0.45f, -3);
             arena.AddSpawnPoint(3, 0.45f, 3);
+            arena.SetWeaponCount(5);
             arenas.Add(arena);
 
             rooms = new List<Room>();
@@ -635,7 +636,7 @@ namespace BrawlerServer.Server
             {
                 Rotation rotation = new Rotation(0, 0, 0, 0);
                 int spawnIndex = new Random().Next(0, this.arenas[0].spawnPoints.Count);
-                Logs.Log($"[{this.Time}] {this.arenas[0].spawnPoints.Count}");
+                Logs.Log($"[{this.Time}] {cl} spawned at spawnpoint {spawnIndex}");
                 cl.SetPosition(this.arenas[0].spawnPoints[spawnIndex]);
                 cl.SetRotation(rotation);
 
@@ -662,6 +663,30 @@ namespace BrawlerServer.Server
                 packetEnterArena.Broadcast = true;
                 packetEnterArena.Writer.Write(jsonData);
                 this.SendPacket(packetEnterArena);
+            }
+
+            for (int i = 0; i < this.arenas[0].weaponCount; i++)
+            {
+                Rotation rotation = new Rotation(0, 0, 0, 0);
+                float x = (float)(new Random().NextDouble() * 5 - 2.5);
+                float y = 0;
+                float z = (float)(new Random().NextDouble() * 5 - 2.5);
+                Position position = new Position(x, y, z);
+                uint objectType = 0;
+
+                byte[] data = new byte[512];
+                Packet packetSpawnObject = new Packet(this, data.Length, data, null);
+                packetSpawnObject.AddHeaderToData(true, Commands.SpawnObject);
+                packetSpawnObject.Broadcast = true;
+                packetSpawnObject.Writer.Write(objectType);
+                packetSpawnObject.Writer.Write(position.X);
+                packetSpawnObject.Writer.Write(position.Y);
+                packetSpawnObject.Writer.Write(position.Z);
+                packetSpawnObject.Writer.Write(rotation.Rx);
+                packetSpawnObject.Writer.Write(rotation.Ry);
+                packetSpawnObject.Writer.Write(rotation.Rz);
+                packetSpawnObject.Writer.Write(rotation.Rw);
+                packetSpawnObject.Writer.Write(Utilities.Utilities.GetObjectId());
             }
         }
 

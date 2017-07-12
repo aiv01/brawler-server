@@ -36,6 +36,7 @@ namespace BrawlerServer.Utilities
         ClientHitted = 15,
         ClientSwappedWeapon = 17,
         ClientBrokeWeapon = 19,
+        SpawnObject = 98,
         ClientCommanded = 99,
         EnterArena = 115,
         ExitArena = 116,
@@ -70,6 +71,7 @@ namespace BrawlerServer.Utilities
         private static uint PacketId = 0;
         private static uint ClientId = 0;
         private static int RoomId = 0;
+        private static int ObjectId = 0;
 
         // handlers per command (the array index is the command)
         private static readonly Dictionary<Commands, Type> Handlers = new Dictionary<Commands, Type> {
@@ -134,6 +136,11 @@ namespace BrawlerServer.Utilities
         public static uint GetClientId()
         {
             return ClientId++;
+        }
+
+        public static uint GetObjectId()
+        {
+            return ObjectId++;
         }
 
         public static int GetRoomId()

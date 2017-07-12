@@ -7,6 +7,7 @@ namespace BrawlerServer.Gameplay
     public class Arena
     {
         public List<Position> spawnPoints { get; private set; }
+        public int weaponCount { get; private set; }
 
         public Arena()
         {
@@ -21,6 +22,11 @@ namespace BrawlerServer.Gameplay
         public void AddSpawnPoint(Position position)
         {
             AddSpawnPoint(position.X, position.Y, position.Z);
+        }
+
+        public void SetWeaponCount(int amount)
+        {
+            weaponCount = amount;
         }
     }
 }

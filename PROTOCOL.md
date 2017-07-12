@@ -197,9 +197,9 @@ Binary Payload:
 * Rw (float): W component of the quaternion rotation;
 * Id (uint): Object Unique Identifier
 
-### CLIENT WON (command 99) Server > Client
+### CLIENT COMMANDED (command 99) Server > Client
 Binary Payload:
-* Id (uint): Client unique identifier;
+* ?
 
 ### EMPOWER PLAYER (command 100) Web Service > Server
 Json Payload:
