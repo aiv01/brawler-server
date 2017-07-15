@@ -687,6 +687,9 @@ namespace BrawlerServer.Server
                 packetSpawnObject.Writer.Write(rotation.Rz);
                 packetSpawnObject.Writer.Write(rotation.Rw);
                 packetSpawnObject.Writer.Write(Utilities.Utilities.GetObjectId());
+                this.SendPacket(packetSpawnObject);
+
+                Logs.Log($"[{this.Time}] Spawned Object[objType:{objectType},xyz:{position.X},{position.Y},{position.Z},rot:{rotation.Rx},{rotation.Ry},{rotation.Rz},{rotation.Rw}]");
             }
         }
 
