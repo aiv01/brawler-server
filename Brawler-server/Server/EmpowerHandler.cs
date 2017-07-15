@@ -23,14 +23,12 @@ namespace BrawlerServer.Server
         {
             Packet = packet;
             var jsonData = packet.Reader.ReadString();
-            Logs.LogWarning($"{jsonData}, {packet}, {packet.PayloadOffset}");
             packet.Stream.Seek(packet.PayloadOffset, System.IO.SeekOrigin.Begin);
             var stringa = "";
             for (int i = 0; i < packet.PacketSize; i++)
             {
                 stringa += packet.Data[i] + " ";
             }
-            Logs.LogWarning($"{stringa}");
             JsonData = Utilities.Utilities.ParsePacketJson(packet, typeof(Json.EmpowerHandler));
 
             //Check if client is connected
@@ -52,9 +50,7 @@ namespace BrawlerServer.Server
             else if (Empower == EmpowerType.Criticism)
                 ClientToEmpower.AddFury(-10);
 
-            Logs.LogWarning($"[{packet.Server.Time}] Received Empower packet from {packet.RemoteEp} with {Empower}");
-
-            packet.Server.CheckPlayersReady();
+            Logs.Log($"[{packet.Server.Time}] Received Empower packet from {packet.RemoteEp} with {Empower}");
         }
     }
 }

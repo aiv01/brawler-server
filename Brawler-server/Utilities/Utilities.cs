@@ -73,6 +73,8 @@ namespace BrawlerServer.Utilities
         private static int RoomId = 0;
         private static uint ObjectId = 0;
 
+        private static Random random = new Random();
+
         // handlers per command (the array index is the command)
         private static readonly Dictionary<Commands, Type> Handlers = new Dictionary<Commands, Type> {
             { Commands.Join, typeof(JoinHandler) },
@@ -146,6 +148,16 @@ namespace BrawlerServer.Utilities
         public static int GetRoomId()
         {
             return RoomId++;
+        }
+
+        public static int RandomizeInt(int min, int max)
+        {
+            return random.Next(min, max);
+        }
+
+        public static float RandomizeFloat(float min, float max)
+        {
+            return (float)(random.NextDouble() * (max - min) + min);
         }
     }
 }

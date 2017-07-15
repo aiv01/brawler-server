@@ -627,7 +627,7 @@ namespace BrawlerServer.Server
             }
             this.mode = ServerMode.Battle;
             MovePlayersToArena();
-            SendChatMessage($"Match Started, Players count: {clients.Count}");
+            SendChatMessage($"[{this.Time}] Match Started, Players count: {clients.Count}");
         }
 
         public void MovePlayersToArena()
@@ -635,7 +635,7 @@ namespace BrawlerServer.Server
             foreach (Client cl in clients.Values)
             {
                 Rotation rotation = new Rotation(0, 0, 0, 0);
-                int spawnIndex = new Random().Next(0, this.arenas[0].spawnPoints.Count);
+                int spawnIndex = Utilities.Utilities.RandomizeInt(0, this.arenas[0].spawnPoints.Count);
                 Logs.Log($"[{this.Time}] {cl} spawned at spawnpoint {spawnIndex}");
                 cl.SetPosition(this.arenas[0].spawnPoints[spawnIndex]);
                 cl.SetRotation(rotation);
@@ -668,9 +668,9 @@ namespace BrawlerServer.Server
             for (int i = 0; i < this.arenas[0].weaponCount; i++)
             {
                 Rotation rotation = new Rotation(0, 0, 0, 0);
-                float x = (float)(new Random().NextDouble() * 5 - 2.5);
+                float x = Utilities.Utilities.RandomizeFloat(-2.5f, 2.5f);
                 float y = 0;
-                float z = (float)(new Random().NextDouble() * 5 - 2.5);
+                float z = Utilities.Utilities.RandomizeFloat(-2.5f, 2.5f);
                 Position position = new Position(x, y, z);
                 uint objectType = 0;
 
