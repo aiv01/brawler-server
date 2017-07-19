@@ -11,8 +11,9 @@ namespace BrawlerServer.Server
         public Client Client { get; private set; }
         public Json.SwapWeaponHandler JsonData { get; private set; }
         public string JsonSerialized { get; private set; }
-        public uint Id { get; private set; }
-        public byte WeaponId { get; private set; }
+        public uint ClientId { get; private set; }
+        public byte ObjectId { get; private set; }
+        public byte WeaponType { get; private set; }
 
         public void Init(Packet packet)
         {
@@ -32,23 +33,19 @@ namespace BrawlerServer.Server
             Client = packet.Server.GetClientFromEndPoint(packet.RemoteEp);
 
             packet.Stream.Seek(packet.PayloadOffset, System.IO.SeekOrigin.Begin);
-            Id = packet.Server.GetClientFromEndPoint(packet.RemoteEp).Id;
-            WeaponId = packet.Reader.ReadByte();
+            ClientId = packet.Server.GetClientFromEndPoint(packet.RemoteEp).Id;
+            WeaponType = packet.Reader.ReadByte();
+            ObjectId = packet.Reader.ReadUInt32();
 
             Logs.Log($"[{packet.Server.Time}] Received SwapWeapon packet ({WeaponId}) from {Client}.");
 
             Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, packet.RemoteEp);
             packetToSend.Broadcast = true;
             packetToSend.AddHeaderToData(false, Commands.ClientSwappedWeapon);
-            packetToSend.Writer.Write(WeaponId);
-            packetToSend.Writer.Write(Id);
+            packetToSend.Writer.Write(WeaponType);
+            packetToSend.Writer.Write(ObjectId);
+            packetToSend.Writer.Write(ClientId);
             Packet.Server.SendPacket(packetToSend);
-
-            JsonData = new Json.SwapWeaponHandler()
-            {
-                WeaponId = this.WeaponId,
-            };
-            JsonSerialized = JsonConvert.SerializeObject(JsonData);
         }
     }
 }
