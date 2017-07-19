@@ -12,7 +12,7 @@ namespace BrawlerServer.Server
         public Json.SwapWeaponHandler JsonData { get; private set; }
         public string JsonSerialized { get; private set; }
         public uint ClientId { get; private set; }
-        public byte ObjectId { get; private set; }
+        public uint ObjectId { get; private set; }
         public byte WeaponType { get; private set; }
 
         public void Init(Packet packet)
