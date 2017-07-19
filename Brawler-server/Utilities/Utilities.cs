@@ -75,6 +75,8 @@ namespace BrawlerServer.Utilities
 
         private static Random random = new Random();
 
+        private static DateTime dateTime = new DateTime();
+
         // handlers per command (the array index is the command)
         private static readonly Dictionary<Commands, Type> Handlers = new Dictionary<Commands, Type> {
             { Commands.Join, typeof(JoinHandler) },
@@ -158,6 +160,11 @@ namespace BrawlerServer.Utilities
         public static float RandomizeFloat(float min, float max)
         {
             return (float)(random.NextDouble() * (max - min) + min);
+        }
+
+        public static string GetTime()
+        {
+            return dateTime.ToString("h:m:s");
         }
     }
 }

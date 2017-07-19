@@ -15,7 +15,11 @@ namespace BrawlerServer.Utilities
 
         public void Write(string message, string category = "None")
         {
-            Console.WriteLine($"[{category}]{message}");
+            string[] lines = message.Split('\n');
+            foreach (var line in lines)
+            {
+                Console.WriteLine($"[{category}]{line}");
+            }
         }
     }
     
