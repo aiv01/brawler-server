@@ -37,7 +37,7 @@ namespace BrawlerServer.Server
             WeaponType = packet.Reader.ReadByte();
             ObjectId = packet.Reader.ReadUInt32();
 
-            Logs.Log($"[{packet.Server.Time}] Received SwapWeapon packet ({WeaponId}) from {Client}.");
+            Logs.Log($"[{packet.Server.Time}] Received SwapWeapon packet ({WeaponType}, {ObjectId}) from {Client}.");
 
             Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, packet.RemoteEp);
             packetToSend.Broadcast = true;
