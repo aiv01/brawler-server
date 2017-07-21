@@ -164,7 +164,7 @@ namespace BrawlerServer.Utilities
 
         public static string GetTime()
         {
-            return dateTime.ToString("h:m:s");
+            return DateTime.Now.ToString("h:mm:ss");
         }
     }
 }

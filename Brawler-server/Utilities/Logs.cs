@@ -18,7 +18,7 @@ namespace BrawlerServer.Utilities
             string[] lines = message.Split('\n');
             foreach (var line in lines)
             {
-                Console.WriteLine($"[{category}]{line}");
+                Console.WriteLine($"[{category}][{Utilities.GetTime()}]{line}");
             }
         }
     }
