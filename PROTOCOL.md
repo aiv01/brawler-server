@@ -136,7 +136,7 @@ Binary Payload:
 * Rw (float): W component of the quaternion rotation;
 * Damage (float): Damage got
 
-### CLIENT HITTED (command 15) Server > Client
+### CLIENT HIT (command 15) Server > Client
 Binary Payload:
 * Id (uint): Client Unique Identifier;
 * X (float): X position of the player;
