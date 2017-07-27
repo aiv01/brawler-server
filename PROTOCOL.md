@@ -35,7 +35,7 @@ Json Payload:
 
 ### MOVE (command 4) Client > Server
 Binary Payload:  
-* MoveType (byte): Movement type of the player (like camera lock);
+* PlayerState (byte): State of the player (like parry);
 * X (float): X position of the player;
 * Y (float): Y position of the player;
 * Z (float): Z position of the player;
@@ -48,7 +48,7 @@ Binary Payload:
 ### CLIENT MOVED (command 5) Server > Client
 Binary Payload:  
 * Id (uint): Client Unique Identifier;
-* MoveType (byte): Movement type of the player (like camera lock);
+* PlayerState (byte): State of the player (like parry);
 * X (float): X position of the player;
 * Y (float): Y position of the player;
 * Z (float): Z position of the player;
@@ -102,7 +102,7 @@ Binary Payload:
 * Rw (float): W component of the quaternion rotation;
 * TauntId (byte): Taunt type identifier
 
-### LIGHT ATTACK (command 10) Client > Server
+### ATTACK (command 10) Client > Server
 Binary Payload:
 * X (float): X position of the player;
 * Y (float): Y position of the player;
@@ -111,8 +111,9 @@ Binary Payload:
 * Ry (float): Y component of the quaternion rotation;
 * Rz (float): Z component of the quaternion rotation;
 * Rw (float): W component of the quaternion rotation;
+* Light (bool): If attack is light or heavy;
 
-### CLIENT LIGHT ATTACKED (command 11) Server > Client
+### CLIENT ATTACKED (command 11) Server > Client
 Binary Payload:
 * Id (uint): Client Unique Identifier;
 * X (float): X position of the player;
@@ -122,27 +123,7 @@ Binary Payload:
 * Ry (float): Y component of the quaternion rotation;
 * Rz (float): Z component of the quaternion rotation;
 * Rw (float): W component of the quaternion rotation;
-
-### HEAVY ATTACK (command 12) Client > Server
-Binary Payload:
-* X (float): X position of the player;
-* Y (float): Y position of the player;
-* Z (float): Z position of the player;
-* Rx (float): X component of the quaternion rotation;
-* Ry (float): Y component of the quaternion rotation;
-* Rz (float): Z component of the quaternion rotation;
-* Rw (float): W component of the quaternion rotation;
-
-### CLIENT HEAVY ATTACKED (command 13) Server > Client
-Binary Payload:
-* Id (uint): Client Unique Identifier;
-* X (float): X position of the player;
-* Y (float): Y position of the player;
-* Z (float): Z position of the player;
-* Rx (float): X component of the quaternion rotation;
-* Ry (float): Y component of the quaternion rotation;
-* Rz (float): Z component of the quaternion rotation;
-* Rw (float): W component of the quaternion rotation;
+* Light (bool): If attack is light or heavy;
 
 ### HIT (command 14) Client > Server
 Binary Payload:
