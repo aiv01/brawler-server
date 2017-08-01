@@ -65,7 +65,7 @@ namespace BrawlerServer.Server
 
             Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, packet.RemoteEp);
             packetToSend.Broadcast = true;
-            packetToSend.AddHeaderToData(false, Commands.ClientHitted);
+            packetToSend.AddHeaderToData(false, Commands.ClientHit);
             packetToSend.Writer.Write(Id);
             packetToSend.Writer.Write(X);
             packetToSend.Writer.Write(Y);

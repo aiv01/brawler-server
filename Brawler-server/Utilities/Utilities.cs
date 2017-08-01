@@ -33,7 +33,7 @@ namespace BrawlerServer.Utilities
         ClientTaunted = 9,
         ClientLightAttacked = 11,
         ClientHeavyAttacked = 13,
-        ClientHitted = 15,
+        ClientHit = 15,
         ClientSwappedWeapon = 17,
         ClientBrokeWeapon = 19,
         SpawnObject = 98,
