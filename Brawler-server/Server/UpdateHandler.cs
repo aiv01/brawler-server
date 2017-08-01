@@ -5,13 +5,14 @@ using System.Text;
 
 namespace BrawlerServer.Server
 {
-    public class LightAttackHandler : ICommandHandler
+    public class UpdateHandler : ICommandHandler
     {
         public Packet Packet { get; private set; }
         public Client Client { get; private set; }
-        public Json.LightAttackHandler JsonData { get; private set; }
+        public Json.MoveHandler JsonData { get; private set; }
         public string JsonSerialized { get; private set; }
         public uint Id { get; private set; }
+        public byte PlayerState { get; private set; }
         public float X { get; private set; }
         public float Y { get; private set; }
         public float Z { get; private set; }
@@ -19,6 +20,8 @@ namespace BrawlerServer.Server
         public float Ry { get; private set; }
         public float Rz { get; private set; }
         public float Rw { get; private set; }
+        public float Health { get; private set; }
+        public float Fury { get; private set; }
 
         public void Init(Packet packet)
         {
@@ -27,17 +30,26 @@ namespace BrawlerServer.Server
             //Check if server is in Battle
             if (Packet.Server.mode != Server.ServerMode.Battle)
             {
-                throw new Exception($"RemoteEp '{packet.RemoteEp}' sent a light attack but game hasn't started yet.");
+                throw new Exception($"RemoteEp '{packet.RemoteEp}' sent a move but game hasn't started yet.");
             }
 
+            //Check if client has joined
             if (!packet.Server.HasClient(packet.RemoteEp))
             {
-                throw new Exception($"RemoteEp '{packet.RemoteEp}' sent a light attack but has never joined.");
+                throw new Exception($"RemoteEp '{packet.RemoteEp}' sent a move but has never joined.");
             }
+
             Client = packet.Server.GetClientFromEndPoint(packet.RemoteEp);
-            
+
+            //Check if client is not dead
+            if (Client.isDead)
+            {
+                throw new Exception($"RemoteEp '{packet.RemoteEp}' sent a move but is dead.");
+            }
+
             packet.Stream.Seek(packet.PayloadOffset, System.IO.SeekOrigin.Begin);
-            Id = packet.Server.GetClientFromEndPoint(packet.RemoteEp).Id;
+            Id = Client.Id;
+            PlayerState = packet.Reader.ReadByte();
             X = packet.Reader.ReadSingle();
             Y = packet.Reader.ReadSingle();
             Z = packet.Reader.ReadSingle();
@@ -45,13 +57,16 @@ namespace BrawlerServer.Server
             Ry = packet.Reader.ReadSingle();
             Rz = packet.Reader.ReadSingle();
             Rw = packet.Reader.ReadSingle();
+            Health = Client.health;
+            Fury = Client.fury;
 
-            Logs.Log($"[{packet.Server.Time}] Received light attack packet ({X},{Y},{Z},{Rx},{Ry},{Rz},{Rw}) from '{Client}'.");
+            Logs.Log($"[{packet.Server.Time}] Received move packet ({PlayerState},({X},{Y},{Z}),({Rx},{Ry},{Rz},{Rw}),HP:{Health},Fury:{Fury}) from {Client}.");
 
-            Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, packet.RemoteEp);
+            Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, null);
             packetToSend.Broadcast = true;
-            packetToSend.AddHeaderToData(false, Commands.ClientLightAttacked);
+            packetToSend.AddHeaderToData(false, Commands.ClientUpdated);
             packetToSend.Writer.Write(Id);
+            packetToSend.Writer.Write(PlayerState);
             packetToSend.Writer.Write(X);
             packetToSend.Writer.Write(Y);
             packetToSend.Writer.Write(Z);
@@ -59,19 +74,9 @@ namespace BrawlerServer.Server
             packetToSend.Writer.Write(Ry);
             packetToSend.Writer.Write(Rz);
             packetToSend.Writer.Write(Rw);
+            packetToSend.Writer.Write(Health);
+            packetToSend.Writer.Write(Fury);
             Packet.Server.SendPacket(packetToSend);
-
-            JsonData = new Json.LightAttackHandler()
-            {
-                X = this.X,
-                Y = this.Y,
-                Z = this.Z,
-                Rx = this.Rx,
-                Ry = this.Ry,
-                Rz = this.Rz,
-                Rw = this.Rw,
-            };
-            JsonSerialized = JsonConvert.SerializeObject(JsonData);
         }
     }
 }

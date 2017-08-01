@@ -61,7 +61,7 @@ namespace BrawlerServer.Utilities
             public byte TauntId;
         }
 
-        public class LightAttackHandler
+        public class AttackHandler
         {
             public float X;
             public float Y;
@@ -70,17 +70,7 @@ namespace BrawlerServer.Utilities
             public float Ry;
             public float Rz;
             public float Rw;
-        }
-
-        public class HeavyAttackHandler
-        {
-            public float X;
-            public float Y;
-            public float Z;
-            public float Rx;
-            public float Ry;
-            public float Rz;
-            public float Rw;
+            public bool IsLight;
         }
 
         public class SwapWeaponHandler
