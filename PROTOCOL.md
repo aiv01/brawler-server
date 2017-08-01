@@ -33,7 +33,7 @@ Json Payload:
 * uint Id: Client Unique Identifier;
 * string Reason: Reason for leaving (kicked, quit, ...);
 
-### MOVE (command 4) Client > Server
+### UPDATE (command 4) Client > Server
 Binary Payload:  
 * PlayerState (byte): State of the player (like parry);
 * X (float): X position of the player;
@@ -45,7 +45,7 @@ Binary Payload:
 * Rw (float): W component of the quaternion rotation;
 * Health (int): Player health;
 
-### CLIENT MOVED (command 5) Server > Client
+### CLIENT UPDATE (command 5) Server > Client
 Binary Payload:  
 * Id (uint): Client Unique Identifier;
 * PlayerState (byte): State of the player (like parry);
