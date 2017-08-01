@@ -47,7 +47,7 @@ namespace BrawlerServer.Server.Tests
             Assert.That(packet.RemoteEp, Is.EqualTo(server.BindEp));
             Assert.That(packet.PayloadOffset, Is.EqualTo(payloadOffset));
 
-            var packetHandler = packet.PacketHandler as UpdateHandler;
+            var packetHandler = packet.PacketHandler as MoveHandler;
 
             Assert.That(packetHandler, Is.Not.EqualTo(null));
 
@@ -68,7 +68,7 @@ namespace BrawlerServer.Server.Tests
             server.ServerTick -= TestUpdatePacketBySocketSendPacket;
 
             var packet = CreateAndTestMovedPacket(server);
-            var client = ((UpdateHandler)packet.PacketHandler).Client;
+            var client = ((MoveHandler)packet.PacketHandler).Client;
 
             server.ServerPacketReceive += (s, p) =>
             {
@@ -84,7 +84,7 @@ namespace BrawlerServer.Server.Tests
                     Assert.That(p.RemoteEp, Is.EqualTo(server.BindEp));
                     Assert.That(p.PayloadOffset, Is.EqualTo(packet.PayloadOffset));
 
-                    var packetHandler = p.PacketHandler as UpdateHandler;
+                    var packetHandler = p.PacketHandler as MoveHandler;
 
                     Assert.That(packetHandler, Is.EqualTo(null));
                     Assert.That(s.HasClient(client), Is.EqualTo(true));

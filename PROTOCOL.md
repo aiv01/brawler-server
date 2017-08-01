@@ -45,7 +45,7 @@ Binary Payload:
 * Rw (float): W component of the quaternion rotation;
 * Health (int): Player health;
 
-### CLIENT UPDATED (command 5) Server > Client
+### CLIENT UPDATE (command 5) Server > Client
 Binary Payload:  
 * Id (uint): Client Unique Identifier;
 * PlayerState (byte): State of the player (like parry);
