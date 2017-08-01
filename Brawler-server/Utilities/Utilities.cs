@@ -11,7 +11,7 @@ namespace BrawlerServer.Utilities
         // client -> server
         Join = 0,
         Leave = 2,
-        Move = 4,
+        Update = 4,
         Dodge = 6,
         Taunt = 8,
         LightAttack = 10,
@@ -28,7 +28,7 @@ namespace BrawlerServer.Utilities
         // server -> client
         ClientJoined = 1,
         ClientLeft = 3,
-        ClientMoved = 5,
+        ClientUpdated = 5,
         ClientDodged = 7,
         ClientTaunted = 9,
         ClientLightAttacked = 11,
@@ -81,7 +81,7 @@ namespace BrawlerServer.Utilities
         private static readonly Dictionary<Commands, Type> Handlers = new Dictionary<Commands, Type> {
             { Commands.Join, typeof(JoinHandler) },
             { Commands.Leave, typeof(LeaveHandler) },
-            { Commands.Move, typeof(MoveHandler) },
+            { Commands.Update, typeof(UpdateHandler) },
             { Commands.Ack, typeof(ACKHandler) },
             { Commands.Auth, typeof(AuthHandler) },
             { Commands.Chat, typeof(ChatHandler) },
