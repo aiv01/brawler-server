@@ -5,11 +5,11 @@ using System.Text;
 
 namespace BrawlerServer.Server
 {
-    public class LightAttackHandler : ICommandHandler
+    public class AttackHandler : ICommandHandler
     {
         public Packet Packet { get; private set; }
         public Client Client { get; private set; }
-        public Json.LightAttackHandler JsonData { get; private set; }
+        public Json.AttackHandler JsonData { get; private set; }
         public string JsonSerialized { get; private set; }
         public uint Id { get; private set; }
         public float X { get; private set; }
@@ -19,6 +19,7 @@ namespace BrawlerServer.Server
         public float Ry { get; private set; }
         public float Rz { get; private set; }
         public float Rw { get; private set; }
+        public bool IsLight { get; private set; }
 
         public void Init(Packet packet)
         {
@@ -27,12 +28,12 @@ namespace BrawlerServer.Server
             //Check if server is in Battle
             if (Packet.Server.mode != Server.ServerMode.Battle)
             {
-                throw new Exception($"RemoteEp '{packet.RemoteEp}' sent a light attack but game hasn't started yet.");
+                throw new Exception($"RemoteEp '{packet.RemoteEp}' sent an attack but game hasn't started yet.");
             }
 
             if (!packet.Server.HasClient(packet.RemoteEp))
             {
-                throw new Exception($"RemoteEp '{packet.RemoteEp}' sent a light attack but has never joined.");
+                throw new Exception($"RemoteEp '{packet.RemoteEp}' sent an attack but has never joined.");
             }
             Client = packet.Server.GetClientFromEndPoint(packet.RemoteEp);
             
@@ -45,12 +46,13 @@ namespace BrawlerServer.Server
             Ry = packet.Reader.ReadSingle();
             Rz = packet.Reader.ReadSingle();
             Rw = packet.Reader.ReadSingle();
+            IsLight = packet.Reader.ReadBoolean();
 
-            Logs.Log($"[{packet.Server.Time}] Received light attack packet ({X},{Y},{Z},{Rx},{Ry},{Rz},{Rw}) from '{Client}'.");
+            Logs.Log($"[{packet.Server.Time}] Received attack packet ({X},{Y},{Z},{Rx},{Ry},{Rz},{Rw},Light:{IsLight}) from '{Client}'.");
 
             Packet packetToSend = new Packet(Packet.Server, 512, packet.Data, packet.RemoteEp);
             packetToSend.Broadcast = true;
-            packetToSend.AddHeaderToData(false, Commands.ClientLightAttacked);
+            packetToSend.AddHeaderToData(false, Commands.ClientAttacked);
             packetToSend.Writer.Write(Id);
             packetToSend.Writer.Write(X);
             packetToSend.Writer.Write(Y);
@@ -59,9 +61,10 @@ namespace BrawlerServer.Server
             packetToSend.Writer.Write(Ry);
             packetToSend.Writer.Write(Rz);
             packetToSend.Writer.Write(Rw);
+            packetToSend.Writer.Write(IsLight);
             Packet.Server.SendPacket(packetToSend);
 
-            JsonData = new Json.LightAttackHandler()
+            JsonData = new Json.AttackHandler()
             {
                 X = this.X,
                 Y = this.Y,
@@ -70,6 +73,7 @@ namespace BrawlerServer.Server
                 Ry = this.Ry,
                 Rz = this.Rz,
                 Rw = this.Rw,
+                IsLight = this.IsLight,
             };
             JsonSerialized = JsonConvert.SerializeObject(JsonData);
         }

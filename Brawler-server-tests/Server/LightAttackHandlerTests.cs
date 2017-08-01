@@ -22,7 +22,7 @@ namespace BrawlerServer.Server.Tests
 
             var packetId = Utilities.Utilities.GetPacketId();
             var packet = new Packet(server, 1024, UpdateData, server.BindEp);
-            packet.AddHeaderToData(packetId, false, Commands.LightAttack);
+            packet.AddHeaderToData(packetId, false, Commands.Attack);
             packet.Writer.Write(102.5f);
             packet.Writer.Write(0f);
             packet.Writer.Write(25.25f);
@@ -34,7 +34,7 @@ namespace BrawlerServer.Server.Tests
 
             Assert.That(packet.Id, Is.EqualTo(packetId));
             Assert.That(packet.IsReliable, Is.EqualTo(false));
-            Assert.That(packet.Command, Is.EqualTo(Commands.LightAttack));
+            Assert.That(packet.Command, Is.EqualTo(Commands.Attack));
             Assert.That(packet.RemoteEp, Is.EqualTo(server.BindEp));
             var payloadOffset = packet.PayloadOffset;
 
@@ -42,11 +42,11 @@ namespace BrawlerServer.Server.Tests
 
             Assert.That(packet.Id, Is.EqualTo(packetId));
             Assert.That(packet.IsReliable, Is.EqualTo(false));
-            Assert.That(packet.Command, Is.EqualTo(Commands.LightAttack));
+            Assert.That(packet.Command, Is.EqualTo(Commands.Attack));
             Assert.That(packet.RemoteEp, Is.EqualTo(server.BindEp));
             Assert.That(packet.PayloadOffset, Is.EqualTo(payloadOffset));
 
-            var packetHandler = packet.PacketHandler as LightAttackHandler;
+            var packetHandler = packet.PacketHandler as AttackHandler;
 
             Assert.That(packetHandler, Is.Not.EqualTo(null));
             
@@ -66,11 +66,11 @@ namespace BrawlerServer.Server.Tests
             server.ServerTick -= TestLightAttackPacketBySocketSendPacket;
 
             var packet = CreateAndTestLightAttackPacket(server);
-            var client = ((LightAttackHandler)packet.PacketHandler).Client;
+            var client = ((AttackHandler)packet.PacketHandler).Client;
 
             server.ServerPacketReceive += (s, p) =>
             {
-                if (p.Command == Commands.ClientLightAttacked)
+                if (p.Command == Commands.ClientAttacked)
                 {
                     s.IsRunning = false;
 
@@ -78,11 +78,11 @@ namespace BrawlerServer.Server.Tests
 
                     Assert.That(p.Id, Is.GreaterThan(packet.Id));
                     Assert.That(p.IsReliable, Is.EqualTo(false));
-                    Assert.That(p.Command, Is.EqualTo(Commands.ClientLightAttacked));
+                    Assert.That(p.Command, Is.EqualTo(Commands.ClientAttacked));
                     Assert.That(p.RemoteEp, Is.EqualTo(server.BindEp));
                     Assert.That(p.PayloadOffset, Is.EqualTo(packet.PayloadOffset));
 
-                    var packetHandler = p.PacketHandler as LightAttackHandler;
+                    var packetHandler = p.PacketHandler as AttackHandler;
 
                     Assert.That(packetHandler, Is.EqualTo(null));
                     Assert.That(s.HasClient(client), Is.EqualTo(true));
