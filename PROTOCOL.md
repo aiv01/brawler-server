@@ -43,7 +43,8 @@ Binary Payload:
 * Ry (float): Y component of the quaternion rotation;
 * Rz (float): Z component of the quaternion rotation;
 * Rw (float): W component of the quaternion rotation;
-* Health (int): Player health;
+* Health (float): Player health;
+* Fury (float): Player Fury;
 
 ### CLIENT UPDATE (command 5) Server > Client
 Binary Payload:  
@@ -56,7 +57,8 @@ Binary Payload:
 * Ry (float): Y component of the quaternion rotation;
 * Rz (float): Z component of the quaternion rotation;
 * Rw (float): W component of the quaternion rotation;
-* Health (int): Player health;
+* Health (float): Player health;
+* Fury (float): Player Fury;
 
 ### DODGE (command 6) Client > Server
 Binary Payload:
